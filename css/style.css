@@ -2,7 +2,6 @@
   --ink: #f2f4f8;
   --ink-dim: #b7c0cf;
   --line: rgba(242,244,248,0.18);
-  --vh: 1vh;
 }
 
 *{
@@ -21,9 +20,12 @@ html, body{
   overflow-x: hidden;
 }
 
+/* Modelo único para qualquer tela: a imagem nunca é cortada.
+   Ela ocupa 100% da largura, com a altura calculada pela
+   proporção real dela (16:9), e o texto vem logo abaixo, em
+   fluxo normal de página — sem forçar altura de tela cheia
+   nem usar cover em nenhum caso. */
 body{
-  background-image: url('../images/logooriginal01.png');
-  background-repeat: no-repeat;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -32,51 +34,23 @@ body{
   padding-right: env(safe-area-inset-right);
 }
 
-/* ===== MOBILE (padrão): imagem inteira, sem cortar,
-   texto logo abaixo, sem forçar altura de tela cheia ===== */
-body{
-  background-size: contain;
-  background-position: top center;
-  justify-content: flex-start;
-  padding-top: max(4vh, env(safe-area-inset-top));
-
-  min-height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-  min-height: 100dvh;
-}
-
-/* Reserva o espaço da imagem no topo, na proporção real dela
-   (2560x1440 = 16:9), pra o texto não subir por cima */
-.bg-spacer{
-  width: 100%;
-  aspect-ratio: 16 / 9;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background: linear-gradient(
-    to bottom,
-    rgba(1,2,12,0) 0%,
-    rgba(1,2,12,0) 55%,
-    rgba(1,2,12,0.6) 78%,
-    rgba(1,2,12,0.95) 92%,
-    rgba(1,2,12,1) 100%
-  );
-  pointer-events:none;
-  z-index:1;
+.bg-image{
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 78vh;
+  margin: 0 auto;
 }
 
 .panel{
   position:relative;
-  z-index:2;
   width:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   text-align:center;
-  padding: 1.5vh clamp(1.25rem, 6vw, 4rem) 0;
+  padding: 3vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
   animation: rise 1.8s ease-out both;
 }
 
@@ -111,7 +85,6 @@ body::before{
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-dim);
-  margin-bottom: clamp(2rem, 6vh, 3.5rem);
 }
 
 .dot{
@@ -129,10 +102,8 @@ body::before{
 
 footer{
   position:relative;
-  z-index:2;
-  margin-top: auto;
-  padding-top: 2vh;
   padding-bottom: max(3vh, env(safe-area-inset-bottom));
+  padding-top: 1vh;
   font-size: 0.66rem;
   letter-spacing: 0.08em;
   color: rgba(183,192,207,0.5);
@@ -144,63 +115,10 @@ footer{
   .dot{ animation:none; }
 }
 
-/* ===== PAISAGEM (celular deitado ou desktop): modo capa
-   cheia, imagem cobrindo a tela toda, texto ancorado embaixo ===== */
-@media (orientation: landscape){
-  body{
-    background-size: cover;
-    background-position: center 30%;
-    justify-content: flex-end;
-    padding-top: 0;
-
-    min-height: 100vh;
-    min-height: calc(var(--vh, 1vh) * 100);
-  }
-  .bg-spacer{
-    display: none;
-  }
-  .panel{
-    padding-top: 6vh;
-    padding-bottom: clamp(2rem, 6vh, 3.5rem);
-  }
+/* Só no mobile (telas estreitas): "Em desenvolvimento" fica
+   um pouco mais abaixo, com mais respiro depois da frase */
+@media (max-width: 767px){
   .status{
-    margin-bottom: 0;
-  }
-  footer{
-    margin-top: 0;
-    padding-top: 0;
-  }
-}
-
-/* Paisagem de tela curta (celular deitado): empurra a imagem
-   mais pra cima e encolhe o texto, pra sobrar espaço suficiente
-   embaixo e o texto não cair em cima da assinatura */
-@media (orientation: landscape) and (max-height: 600px){
-  body{
-    background-position: center 5%;
-  }
-  .panel{
-    padding-top: 1vh;
-    padding-bottom: 1vh;
-  }
-  .relato{
-    font-size: 0.72rem;
-    line-height: 1.5;
-    margin-bottom: 0.6rem;
-  }
-  .divider{
-    margin-bottom: 0.5rem;
-  }
-  .status{
-    font-size: 0.55rem;
-    gap: 0.4rem;
-  }
-  .dot{
-    width: 4px;
-    height: 4px;
-  }
-  footer{
-    padding-bottom: max(1vh, env(safe-area-inset-bottom));
-    font-size: 0.55rem;
+    margin-top: clamp(1rem, 4vh, 2rem);
   }
 }
