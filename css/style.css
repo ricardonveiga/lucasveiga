@@ -117,6 +117,19 @@ footer{
   .dot{ animation:none; }
 }
 
+/* Só no mobile em pé (retrato): o endereço do site fica
+   ancorado no fim da primeira tela, não logo após o status */
+@media (max-width: 1023px) and (orientation: portrait){
+  body{
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
+  }
+  footer{
+    margin-top: auto;
+  }
+}
+
 /* ===== DESKTOP (a partir de 1024px de largura): volta ao
    modo capa cheia — imagem preenche a tela toda, e a frase
    fica sobreposta dentro dela, perto da assinatura ===== */
