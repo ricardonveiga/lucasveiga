@@ -2,8 +2,7 @@
   --ink: #f2f4f8;
   --ink-dim: #b7c0cf;
   --line: rgba(242,244,248,0.18);
-  /* --vh é recalculado via JS para corrigir a altura real
-     da viewport em navegadores mobile (barra de endereço) */
+  --bg: #05070d;
   --vh: 1vh;
 }
 
@@ -14,21 +13,19 @@
 html, body{
   margin:0;
   padding:0;
-  background:#05070d;
+  background: var(--bg);
   color: var(--ink);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body{
   min-height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
-
-  background-image: url('../images/logooriginal01.png';)
-  background-size: cover;
-  background-position: center 30%;
-  background-repeat: no-repeat;
+  min-height: 100dvh;
 
   display:flex;
   flex-direction:column;
@@ -40,32 +37,52 @@ body{
   padding-right: env(safe-area-inset-right);
 }
 
-/* Overlay para garantir contraste do texto sobre a imagem
-   em qualquer proporção de tela */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
+.bg-wrap{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.bg-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+}
+
+@media (max-aspect-ratio: 3/4){
+  .bg-image{
+    object-fit: contain;
+    object-position: top center;
+  }
+}
+
+.overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background: linear-gradient(
     to bottom,
     rgba(5,7,13,0) 0%,
-    rgba(5,7,13,0) 40%,
-    rgba(5,7,13,0.55) 66%,
-    rgba(5,7,13,0.92) 87%,
+    rgba(5,7,13,0) 38%,
+    rgba(5,7,13,0.55) 64%,
+    rgba(5,7,13,0.92) 86%,
     rgba(5,7,13,1) 100%
   );
-  pointer-events:none;
-  z-index:1;
 }
 
 .panel{
-  position:relative;
-  z-index:2;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   padding: 6vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
   animation: rise 1.8s ease-out both;
 }
@@ -117,8 +134,8 @@ body::before{
 }
 
 footer{
-  position:relative;
-  z-index:2;
+  position: relative;
+  z-index: 2;
   padding-bottom: max(3vh, env(safe-area-inset-bottom));
   font-size: 0.66rem;
   letter-spacing: 0.08em;
@@ -126,19 +143,16 @@ footer{
   text-align:center;
 }
 
-/* ---------- Breakpoints ---------- */
-
-/* Telas pequenas (celulares) */
 @media (max-width: 480px){
-  body{
-    background-position: center 22%;
-  }
   .relato{
-    max-width: 32ch;
+    max-width: 30ch;
+    font-size: 0.9rem;
+  }
+  .panel{
+    padding-bottom: 1.5rem;
   }
 }
 
-/* Celulares em paisagem / altura curta */
 @media (max-height: 480px) and (orientation: landscape){
   .panel{
     padding-top: 3vh;
@@ -150,32 +164,25 @@ footer{
   .divider{
     margin-bottom: 0.8rem;
   }
-}
-
-/* Tablets */
-@media (min-width: 481px) and (max-width: 1024px){
-  body{
-    background-position: center 26%;
+  .bg-image{
+    object-fit: cover;
+    object-position: center 15%;
   }
 }
 
-/* Telas grandes / desktop amplo */
+@media (min-width: 481px) and (max-width: 1024px) and (min-aspect-ratio: 3/4){
+  .bg-image{
+    object-position: center 26%;
+  }
+}
+
 @media (min-width: 1600px){
   .relato{
     max-width: 52ch;
   }
 }
 
-/* Reduz movimento para quem prefere */
 @media (prefers-reduced-motion: reduce){
   .panel{ animation:none; }
   .dot{ animation:none; }
-}
-
-/* Telas de alta densidade: nitidez extra não é necessária aqui,
-   mas mantemos a imagem cobrindo sem distorcer */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi){
-  body{
-    background-size: cover;
-  }
 }
