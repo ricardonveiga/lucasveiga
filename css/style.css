@@ -22,57 +22,32 @@ html, body{
   overflow-x: hidden;
 }
 
+/* ================================================
+   MOBILE (padrão): fluxo normal, sem altura forçada.
+   Imagem em cima, texto logo abaixo, sem vão vazio.
+   ================================================ */
 body{
-  min-height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-  min-height: 100dvh;
-
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  align-items:center;
-  position:relative;
-
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  display: block;
 }
 
 .bg-wrap{
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
+  position: relative;
+  width: 100%;
   background: var(--bg);
+  line-height: 0; /* remove o espacinho fantasma abaixo da img */
 }
 
 .bg-image{
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 22%;
+  height: auto;
+  max-height: 62vh;
+  object-fit: contain;
   display: block;
-}
-
-@media (max-aspect-ratio: 3/4){
-  .bg-image{
-    object-fit: contain;
-    object-position: top center;
-  }
+  margin: 0 auto;
 }
 
 .overlay{
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(5,7,13,0) 0%,
-    rgba(5,7,13,0) 38%,
-    rgba(5,7,13,0.55) 64%,
-    rgba(5,7,13,0.92) 86%,
-    rgba(5,7,13,1) 100%
-  );
+  display: none;
 }
 
 .panel{
@@ -83,7 +58,7 @@ body{
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 6vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
+  padding: clamp(1.5rem, 5vh, 2.5rem) clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3rem);
   animation: rise 1.8s ease-out both;
 }
 
@@ -143,34 +118,109 @@ footer{
   text-align:center;
 }
 
-@media (max-width: 480px){
-  .relato{
-    max-width: 30ch;
-    font-size: 0.9rem;
-  }
-  .panel{
-    padding-bottom: 1.5rem;
-  }
+@media (prefers-reduced-motion: reduce){
+  .panel{ animation:none; }
+  .dot{ animation:none; }
 }
 
-@media (max-height: 480px) and (orientation: landscape){
-  .panel{
-    padding-top: 3vh;
-    padding-bottom: 2vh;
+/* ================================================
+   CELULAR EM PAISAGEM (tela curta): vira modo capa
+   cheia, senão o conteúdo não cabe na tela.
+   ================================================ */
+@media (max-width: 767px) and (orientation: landscape){
+  body{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
   }
-  .relato{
-    margin-bottom: 1rem;
-  }
-  .divider{
-    margin-bottom: 0.8rem;
+  .bg-wrap{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
   }
   .bg-image{
+    width: 100%;
+    height: 100%;
+    max-height: none;
     object-fit: cover;
     object-position: center 15%;
   }
+  .overlay{
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(5,7,13,0) 0%,
+      rgba(5,7,13,0.55) 55%,
+      rgba(5,7,13,0.95) 85%,
+      rgba(5,7,13,1) 100%
+    );
+  }
+  .panel{
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+  }
+  .relato{ margin-bottom: 1rem; }
+  .divider{ margin-bottom: 0.8rem; }
 }
 
-@media (min-width: 481px) and (max-width: 1024px) and (min-aspect-ratio: 3/4){
+/* ================================================
+   TABLET / DESKTOP (a partir de 768px): modo capa
+   cheia, imagem de fundo com texto ancorado embaixo.
+   ================================================ */
+@media (min-width: 768px){
+  body{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .bg-wrap{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .bg-image{
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
+    object-position: center 22%;
+  }
+  .overlay{
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(5,7,13,0) 0%,
+      rgba(5,7,13,0) 38%,
+      rgba(5,7,13,0.55) 64%,
+      rgba(5,7,13,0.92) 86%,
+      rgba(5,7,13,1) 100%
+    );
+  }
+  .panel{
+    padding: 6vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
+  }
+}
+
+@media (min-width: 1024px) and (min-aspect-ratio: 3/4){
   .bg-image{
     object-position: center 26%;
   }
@@ -180,9 +230,4 @@ footer{
   .relato{
     max-width: 52ch;
   }
-}
-
-@media (prefers-reduced-motion: reduce){
-  .panel{ animation:none; }
-  .dot{ animation:none; }
 }
