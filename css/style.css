@@ -171,3 +171,36 @@ footer{
     padding-top: 0;
   }
 }
+
+/* Paisagem de tela curta (celular deitado): empurra a imagem
+   mais pra cima e encolhe o texto, pra sobrar espaço suficiente
+   embaixo e o texto não cair em cima da assinatura */
+@media (orientation: landscape) and (max-height: 600px){
+  body{
+    background-position: center 5%;
+  }
+  .panel{
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+  }
+  .relato{
+    font-size: 0.72rem;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+  }
+  .divider{
+    margin-bottom: 0.5rem;
+  }
+  .status{
+    font-size: 0.55rem;
+    gap: 0.4rem;
+  }
+  .dot{
+    width: 4px;
+    height: 4px;
+  }
+  footer{
+    padding-bottom: max(1vh, env(safe-area-inset-bottom));
+    font-size: 0.55rem;
+  }
+}
