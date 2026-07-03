@@ -39,6 +39,10 @@ body{
   background-position: top center;
   justify-content: flex-start;
   padding-top: max(4vh, env(safe-area-inset-top));
+
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100dvh;
 }
 
 /* Reserva o espaço da imagem no topo, na proporção real dela
@@ -72,7 +76,7 @@ body::before{
   flex-direction:column;
   align-items:center;
   text-align:center;
-  padding: 3vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
+  padding: 1.5vh clamp(1.25rem, 6vw, 4rem) 0;
   animation: rise 1.8s ease-out both;
 }
 
@@ -107,6 +111,7 @@ body::before{
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-dim);
+  margin-bottom: clamp(2rem, 6vh, 3.5rem);
 }
 
 .dot{
@@ -125,6 +130,8 @@ body::before{
 footer{
   position:relative;
   z-index:2;
+  margin-top: auto;
+  padding-top: 2vh;
   padding-bottom: max(3vh, env(safe-area-inset-bottom));
   font-size: 0.66rem;
   letter-spacing: 0.08em;
@@ -154,5 +161,9 @@ footer{
   }
   .panel{
     padding-top: 6vh;
+    padding-bottom: clamp(2rem, 6vh, 3.5rem);
+  }
+  .status{
+    margin-bottom: 0;
   }
 }
