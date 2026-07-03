@@ -2,7 +2,6 @@
   --ink: #f2f4f8;
   --ink-dim: #b7c0cf;
   --line: rgba(242,244,248,0.18);
-  --bg: #01020c;
   --vh: 1vh;
 }
 
@@ -13,38 +12,59 @@
 html, body{
   margin:0;
   padding:0;
-  background: var(--bg);
+  background:#05070d;
   color: var(--ink);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
-  width: 100%;
-  overflow-x: hidden;
 }
 
-/* Layout único, centralizado, funciona igual em qualquer tela.
-   O fundo sólido é a mesma cor da imagem, então não há corte
-   nem vão vazio — só preenchimento uniforme ao redor. */
 body{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-  overflow-y: auto;
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+
+  background-image: url('../images/logooriginal01.png');
+  background-size: cover;
+  background-position: center 30%;
+  background-repeat: no-repeat;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  position:relative;
+
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
-.center-group{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(1rem, 4vh, 2rem) clamp(1.25rem, 6vw, 4rem) 0;
+/* Overlay para garantir contraste do texto sobre a imagem
+   em qualquer proporção de tela */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(
+    to bottom,
+    rgba(5,7,13,0) 0%,
+    rgba(5,7,13,0) 40%,
+    rgba(5,7,13,0.55) 66%,
+    rgba(5,7,13,0.92) 87%,
+    rgba(5,7,13,1) 100%
+  );
+  pointer-events:none;
+  z-index:1;
+}
+
+.panel{
+  position:relative;
+  z-index:2;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  padding: 6vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
   animation: rise 1.8s ease-out both;
 }
 
@@ -53,20 +73,11 @@ body{
   to{ opacity:1; transform: translateY(0); }
 }
 
-.logo{
-  width: auto;
-  max-width: min(88vw, 760px);
-  max-height: 42vh;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
-}
-
 .relato{
   font-family:'EB Garamond', serif;
   font-style: italic;
   font-weight:400;
-  font-size: clamp(0.95rem, 2.4vw, 1.2rem);
+  font-size: clamp(1rem, 2vw, 1.2rem);
   line-height: 1.75;
   color: var(--ink-dim);
   max-width: 46ch;
@@ -104,36 +115,20 @@ body{
 }
 
 footer{
+  position:relative;
+  z-index:2;
   padding-bottom: max(3vh, env(safe-area-inset-bottom));
-  padding-top: 1vh;
   font-size: 0.66rem;
   letter-spacing: 0.08em;
   color: rgba(183,192,207,0.5);
   text-align:center;
 }
 
-/* Celular em paisagem: encolhe respiros verticais pra caber */
-@media (max-height: 480px) and (orientation: landscape){
-  .center-group{
-    padding-top: 2vh;
-    padding-bottom: 1.5vh;
-  }
-  .logo{
-    max-width: min(60vw, 480px);
-    margin-bottom: 1rem;
-  }
-  .relato{ margin-bottom: 1rem; }
-  .divider{ margin-bottom: 0.8rem; }
-}
-
-/* Telas grandes */
-@media (min-width: 1600px){
-  .relato{
-    max-width: 52ch;
-  }
+@media (max-width: 640px){
+  body{ background-position: center 22%; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .center-group{ animation:none; }
+  .panel{ animation:none; }
   .dot{ animation:none; }
 }
