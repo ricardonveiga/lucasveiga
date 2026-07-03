@@ -2,6 +2,7 @@
   --ink: #f2f4f8;
   --ink-dim: #b7c0cf;
   --line: rgba(242,244,248,0.18);
+  --vh: 1vh;
 }
 
 *{
@@ -20,11 +21,6 @@ html, body{
   overflow-x: hidden;
 }
 
-/* Modelo único para qualquer tela: a imagem nunca é cortada.
-   Ela ocupa 100% da largura, com a altura calculada pela
-   proporção real dela (16:9), e o texto vem logo abaixo, em
-   fluxo normal de página — sem forçar altura de tela cheia
-   nem usar cover em nenhum caso. */
 body{
   display:flex;
   flex-direction:column;
@@ -34,6 +30,8 @@ body{
   padding-right: env(safe-area-inset-right);
 }
 
+/* ===== MOBILE (padrão, até 1023px): imagem inteira, sem
+   cortar nada, fluxo normal — a frase fica colada nela ===== */
 .bg-image{
   display: block;
   width: auto;
@@ -41,6 +39,10 @@ body{
   height: auto;
   max-height: 62vh;
   margin: 0 auto;
+}
+
+.overlay{
+  display: none;
 }
 
 .panel{
@@ -115,10 +117,53 @@ footer{
   .dot{ animation:none; }
 }
 
-/* Só no mobile (telas estreitas): "Em desenvolvimento" fica
-   um pouco mais abaixo, com mais respiro depois da frase */
-@media (max-width: 767px){
-  .status{
-    margin-top: clamp(1rem, 4vh, 2rem);
+/* ===== DESKTOP (a partir de 1024px de largura): volta ao
+   modo capa cheia — imagem preenche a tela toda, e a frase
+   fica sobreposta dentro dela, perto da assinatura ===== */
+@media (min-width: 1024px){
+  body{
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    justify-content: flex-end;
+  }
+
+  .bg-image{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    object-position: center 30%;
+    margin: 0;
+  }
+
+  .overlay{
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(1,2,12,0) 0%,
+      rgba(1,2,12,0) 40%,
+      rgba(1,2,12,0.55) 65%,
+      rgba(1,2,12,0.92) 85%,
+      rgba(1,2,12,1) 100%
+    );
+  }
+
+  .panel{
+    position: relative;
+    z-index: 2;
+    padding: 6vh clamp(1.25rem, 6vw, 4rem) clamp(2rem, 6vh, 3.5rem);
+  }
+
+  footer{
+    position: relative;
+    z-index: 2;
   }
 }
