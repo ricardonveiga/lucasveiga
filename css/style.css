@@ -12,7 +12,7 @@
 html, body{
   margin:0;
   padding:0;
-  background:#05070d;
+  background:#01020c;
   color: var(--ink);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,7 +24,7 @@ body{
   min-height: calc(var(--vh, 1vh) * 100);
 
   background-image: url('../images/logooriginal01.png');
-  background-size: cover;
+  background-size: contain;
   background-position: center 30%;
   background-repeat: no-repeat;
 
@@ -124,8 +124,15 @@ footer{
   text-align:center;
 }
 
-@media (max-width: 640px){
-  body{ background-position: center 22%; }
+/* Celular em pé: a imagem é larga (paisagem), então "cover" corta
+   o boneco e parte da assinatura. Trocamos para "contain" pra
+   mostrar a imagem inteira, sem cortar nada. */
+@media (max-aspect-ratio: 3/4){
+  body{
+    background-size: contain;
+    background-position: top center;
+    padding-top: max(6vh, env(safe-area-inset-top));
+  }
 }
 
 @media (prefers-reduced-motion: reduce){
