@@ -144,9 +144,9 @@ footer{
   .dot{ animation:none; }
 }
 
-/* ===== DESKTOP / TELAS LARGAS (a partir de 768px):
-   volta ao modelo de capa cheia, igual já estava aprovado ===== */
-@media (min-width: 768px) and (min-height: 500px){
+/* ===== PAISAGEM (celular deitado ou desktop): modo capa
+   cheia, imagem cobrindo a tela toda, texto ancorado embaixo ===== */
+@media (orientation: landscape){
   body{
     background-size: cover;
     background-position: center 30%;
