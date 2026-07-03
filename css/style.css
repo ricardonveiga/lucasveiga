@@ -166,4 +166,8 @@ footer{
   .status{
     margin-bottom: 0;
   }
+  footer{
+    margin-top: 0;
+    padding-top: 0;
+  }
 }
