@@ -189,3 +189,13 @@ footer{
   .spinner{ animation-duration: 1.5s; }
   .dot{ animation:none; }
 }
+
+/* ===== Mobile: a imagem é larga (paisagem) — numa tela estreita e alta,
+   "cover" corta as bordas onde ficam a assinatura e a frase. Mostra a
+   imagem inteira em vez de cortar. ===== */
+@media (max-width: 600px){
+  .bg-image{
+    object-fit: contain;
+    background: #0d1b2e;
+  }
+}

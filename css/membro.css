@@ -1048,7 +1048,6 @@ a{ text-decoration: none; color: inherit; }
 
   .hero-text{
     padding: 0.7rem 0.9rem;
-    max-width: 54%;
   }
 
   .hero-text h1{
@@ -1056,7 +1055,7 @@ a{ text-decoration: none; color: inherit; }
   }
 
   .hero-text p{
-    font-size: 0.62rem;
+    font-size: 0.5rem;
   }
 }
 
