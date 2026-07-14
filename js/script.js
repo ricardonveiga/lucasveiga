@@ -238,6 +238,14 @@ btnLgpdConfirm.addEventListener('click', async () => {
   }
 
   aoConfirmarConteudo = () => {
+    // Limpa qualquer resquício de sessão anterior (de um login de membro
+    // feito antes, no mesmo navegador) — sem isso, o visitante podia
+    // "herdar" nome/permissões de quem usou o site antes dele.
+    sessionStorage.removeItem('nomeUsuario');
+    sessionStorage.removeItem('usuarioId');
+    sessionStorage.removeItem('grupoUsuario');
+    sessionStorage.removeItem('papelUsuario');
+
     sessionStorage.setItem('mensagemBoasVindas', 'Obrigado por acessar!');
     sessionStorage.setItem('tipoAcesso', 'visitante');
     window.location.href = 'area.html';

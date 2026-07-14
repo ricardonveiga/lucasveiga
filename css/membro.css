@@ -1043,15 +1043,29 @@ a{ text-decoration: none; color: inherit; }
   }
 
   .hero-banner{
-    max-height: 220px;
+    aspect-ratio: auto;
+    height: 260px;
+    max-height: none;
   }
 
   .hero-text{
     padding: 1.1rem 1.3rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), transparent 70%);
   }
 
   .hero-text h1{
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+    color: #ffffff;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+  }
+
+  .hero-text p{
+    color: #f4f0e8;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
   }
 }
 

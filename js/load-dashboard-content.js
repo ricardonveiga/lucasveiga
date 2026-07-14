@@ -139,7 +139,7 @@
     trackFotos.innerHTML = '';
     // Duplica a lista para o efeito de rolagem contínua do carrossel — só
     // quando já há itens suficientes, senão a duplicação parece bug.
-    const listaFotos = itens.length >= 4 ? [...itens, ...itens] : itens;
+    const listaFotos = [...itens, ...itens];
     listaFotos.forEach(item => {
       trackFotos.appendChild(criarCardFoto(item));
     });
@@ -159,7 +159,7 @@
 
     trackVideos.classList.remove('marquee-vazio');
     trackVideos.innerHTML = '';
-    const listaVideos = itens.length >= 4 ? [...itens, ...itens] : itens;
+    const listaVideos = [...itens, ...itens];
     listaVideos.forEach(item => {
       trackVideos.appendChild(criarCardVideo(item));
     });

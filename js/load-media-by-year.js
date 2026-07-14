@@ -115,7 +115,7 @@
       return;
     }
     track.classList.remove('marquee-vazio');
-    const lista = itens.length >= 4 ? [...itens, ...itens] : itens;
+    const lista = itens.length > 0 ? [...itens, ...itens] : itens;
     lista.forEach(item => track.appendChild(criarCard(item)));
   }
 
