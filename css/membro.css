@@ -996,7 +996,7 @@ a{ text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem 0 1rem 3.2rem;
+    padding: 1rem 1rem;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--line);
     position: sticky;
@@ -1047,15 +1047,15 @@ a{ text-decoration: none; color: inherit; }
   }
 
   .hero-text{
-    padding: 0.9rem 1.1rem;
+    padding: 0.7rem 0.9rem;
   }
 
   .hero-text h1{
-    font-size: 1.05rem;
+    font-size: 0.9rem;
   }
 
   .hero-text p{
-    font-size: 0.72rem;
+    font-size: 0.62rem;
   }
 }
 
