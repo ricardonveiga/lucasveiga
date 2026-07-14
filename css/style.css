@@ -30,8 +30,6 @@ body{
   padding-right: env(safe-area-inset-right);
 }
 
-/* ===== MOBILE (padrão, até 1023px): imagem inteira, sem
-   cortar nada, fluxo normal — a frase fica colada nela ===== */
 .bg-image{
   display: block;
   width: auto;
@@ -79,29 +77,6 @@ body{
   margin: 0 0 clamp(1.2rem, 2.5vh, 1.8rem) 0;
 }
 
-.status{
-  display:flex;
-  align-items:center;
-  gap: 0.6rem;
-  font-size: clamp(0.62rem, 1.6vw, 0.7rem);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
-}
-
-.dot{
-  width:5px; height:5px;
-  border-radius:50%;
-  background: #7fa0c9;
-  animation: pulse 2.4s ease-in-out infinite;
-  flex-shrink:0;
-}
-
-@keyframes pulse{
-  0%,100%{ opacity:0.35; }
-  50%{ opacity:1; }
-}
-
 footer{
   position:relative;
   padding-bottom: max(3vh, env(safe-area-inset-bottom));
@@ -114,11 +89,8 @@ footer{
 
 @media (prefers-reduced-motion: reduce){
   .panel{ animation:none; }
-  .dot{ animation:none; }
 }
 
-/* Só no mobile em pé (retrato): o endereço do site fica
-   ancorado no fim da primeira tela, não logo após o status */
 @media (max-width: 1023px) and (orientation: portrait){
   body{
     min-height: 100vh;
@@ -130,9 +102,6 @@ footer{
   }
 }
 
-/* ===== DESKTOP (a partir de 1024px de largura): volta ao
-   modo capa cheia — imagem preenche a tela toda, e a frase
-   fica sobreposta dentro dela, perto da assinatura ===== */
 @media (min-width: 1024px){
   body{
     min-height: 100vh;
@@ -179,4 +148,211 @@ footer{
     position: relative;
     z-index: 2;
   }
+}
+
+/* ===== LOGIN — botão e painel ===== */
+.login-toggle{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(242,244,248,0.06);
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.login-toggle:hover{
+  background: rgba(242,244,248,0.12);
+  color: var(--ink);
+  border-color: rgba(242,244,248,0.3);
+}
+
+.login-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(1,2,12,0.85);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+  padding: 1.5rem;
+}
+.login-overlay.active{
+  display: flex;
+}
+
+.login-box{
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 14px;
+  overflow: hidden;
+  text-align: center;
+  animation: rise 0.4s ease-out both;
+  background: #000000;
+}
+
+.login-image{
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.login-content{
+  position: relative;
+  width: 100%;
+  padding: 0.8rem 1.5rem 1.5rem;
+  margin-top: -4px;
+}
+
+.login-content-hidden{
+  display: none;
+}
+
+.login-title{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 0 0 0.9rem 0;
+}
+
+.guest-note{
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin: -0.4rem 0 0.9rem 0;
+}
+
+.login-error{
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: #e78a8a;
+  margin: -0.3rem 0 0.6rem 0;
+  min-height: 1em;
+}
+
+.login-box input{
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(242,244,248,0.06);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+.login-box input::placeholder{
+  color: var(--ink-dim);
+  opacity: 0.6;
+}
+.login-box input:focus{
+  outline: none;
+  border-color: rgba(242,244,248,0.4);
+}
+
+.password-wrap{
+  position: relative;
+}
+.password-wrap input{
+  padding-right: 2.4rem;
+}
+.toggle-pass{
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: -0.3rem;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+}
+.toggle-pass:hover{ color: var(--ink); }
+
+.login-box .btn-entrar,
+.login-box .btn-publico{
+  display: block;
+  width: 100%;
+  padding: 0.65rem;
+  margin-top: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  transition: background 0.3s, opacity 0.3s;
+  box-sizing: border-box;
+}
+.login-box .btn-entrar{
+  background: var(--ink);
+  color: #01020c;
+  border-color: var(--ink);
+  font-weight: 500;
+}
+.login-box .btn-entrar:hover{ opacity: 0.85; }
+.login-box .btn-entrar:disabled{ opacity: 0.5; cursor: default; }
+
+.login-box .btn-publico{
+  background: transparent;
+  color: var(--ink-dim);
+}
+.login-box .btn-publico:hover{
+  background: rgba(242,244,248,0.1);
+  color: var(--ink);
+}
+
+.close-login{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(1,2,12,0.55);
+  border: 1px solid rgba(242,244,248,0.15);
+  color: var(--ink-dim);
+  cursor: pointer;
+  z-index: 3;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, color 0.3s;
+}
+.close-login:hover{
+  background: rgba(1,2,12,0.8);
+  color: var(--ink);
+}
+
+/* ===== Esqueci minha senha ===== */
+.btn-esqueci-senha{
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 0.6rem;
+  padding: 0.3rem;
+  transition: color 0.2s;
+}
+.btn-esqueci-senha:hover{
+  color: var(--ink);
 }

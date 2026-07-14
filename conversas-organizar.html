@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucas Veiga — Organizar Conversas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/membro.css">
+<link rel="icon" type="image/png" href="images/logosemsig01_fundo_preto.png">
+</head>
+<body>
+
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div id="mobileHeader" class="mobile-header">
+    <span class="mobile-logo">Lucas Veiga</span>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <aside id="sidebar" class="sidebar">
+    <button id="closeSidebar" class="close-sidebar" aria-label="Fechar menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="sidebar-scroll">
+      <div class="sidebar-top">
+        <div class="sidebar-image-wrap">
+          <img src="images/logo04_fundo_noite_azul.png" alt="Lucas Veiga" class="sidebar-logo logo-dark">
+          <img src="images/logo_coração02.png" alt="Lucas Veiga" class="sidebar-logo logo-light">
+        </div>
+      </div>
+
+      <div class="sidebar-user sidebar-user-com-sino">
+        <p class="sidebar-hello">Olá, <span id="userName">Usuário</span></p>
+        <p class="sidebar-sub"></p>
+        <div class="sidebar-user-icons">
+          <button id="letterIcon" class="notification-bell" aria-label="Responder perguntas">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="notificationBell" class="notification-bell" aria-label="Notificações">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="bell-dot"></span>
+          </button>
+          <button id="editPasswordIcon" class="notification-bell" aria-label="Alterar senha">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="membro.html" class="nav-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-9 9 9M5 10v10h14V10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Início</span>
+        </a>
+        <a href="fotos.html" class="nav-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span>Fotos</span>
+        </a>
+        <a href="videos.html" class="nav-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Vídeos</span>
+        </a>
+        <a href="mural.html" class="nav-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span>Mural</span>
+        </a>
+        <a href="conversas.html" class="nav-item active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 0 1-4-.8L3 20l1.3-3.9A7.9 7.9 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Conversas</span>
+        </a>
+        <a href="sonhos.html" class="nav-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c.5 2 2 4.5 4.5 5.5C14 9.5 12.5 12 12 14c-.5-2-2-4.5-4.5-5.5C10 7.5 11.5 5 12 3z" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 13c.3 1 .9 2 2 2.5-1.1.5-1.7 1.5-2 2.5-.3-1-.9-2-2-2.5 1.1-.5 1.7-1.5 2-2.5z" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 14c.3 1 .9 2 2 2.5C5.9 17 5.3 18 5 19c-.3-1-.9-2-2-2.5C4.1 16 4.7 15 5 14z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Sonhos e Sinais</span>
+        </a>
+
+        <a href="admin.html" id="navAdminLink" class="nav-item" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Painel Admin</span>
+        </a>
+        <button id="btnMixFotos" class="nav-item nav-item-mix">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span>Mix Fotos</span>
+        </button>
+        <button id="btnMixVideos" class="nav-item nav-item-mix">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span>Mix Vídeos</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button id="themeToggle" class="theme-toggle">
+          <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke-linecap="round"/></svg>
+          <span id="themeLabel">Modo claro</span>
+        </button>
+
+        <a href="index.html" id="btnSair" class="nav-item nav-sair">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Sair</span>
+        </a>
+
+        <p class="sidebar-quote">"Pra quem tem fé,<br>a vida nunca tem fim,<br>não tem fim."</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <a href="conversas.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Conversas
+      </a>
+      <h1>Organizar Conversas</h1>
+    </div>
+    <p class="mural-intro">Arraste os cards abaixo para colocá-los na ordem cronológica em que a conversa aconteceu.</p>
+    <p class="hint-text">A ordem que você definir aqui é a mesma usada quando alguém clicar em "Ver sequência completa" — assim quem for ler consegue acompanhar a conversa do começo ao fim, como ela realmente foi.</p>
+
+    <section class="content-section">
+      <div id="reorderList" class="reorder-list" data-conversa-id="padrao">
+        <div class="reorder-item" data-item-id="conv-1" draggable="true">
+          <span class="reorder-handle">⠿</span>
+          <div class="media-card photo-card" data-visibility="familia">
+            <span class="badge badge-aprovado">Print</span>
+            <span class="media-caption">Conversa de 2024 <em>2024</em></span>
+          </div>
+        </div>
+        <div class="reorder-item" data-item-id="conv-2" draggable="true">
+          <span class="reorder-handle">⠿</span>
+          <div class="media-card video-card" data-visibility="membros">
+            <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <span class="media-caption">Áudio de conversa <em>0:34</em></span>
+          </div>
+        </div>
+        <div class="reorder-item" data-item-id="conv-3" draggable="true">
+          <span class="reorder-handle">⠿</span>
+          <div class="media-card photo-card" data-visibility="publico">
+            <span class="badge badge-aprovado">Print</span>
+            <span class="media-caption">Última mensagem <em>2024</em></span>
+          </div>
+        </div>
+        <div class="reorder-item" data-item-id="conv-4" draggable="true">
+          <span class="reorder-handle">⠿</span>
+          <div class="media-card photo-card" data-visibility="publico">
+            <span class="badge badge-pendente">Aguardando aprovação</span>
+            <span class="media-caption">Print recente <em>2024</em></span>
+          </div>
+        </div>
+      </div>
+
+      <button id="btnSalvarOrdem" class="btn-publicar">Salvar ordem ♥</button>
+    </section>
+  </main>
+
+  <!-- Modal de perguntas do dia -->
+  <div id="perguntasModal" class="perguntas-modal">
+    <div class="perguntas-modal-inner" style="max-height:85vh; overflow-y:auto;">
+      <p class="perguntas-modal-titulo">Perguntas para receber uma mensagem</p>
+      <p class="perguntas-modal-sub">Sem pressa — responda o quanto quiser e pule o que doer demais. Quanto mais você compartilhar, mais fiel à sua relação a mensagem vai ficar.</p>
+
+      <div class="pergunta-item">
+        <label for="pComoElaTeChamava">Como ele te chamava?</label>
+        <textarea id="pComoElaTeChamava" placeholder="Ex: Pai, Mãe, Vô, Amor..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pComoVoceAChamava">Como você o chamava?</label>
+        <textarea id="pComoVoceAChamava" placeholder="Ex: Lucas, Filho, Veigula..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pBrincadeiraInterna">Qual era a brincadeira, piada interna ou expressão que era só de vocês?</label>
+        <textarea id="pBrincadeiraInterna" placeholder="Uma frase, um apelido, um jeito de rir..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pLembrancaFeliz">Qual é a lembrança mais feliz que vem à sua cabeça quando pensa nele?</label>
+        <textarea id="pLembrancaFeliz" placeholder="Conte um momento específico..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pOQueAdmirava">O que você mais admirava nele?</label>
+        <textarea id="pOQueAdmirava" placeholder="Um jeito de ser, uma qualidade..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pOQueElaAdmirava">O que você acredita que ele mais admirava em você?</label>
+        <textarea id="pOQueElaAdmirava" placeholder="Como você acha que ele te descreveria..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pLembrancaEngracada">Existe alguma lembrança engraçada que sempre faz você sorrir? (pode deixar em branco se doer)</label>
+        <textarea id="pLembrancaEngracada" placeholder="Fique à vontade para pular esta..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pAlgoNuncaDisse">Existe algo que você nunca conseguiu dizer a ele?</label>
+        <textarea id="pAlgoNuncaDisse" placeholder="Escreva livremente..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pAlgoQueGostariaOuvir">Existe algo que você gostaria de ouvir dele hoje?</label>
+        <textarea id="pAlgoQueGostariaOuvir" placeholder="Isso ajuda a entender o que traria conforto..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pMomentoAbraco">Se ele pudesse te dar um abraço agora, de que momento de vocês dois ele provavelmente lembraria?</label>
+        <textarea id="pMomentoAbraco" placeholder="Um aniversário, uma viagem, um jogo..."></textarea>
+      </div>
+      <div class="pergunta-item">
+        <label for="pSentimentoDesejado">Que sentimento você gostaria que essa mensagem transmitisse?</label>
+        <select id="pSentimentoDesejado" style="width:100%; padding:0.6rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--card-inner); color:var(--ink); font-family:'Inter', sans-serif; font-size:0.82rem;">
+          <option value="">Deixe a IA sentir pelo resto das respostas</option>
+          <option value="Amor">Amor</option>
+          <option value="Esperança">Esperança</option>
+          <option value="Saudade">Saudade</option>
+          <option value="Gratidão">Gratidão</option>
+          <option value="Paz">Paz</option>
+          <option value="Coragem">Coragem</option>
+          <option value="Conforto">Conforto</option>
+        </select>
+      </div>
+      <div class="pergunta-item">
+        <label for="pFraseEspecial">Alguma frase ou palavra que você gostaria que aparecesse na mensagem? (opcional)</label>
+        <textarea id="pFraseEspecial" placeholder='Ex: "te amo", "meu campeão"...'></textarea>
+      </div>
+
+      <div class="perguntas-modal-acoes">
+        <button id="btnPerguntasPular" class="btn-limpar">Pular por hoje</button>
+        <button id="btnPerguntasEnviar" class="btn-publicar">Gerar mensagem ♥</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Caixa de entrada de mensagens -->
+  <div id="mensagemModal" class="mensagem-modal">
+    <div class="mensagem-modal-inner mensagem-modal-inner-inbox">
+      <button id="mensagemModalClose" class="gallery-lightbox-close" style="position:absolute;top:0.8rem;right:0.8rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+      </button>
+      <div class="mensagem-modal-selo">💌</div>
+      <p class="mensagem-inbox-titulo">Suas mensagens</p>
+      <div id="mensagemInboxLista" class="mensagem-inbox-lista"></div>
+    </div>
+  </div>
+
+  <!-- Modal de alterar senha -->
+  <div id="senhaModal" class="senha-modal">
+    <div class="senha-modal-inner">
+      <button id="senhaModalClose" class="gallery-lightbox-close" style="position:absolute;top:0.8rem;right:0.8rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+      </button>
+      <p class="senha-modal-titulo">Alterar sua senha</p>
+      <p class="senha-modal-sub">Escolha uma senha nova para acessar o site.</p>
+
+      <label for="novaSenha" class="ano-label">Nova senha</label>
+      <input type="password" id="novaSenha" class="ano-input" placeholder="Mínimo 6 caracteres">
+
+      <label for="confirmarSenha" class="ano-label">Confirme a nova senha</label>
+      <input type="password" id="confirmarSenha" class="ano-input" placeholder="Digite novamente">
+
+      <p id="senhaModalErro" class="campo-erro"></p>
+
+      <button id="btnSalvarSenha" class="btn-publicar">Salvar nova senha</button>
+    </div>
+  </div>
+
+  <!-- Mix Fotos / Vídeos -->
+  <div id="mixOverlay" class="mix-overlay">
+    <div class="mix-stage" id="mixStage"></div>
+    <p id="mixCaption" class="mix-caption"></p>
+    <button id="mixClose" class="mix-close" aria-label="Fechar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/site-modal.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/conversa-reorder.js"></script>
+  <script src="js/onboarding-perguntas.js"></script>
+  <script src="js/mix-fotos.js"></script>
+  <script src="js/change-password.js"></script>
+  <script>
+    if (sessionStorage.getItem('papelUsuario') === 'admin') {
+      const linkAdmin = document.getElementById('navAdminLink');
+      if (linkAdmin) linkAdmin.style.display = '';
+    }
+  </script>
+</body>
+</html>
