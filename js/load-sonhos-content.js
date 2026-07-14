@@ -101,7 +101,7 @@
       }
 
       track.classList.remove('marquee-vazio');
-      const listaParaExibir = itens.length >= 4 ? [...itens, ...itens] : itens;
+      const listaParaExibir = [...itens, ...itens];
 
       listaParaExibir.forEach((item, indice) => {
         track.appendChild(criarCardSonho(item, indice));

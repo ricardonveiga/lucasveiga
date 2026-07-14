@@ -121,7 +121,7 @@
     track.classList.remove('marquee-vazio');
     // Só duplica os cards para o efeito de rolagem contínua quando já
     // existem recados suficientes — com poucos, a duplicação parece bug.
-    const listaParaExibir = itens.length >= 4 ? [...itens, ...itens] : itens;
+    const listaParaExibir = [...itens, ...itens];
 
     listaParaExibir.forEach((item, indice) => {
       track.appendChild(criarCardRecado(item, indice));
