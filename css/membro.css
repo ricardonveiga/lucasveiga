@@ -630,20 +630,22 @@ a{ text-decoration: none; color: inherit; }
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 0.5rem 0.7rem;
+  padding: 1.6rem 0.7rem 0.55rem 0.7rem;
   font-size: 0.7rem;
-  color: var(--ink);
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.35) 65%, transparent);
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.4rem;
   border-radius: 0 0 10px 10px;
-}
-[data-theme="light"] .media-caption{
-  background: linear-gradient(to top, rgba(255,255,255,0.85), transparent);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 .media-caption em{
   font-style: normal;
-  opacity: 0.75;
+  opacity: 0.8;
+  flex-shrink: 0;
 }
 
 .photo-card{
