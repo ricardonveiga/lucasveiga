@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucas Veiga — Área</title>
+<meta name="description" content="Em memória de Lucas Veiga.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/area.css">
+<link rel="icon" type="image/png" href="images/logosemsig01_fundo_preto.png">
+</head>
+<body>
+  <img class="bg-image" src="images/fundo_banner_completo01.png" alt="Lucas Veiga">
+
+  <!-- Tela de carregamento — só aparece para membros, antes de ir ao dashboard -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p id="loadingText">Preparando seu espaço...</p>
+    </div>
+  </div>
+
+  <!-- Cartão de boas-vindas — usado só para visitantes -->
+  <div id="welcomeOverlay" class="welcome-overlay">
+    <div class="welcome-card">
+      <button id="closeWelcome" class="close-welcome" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <p id="areaWelcome">Bem-vindo!</p>
+    </div>
+  </div>
+
+  <footer>veigalucas.com.br</footer>
+
+  <script src="js/area.js"></script>
+</body>
+</html>

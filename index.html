@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/png" href="images/logo01_fundo_transparente.png">
+<link rel="icon" type="image/png" href="images/logosemsig01_fundo_preto.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <img class="bg-image" src="images/logooriginal01.png" alt="Silhueta e assinatura de Lucas Veiga">
@@ -20,12 +21,82 @@
       "Pra quem tem fé, a vida nunca tem fim, não tem fim."
     </p>
     <div class="divider"></div>
-    <div class="status">
-      <span class="dot"></span>
-      <span>Em desenvolvimento</span>
-    </div>
+    <button id="loginToggle" class="login-toggle" aria-label="Abrir login">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
   <footer>veigalucas.com.br</footer>
+
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+      <button id="closeLogin" class="close-login" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <img src="images/logo04_fundo_noite_azul.png" alt="Lucas Veiga" class="login-image">
+
+      <div class="login-content" id="loginFields">
+        <p class="login-title">Área reservada</p>
+        <input type="text" id="loginUser" placeholder="exemplo@veigalucas.com.br" autocomplete="username">
+        <div class="password-wrap">
+          <input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password">
+          <button type="button" id="togglePass" class="toggle-pass" aria-label="Mostrar senha">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <p id="loginError" class="login-error"></p>
+        <button id="btnEntrar" class="btn-entrar">Entrar</button>
+        <button id="btnEsqueciSenha" class="btn-esqueci-senha">Esqueci minha senha</button>
+        <button id="btnPublico" class="btn-publico">Entrar como visitante</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="guestFields">
+        <p class="login-title">Antes de continuar</p>
+        <p class="guest-note">Informe seu e-mail e telefone para acessar a área pública e deixar recados.</p>
+        <input type="email" id="guestEmail" placeholder="seu@email.com" autocomplete="email">
+        <input type="tel" id="guestPhone" placeholder="Telefone (com DDD/código do país)" autocomplete="tel">
+        <p id="guestError" class="login-error"></p>
+        <button id="btnGuestConfirm" class="btn-entrar">Continuar</button>
+        <button id="btnGuestBack" class="btn-publico">Voltar</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="lgpdFields">
+        <p class="login-title">Aviso de privacidade</p>
+        <p class="guest-note">
+          Para segurança e prevenção de abusos, seu endereço de IP será registrado junto com essas informações, em conformidade com a LGPD. Esses dados não são publicados e são usados apenas para moderação de recados.
+        </p>
+        <button id="btnLgpdConfirm" class="btn-entrar">Confirmar e continuar</button>
+        <button id="btnLgpdCancel" class="btn-publico">Cancelar</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="contentConsentFields">
+        <p class="login-title">Antes de continuar</p>
+        <p class="guest-note">
+          Fotos, vídeos, recados, homenagens e qualquer outro conteúdo que você enviar neste site poderão ser publicados e compartilhados de acordo com a opção de visibilidade escolhida no momento do envio (privado, apenas família, membros, ou todos). Ao continuar, você concorda com isso.
+        </p>
+        <button id="btnContentConsentConfirm" class="btn-entrar">Entendi, continuar</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="welcomeFields">
+        <p class="login-title" id="welcomeText">Bem-vindo!</p>
+        <button id="btnWelcomeClose" class="btn-entrar">Continuar</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="forgotFields">
+        <p class="login-title">Esqueceu sua senha?</p>
+        <p class="guest-note">
+          Por segurança, a redefinição de senha não é feita automaticamente por aqui. Entre em contato com o administrador do site (Ricardo) para receber uma nova senha de acesso.
+        </p>
+        <button id="btnForgotBack" class="btn-publico">Voltar</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/script.js"></script>
 </body>
