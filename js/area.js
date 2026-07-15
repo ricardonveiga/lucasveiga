@@ -37,14 +37,22 @@ if (tipoAcesso === 'membro') {
   loadingOverlay.classList.add('hidden');
 
   if (mensagem) {
-    // Mostra a mensagem de boas-vindas e só segue para o site quando a
-    // pessoa fechar o cartão (no tempo dela, sem pressa).
+    // Mostra a mensagem de boas-vindas por alguns segundos e segue
+    // sozinho — não depende de clique. O botão de fechar continua
+    // funcionando pra quem quiser pular a espera.
     areaWelcome.textContent = mensagem;
     sessionStorage.removeItem('mensagemBoasVindas');
+    welcomeOverlay.classList.remove('hidden');
 
-    closeWelcome.addEventListener('click', () => {
+    let jaAvancou = false;
+    const avancar = () => {
+      if (jaAvancou) return;
+      jaAvancou = true;
       irParaMembro(ATRASO_REDIRECT_MS);
-    });
+    };
+
+    closeWelcome.addEventListener('click', avancar);
+    setTimeout(avancar, 2500);
   } else {
     // Visitante recorrente (sem mensagem nova) — segue direto, sem
     // precisar fechar nada.

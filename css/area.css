@@ -195,7 +195,7 @@ footer{
    imagem inteira em vez de cortar. ===== */
 @media (max-width: 600px){
   .bg-image{
-    object-fit: contain;
-    background: #0d1b2e;
+    object-fit: cover;
+    object-position: center;
   }
 }
