@@ -1109,6 +1109,24 @@ a{ text-decoration: none; color: inherit; }
   width: 100%;
 }
 
+.paginacao{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.3rem;
+}
+.paginacao-texto{
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  min-width: 90px;
+  text-align: center;
+}
+.paginacao .btn-limpar:disabled{
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ===== Canvas de desenho no Mural ===== */
 .signature-box{
   border: 1px dashed var(--line);

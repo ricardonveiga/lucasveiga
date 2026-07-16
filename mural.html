@@ -123,12 +123,15 @@
     <p class="mural-intro">Recados deixados para o Lucas — digitados, desenhados na tela ou fotografados.</p>
     <p id="avisoVisitante" class="hint-text" style="display:none;">Você está vendo apenas o conteúdo público. Membros e família têm acesso a mais recados.</p>
 
-    <!-- Carrossel de recados existentes -->
+    <!-- Recados existentes (10 por página) -->
     <section class="content-section">
-      <div class="marquee-wrap">
-        <div class="marquee-track marquee-vazio" id="muralCarrosselTrack">
-          <p class="hint-text" style="margin:0;">Carregando recados...</p>
-        </div>
+      <div class="full-grid" id="muralCarrosselTrack">
+        <p class="hint-text" style="margin:0;">Carregando recados...</p>
+      </div>
+      <div class="paginacao" id="muralPaginacao" style="display:none;">
+        <button id="muralPaginaAnterior" class="btn-limpar">‹ Anterior</button>
+        <span id="muralPaginaTexto" class="paginacao-texto">Página 1</span>
+        <button id="muralPaginaProxima" class="btn-limpar">Próxima ›</button>
       </div>
     </section>
 

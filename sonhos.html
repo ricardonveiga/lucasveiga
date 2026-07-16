@@ -127,12 +127,15 @@
     </div>
 
     <div id="sonhosConteudo">
-      <!-- Carrossel de sonhos e sinais existentes -->
+      <!-- Sonhos e sinais existentes (10 por página) -->
       <section class="content-section">
-        <div class="marquee-wrap">
-          <div class="marquee-track marquee-vazio" id="sonhosCarrosselTrack">
-            <p class="hint-text" style="margin:0;">Carregando...</p>
-          </div>
+        <div class="full-grid" id="sonhosCarrosselTrack">
+          <p class="hint-text" style="margin:0;">Carregando...</p>
+        </div>
+        <div class="paginacao" id="sonhosPaginacao" style="display:none;">
+          <button id="sonhosPaginaAnterior" class="btn-limpar">‹ Anterior</button>
+          <span id="sonhosPaginaTexto" class="paginacao-texto">Página 1</span>
+          <button id="sonhosPaginaProxima" class="btn-limpar">Próxima ›</button>
         </div>
       </section>
 
@@ -339,10 +342,6 @@
     if (sessionStorage.getItem('papelUsuario') === 'admin') {
       const linkAdmin = document.getElementById('navAdminLink');
       if (linkAdmin) linkAdmin.style.display = '';
-    }
-    if (nivelDeAcessoAtual() === 'visitante') {
-      document.getElementById('sonhosConteudo').style.display = 'none';
-      document.getElementById('sonhosRestrito').style.display = 'block';
     }
   </script>
 </body>

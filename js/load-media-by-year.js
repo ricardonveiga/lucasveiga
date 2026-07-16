@@ -161,6 +161,7 @@
 
   // ===== Página de um ano só (fotos-ano.html / videos-ano.html) =====
   async function iniciarPaginaAnoUnico(){
+    const ITENS_POR_PAGINA = 10;
     const params = new URLSearchParams(window.location.search);
     const anoSelecionado = params.get('ano') || 'sem-data';
 
@@ -175,24 +176,65 @@
       return chave === anoSelecionado;
     });
 
-    const grid = document.querySelector('.full-grid');
+    const grid = document.getElementById('gridAno') || document.querySelector('.full-grid');
     if (!grid) return;
 
-    grid.innerHTML = '';
-    if (doAno.length === 0) {
-      const vazio = document.createElement('p');
-      vazio.className = 'hint-text';
-      vazio.style.margin = '0';
-      vazio.textContent = tipo === 'video'
-        ? `Nenhum vídeo de ${anoSelecionado === 'sem-data' ? 'sem data' : anoSelecionado} por aqui ainda.`
-        : `Nenhuma foto de ${anoSelecionado === 'sem-data' ? 'sem data' : anoSelecionado} por aqui ainda.`;
-      grid.appendChild(vazio);
-    } else {
-      doAno.forEach(item => grid.appendChild(criarCard(item)));
+    const paginacaoEl = document.getElementById('anoPaginacao');
+    const btnAnterior = document.getElementById('anoPaginaAnterior');
+    const btnProxima = document.getElementById('anoPaginaProxima');
+    const paginaTextoEl = document.getElementById('anoPaginaTexto');
+    let paginaAtual = 0;
+
+    function renderizarPagina(){
+      grid.innerHTML = '';
+
+      if (doAno.length === 0) {
+        const vazio = document.createElement('p');
+        vazio.className = 'hint-text';
+        vazio.style.margin = '0';
+        vazio.textContent = tipo === 'video'
+          ? `Nenhum vídeo de ${anoSelecionado === 'sem-data' ? 'sem data' : anoSelecionado} por aqui ainda.`
+          : `Nenhuma foto de ${anoSelecionado === 'sem-data' ? 'sem data' : anoSelecionado} por aqui ainda.`;
+        grid.appendChild(vazio);
+        if (paginacaoEl) paginacaoEl.style.display = 'none';
+        return;
+      }
+
+      const inicio = paginaAtual * ITENS_POR_PAGINA;
+      const fim = inicio + ITENS_POR_PAGINA;
+      doAno.slice(inicio, fim).forEach(item => grid.appendChild(criarCard(item)));
+
+      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+      if (typeof marcarCardsFavoritos === 'function') marcarCardsFavoritos();
+
+      const totalPaginas = Math.ceil(doAno.length / ITENS_POR_PAGINA);
+      if (paginacaoEl) paginacaoEl.style.display = totalPaginas > 1 ? 'flex' : 'none';
+      if (paginaTextoEl) paginaTextoEl.textContent = `Página ${paginaAtual + 1} de ${totalPaginas}`;
+      if (btnAnterior) btnAnterior.disabled = paginaAtual === 0;
+      if (btnProxima) btnProxima.disabled = paginaAtual >= totalPaginas - 1;
     }
 
-    if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
-    if (typeof marcarCardsFavoritos === 'function') marcarCardsFavoritos();
+    if (btnAnterior) {
+      btnAnterior.addEventListener('click', () => {
+        if (paginaAtual > 0) {
+          paginaAtual -= 1;
+          renderizarPagina();
+          grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+    if (btnProxima) {
+      btnProxima.addEventListener('click', () => {
+        const totalPaginas = Math.ceil(doAno.length / ITENS_POR_PAGINA);
+        if (paginaAtual < totalPaginas - 1) {
+          paginaAtual += 1;
+          renderizarPagina();
+          grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    renderizarPagina();
   }
 
   const ehPaginaAnoUnico = !!document.getElementById('tituloAno');

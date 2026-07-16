@@ -1,9 +1,18 @@
 (function(){
   const SUPABASE_URL = 'https://igvtlqkkflpjrgasapos.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
+  const ITENS_POR_PAGINA = 10;
 
   const track = document.getElementById('muralCarrosselTrack');
   if (!track) return;
+
+  const paginacaoEl = document.getElementById('muralPaginacao');
+  const btnAnterior = document.getElementById('muralPaginaAnterior');
+  const btnProxima = document.getElementById('muralPaginaProxima');
+  const paginaTextoEl = document.getElementById('muralPaginaTexto');
+
+  let todosOsItens = [];
+  let paginaAtual = 0;
 
   function nivelAcesso(){
     const tipoAcesso = sessionStorage.getItem('tipoAcesso');
@@ -63,7 +72,7 @@
     if (nivel === 'visitante') {
       try {
         const resp = await fetch(
-          `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=20`,
+          `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=500`,
           {
             headers: {
               apikey: SUPABASE_KEY,
@@ -72,7 +81,7 @@
           }
         );
         const dados = await resp.json();
-        renderizarRecados(Array.isArray(dados) ? dados : []);
+        iniciarPaginacao(Array.isArray(dados) ? dados : []);
       } catch (e) {
         console.error('Erro ao carregar recados do mural:', e);
       }
@@ -83,7 +92,7 @@
     // marcados como "não compartilhar" (só eles enxergam os deles).
     try {
       const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&select=*&order=criado_em.desc&limit=50`,
+        `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&select=*&order=criado_em.desc&limit=500`,
         {
           headers: {
             apikey: SUPABASE_KEY,
@@ -99,35 +108,68 @@
         }
         return true;
       });
-      renderizarRecados(itens);
+      iniciarPaginacao(itens);
     } catch (e) {
       console.error('Erro ao carregar recados do mural:', e);
     }
   }
 
-  function renderizarRecados(itens){
+  function iniciarPaginacao(itens){
+    todosOsItens = itens;
+    paginaAtual = 0;
+    renderizarPagina();
+  }
+
+  function renderizarPagina(){
     track.innerHTML = '';
 
-    if (itens.length === 0) {
-      track.classList.add('marquee-vazio');
+    if (todosOsItens.length === 0) {
       const vazio = document.createElement('p');
       vazio.className = 'hint-text';
       vazio.style.margin = '0';
       vazio.textContent = 'Nenhum recado por aqui ainda — deixe o seu também!';
       track.appendChild(vazio);
+      if (paginacaoEl) paginacaoEl.style.display = 'none';
       return;
     }
 
-    track.classList.remove('marquee-vazio');
-    // Só duplica os cards para o efeito de rolagem contínua quando já
-    // existem recados suficientes — com poucos, a duplicação parece bug.
-    const listaParaExibir = [...itens, ...itens];
+    const inicio = paginaAtual * ITENS_POR_PAGINA;
+    const fim = inicio + ITENS_POR_PAGINA;
+    const itensDaPagina = todosOsItens.slice(inicio, fim);
 
-    listaParaExibir.forEach((item, indice) => {
+    itensDaPagina.forEach((item, indice) => {
       track.appendChild(criarCardRecado(item, indice));
     });
 
     if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+
+    const totalPaginas = Math.ceil(todosOsItens.length / ITENS_POR_PAGINA);
+    if (paginacaoEl) {
+      paginacaoEl.style.display = totalPaginas > 1 ? 'flex' : 'none';
+    }
+    if (paginaTextoEl) paginaTextoEl.textContent = `Página ${paginaAtual + 1} de ${totalPaginas}`;
+    if (btnAnterior) btnAnterior.disabled = paginaAtual === 0;
+    if (btnProxima) btnProxima.disabled = paginaAtual >= totalPaginas - 1;
+  }
+
+  if (btnAnterior) {
+    btnAnterior.addEventListener('click', () => {
+      if (paginaAtual > 0) {
+        paginaAtual -= 1;
+        renderizarPagina();
+        track.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+  if (btnProxima) {
+    btnProxima.addEventListener('click', () => {
+      const totalPaginas = Math.ceil(todosOsItens.length / ITENS_POR_PAGINA);
+      if (paginaAtual < totalPaginas - 1) {
+        paginaAtual += 1;
+        renderizarPagina();
+        track.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   window.carregarRecadosMural = carregarRecadosMural;
