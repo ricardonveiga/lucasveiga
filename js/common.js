@@ -55,7 +55,14 @@ themeToggle.addEventListener('click', () => {
 // ===== Nome do usuário =====
 const userName = document.getElementById('userName');
 const nomeSalvo = sessionStorage.getItem('nomeUsuario');
-if (nomeSalvo && userName) {
+const tipoAcessoAtual = sessionStorage.getItem('tipoAcesso');
+
+if (tipoAcessoAtual !== 'membro') {
+  // Visitante não tem conta com nome — mostra uma saudação genérica em
+  // vez de "Olá, Usuário".
+  const saudacaoEl = userName ? userName.closest('.sidebar-hello') : null;
+  if (saudacaoEl) saudacaoEl.textContent = 'Seja bem-vindo!';
+} else if (nomeSalvo && userName) {
   userName.textContent = nomeSalvo;
 }
 
@@ -84,9 +91,22 @@ function aplicarFiltroVisibilidade(){
     item.style.display = podeVer(visibilidade, nivel) ? '' : 'none';
   });
 
+  // O aviso "você está vendo apenas conteúdo público" foi removido —
+  // não é mais necessário mostrar essa frase.
   const avisoVisitante = document.getElementById('avisoVisitante');
   if (avisoVisitante) {
-    avisoVisitante.style.display = nivel === 'visitante' ? 'block' : 'none';
+    avisoVisitante.style.display = 'none';
+  }
+
+  // Visitante não vê a opção "Não compartilhar" nos formulários de Fotos,
+  // Vídeos, Mural e Conversas (em Sonhos e Sinais essa opção continua
+  // disponível, por decisão separada).
+  if (nivel === 'visitante') {
+    document.querySelectorAll('input[value="privado"]').forEach(input => {
+      if (input.name === 'visibilidadeSonho') return;
+      const opcao = input.closest('.visibility-option');
+      if (opcao) opcao.style.display = 'none';
+    });
   }
 }
 
