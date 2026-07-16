@@ -28,7 +28,41 @@ const btnEsqueciSenha = document.getElementById('btnEsqueciSenha');
 const btnForgotBack = document.getElementById('btnForgotBack');
 const guestEmail = document.getElementById('guestEmail');
 const guestPhone = document.getElementById('guestPhone');
+const guestCpf = document.getElementById('guestCpf');
 const guestError = document.getElementById('guestError');
+
+// Valida CPF de verdade (dígitos verificadores), não só o formato.
+// Isso barra CPF inventado ou digitado errado, mas não confirma que o
+// CPF pertence à pessoa — isso exigiria consulta a uma base oficial.
+function cpfValido(cpfBruto){
+  const cpf = (cpfBruto || '').replace(/\D/g, '');
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+
+  let soma = 0;
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf[i], 10) * (10 - i);
+  let resto = soma % 11;
+  const digito1 = resto < 2 ? 0 : 11 - resto;
+  if (digito1 !== parseInt(cpf[9], 10)) return false;
+
+  soma = 0;
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf[i], 10) * (11 - i);
+  resto = soma % 11;
+  const digito2 = resto < 2 ? 0 : 11 - resto;
+  if (digito2 !== parseInt(cpf[10], 10)) return false;
+
+  return true;
+}
+
+if (guestCpf) {
+  guestCpf.addEventListener('input', () => {
+    let v = guestCpf.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+    else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+    guestCpf.value = v;
+  });
+}
 
 // Guarda o que fazer depois que a pessoa confirmar o aviso de conteúdo —
 // preenchido tanto pelo fluxo de membro quanto pelo de visitante.
@@ -42,8 +76,10 @@ function resetLoginView() {
   forgotFields.classList.add('login-content-hidden');
   guestEmail.value = '';
   guestPhone.value = '';
+  if (guestCpf) guestCpf.value = '';
   guestEmail.style.borderColor = '';
   guestPhone.style.borderColor = '';
+  if (guestCpf) guestCpf.style.borderColor = '';
   guestError.textContent = '';
   loginError.textContent = '';
 }
@@ -184,9 +220,11 @@ async function obterIP() {
 btnGuestConfirm.addEventListener('click', () => {
   const emailValor = guestEmail.value.trim();
   const phoneRaw = guestPhone.value.trim();
+  const cpfValor = guestCpf ? guestCpf.value.trim() : '';
 
   guestEmail.style.borderColor = '';
   guestPhone.style.borderColor = '';
+  if (guestCpf) guestCpf.style.borderColor = '';
   guestError.textContent = '';
 
   if (!emailValido(emailValor)) {
@@ -203,6 +241,13 @@ btnGuestConfirm.addEventListener('click', () => {
     return;
   }
 
+  if (!cpfValido(cpfValor)) {
+    guestCpf.style.borderColor = '#e07a7a';
+    guestError.textContent = 'CPF inválido. Confira os números digitados.';
+    guestCpf.focus();
+    return;
+  }
+
   guestFields.classList.add('login-content-hidden');
   lgpdFields.classList.remove('login-content-hidden');
 });
@@ -216,6 +261,7 @@ btnLgpdConfirm.addEventListener('click', async () => {
   const emailValor = guestEmail.value.trim();
   const phoneRaw = guestPhone.value.trim();
   const apenasDigitos = phoneRaw.replace(/\D/g, '');
+  const cpfDigitos = guestCpf ? guestCpf.value.replace(/\D/g, '') : '';
 
   btnLgpdConfirm.disabled = true;
   btnLgpdConfirm.textContent = 'Salvando...';
@@ -224,7 +270,7 @@ btnLgpdConfirm.addEventListener('click', async () => {
 
   const { error } = await supabaseClient
     .from('visitantes')
-    .insert([{ email: emailValor, telefone: apenasDigitos, ip: ip }]);
+    .insert([{ email: emailValor, telefone: apenasDigitos, cpf: cpfDigitos, ip: ip }]);
 
   btnLgpdConfirm.disabled = false;
   btnLgpdConfirm.textContent = 'Confirmar e continuar';

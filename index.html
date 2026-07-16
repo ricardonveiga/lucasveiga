@@ -58,9 +58,10 @@
 
       <div class="login-content login-content-hidden" id="guestFields">
         <p class="login-title">Antes de continuar</p>
-        <p class="guest-note">Informe seu e-mail e telefone para acessar a área pública e deixar recados.</p>
+        <p class="guest-note">Informe seu e-mail, telefone e CPF para acessar a área pública e deixar recados.</p>
         <input type="email" id="guestEmail" placeholder="seu@email.com" autocomplete="email">
         <input type="tel" id="guestPhone" placeholder="Telefone (com DDD/código do país)" autocomplete="tel">
+        <input type="text" id="guestCpf" placeholder="CPF (só números)" inputmode="numeric" maxlength="14" autocomplete="off">
         <p id="guestError" class="login-error"></p>
         <button id="btnGuestConfirm" class="btn-entrar">Continuar</button>
         <button id="btnGuestBack" class="btn-publico">Voltar</button>
