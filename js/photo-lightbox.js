@@ -49,8 +49,8 @@
     atualizarBotaoFavoritar();
 
     if (window.ReactionsAPI) {
-      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.privado);
-      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.privado);
+      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.visibilidade, dados.autorId);
+      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.visibilidade, dados.autorId);
     }
 
     overlay.classList.add('active');
@@ -77,7 +77,8 @@
       evento: card.getAttribute('data-evento'),
       year: card.getAttribute('data-year-label'),
       bgUrl: card.dataset.bgUrl || '',
-      privado: card.getAttribute('data-visibility') === 'privado'
+      visibilidade: card.getAttribute('data-visibility'),
+      autorId: card.getAttribute('data-autor-id') || ''
     });
   });
 

@@ -15,10 +15,20 @@ const loginError = document.getElementById('loginError');
 const togglePass = document.getElementById('togglePass');
 
 const loginFields = document.getElementById('loginFields');
+const publicChoiceFields = document.getElementById('publicChoiceFields');
+const publicLoginFields = document.getElementById('publicLoginFields');
 const guestFields = document.getElementById('guestFields');
 const lgpdFields = document.getElementById('lgpdFields');
 const contentConsentFields = document.getElementById('contentConsentFields');
 const forgotFields = document.getElementById('forgotFields');
+const btnJaTenhoCadastro = document.getElementById('btnJaTenhoCadastro');
+const btnCriarCadastro = document.getElementById('btnCriarCadastro');
+const btnPublicChoiceBack = document.getElementById('btnPublicChoiceBack');
+const publicLoginEmail = document.getElementById('publicLoginEmail');
+const publicLoginPass = document.getElementById('publicLoginPass');
+const publicLoginError = document.getElementById('publicLoginError');
+const btnPublicLoginConfirm = document.getElementById('btnPublicLoginConfirm');
+const btnPublicLoginBack = document.getElementById('btnPublicLoginBack');
 const btnGuestConfirm = document.getElementById('btnGuestConfirm');
 const btnGuestBack = document.getElementById('btnGuestBack');
 const btnLgpdConfirm = document.getElementById('btnLgpdConfirm');
@@ -27,8 +37,11 @@ const btnContentConsentConfirm = document.getElementById('btnContentConsentConfi
 const btnEsqueciSenha = document.getElementById('btnEsqueciSenha');
 const btnForgotBack = document.getElementById('btnForgotBack');
 const guestEmail = document.getElementById('guestEmail');
+const guestNome = document.getElementById('guestNome');
 const guestPhone = document.getElementById('guestPhone');
 const guestCpf = document.getElementById('guestCpf');
+const guestPass = document.getElementById('guestPass');
+const guestPassConfirm = document.getElementById('guestPassConfirm');
 const guestError = document.getElementById('guestError');
 
 // Valida CPF de verdade (dígitos verificadores), não só o formato.
@@ -70,17 +83,26 @@ let aoConfirmarConteudo = null;
 
 function resetLoginView() {
   loginFields.classList.remove('login-content-hidden');
+  publicChoiceFields.classList.add('login-content-hidden');
+  publicLoginFields.classList.add('login-content-hidden');
   guestFields.classList.add('login-content-hidden');
   lgpdFields.classList.add('login-content-hidden');
   contentConsentFields.classList.add('login-content-hidden');
   forgotFields.classList.add('login-content-hidden');
   guestEmail.value = '';
+  if (guestNome) guestNome.value = '';
   guestPhone.value = '';
   if (guestCpf) guestCpf.value = '';
+  if (guestPass) guestPass.value = '';
+  if (guestPassConfirm) guestPassConfirm.value = '';
   guestEmail.style.borderColor = '';
   guestPhone.style.borderColor = '';
   if (guestCpf) guestCpf.style.borderColor = '';
+  if (guestPass) guestPass.style.borderColor = '';
   guestError.textContent = '';
+  if (publicLoginEmail) publicLoginEmail.value = '';
+  if (publicLoginPass) publicLoginPass.value = '';
+  if (publicLoginError) publicLoginError.textContent = '';
   loginError.textContent = '';
 }
 
@@ -181,11 +203,31 @@ btnEntrar.addEventListener('click', async () => {
 
 btnPublico.addEventListener('click', () => {
   loginFields.classList.add('login-content-hidden');
+  publicChoiceFields.classList.remove('login-content-hidden');
+});
+
+btnPublicChoiceBack.addEventListener('click', () => {
+  resetLoginView();
+});
+
+btnJaTenhoCadastro.addEventListener('click', () => {
+  publicChoiceFields.classList.add('login-content-hidden');
+  publicLoginFields.classList.remove('login-content-hidden');
+});
+
+btnCriarCadastro.addEventListener('click', () => {
+  publicChoiceFields.classList.add('login-content-hidden');
   guestFields.classList.remove('login-content-hidden');
 });
 
+btnPublicLoginBack.addEventListener('click', () => {
+  publicLoginFields.classList.add('login-content-hidden');
+  publicChoiceFields.classList.remove('login-content-hidden');
+});
+
 btnGuestBack.addEventListener('click', () => {
-  resetLoginView();
+  guestFields.classList.add('login-content-hidden');
+  publicChoiceFields.classList.remove('login-content-hidden');
 });
 
 btnEsqueciSenha.addEventListener('click', () => {
@@ -218,14 +260,27 @@ async function obterIP() {
 }
 
 btnGuestConfirm.addEventListener('click', () => {
+  const nomeValor = guestNome ? guestNome.value.trim() : '';
   const emailValor = guestEmail.value.trim();
   const phoneRaw = guestPhone.value.trim();
   const cpfValor = guestCpf ? guestCpf.value.trim() : '';
+  const senhaValor = guestPass ? guestPass.value : '';
+  const senhaConfirmValor = guestPassConfirm ? guestPassConfirm.value : '';
 
   guestEmail.style.borderColor = '';
   guestPhone.style.borderColor = '';
+  if (guestNome) guestNome.style.borderColor = '';
   if (guestCpf) guestCpf.style.borderColor = '';
+  if (guestPass) guestPass.style.borderColor = '';
+  if (guestPassConfirm) guestPassConfirm.style.borderColor = '';
   guestError.textContent = '';
+
+  if (!nomeValor) {
+    guestNome.style.borderColor = '#e07a7a';
+    guestError.textContent = 'Escreva seu nome para continuar.';
+    guestNome.focus();
+    return;
+  }
 
   if (!emailValido(emailValor)) {
     guestEmail.style.borderColor = '#e07a7a';
@@ -248,6 +303,20 @@ btnGuestConfirm.addEventListener('click', () => {
     return;
   }
 
+  if (!senhaValor || senhaValor.length < 6) {
+    guestPass.style.borderColor = '#e07a7a';
+    guestError.textContent = 'Crie uma senha com pelo menos 6 caracteres.';
+    guestPass.focus();
+    return;
+  }
+
+  if (senhaValor !== senhaConfirmValor) {
+    guestPassConfirm.style.borderColor = '#e07a7a';
+    guestError.textContent = 'As senhas não são iguais.';
+    guestPassConfirm.focus();
+    return;
+  }
+
   guestFields.classList.add('login-content-hidden');
   lgpdFields.classList.remove('login-content-hidden');
 });
@@ -258,19 +327,47 @@ btnLgpdCancel.addEventListener('click', () => {
 });
 
 btnLgpdConfirm.addEventListener('click', async () => {
+  const nomeValor = guestNome ? guestNome.value.trim() : '';
   const emailValor = guestEmail.value.trim();
   const phoneRaw = guestPhone.value.trim();
   const apenasDigitos = phoneRaw.replace(/\D/g, '');
   const cpfDigitos = guestCpf ? guestCpf.value.replace(/\D/g, '') : '';
+  const senhaValor = guestPass ? guestPass.value : '';
 
   btnLgpdConfirm.disabled = true;
-  btnLgpdConfirm.textContent = 'Salvando...';
+  btnLgpdConfirm.textContent = 'Criando cadastro...';
 
   const ip = await obterIP();
 
-  const { error } = await supabaseClient
+  const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+    email: emailValor,
+    password: senhaValor
+  });
+
+  if (authError) {
+    btnLgpdConfirm.disabled = false;
+    btnLgpdConfirm.textContent = 'Confirmar e continuar';
+    console.error('Erro ao criar cadastro:', authError);
+    lgpdFields.classList.add('login-content-hidden');
+    guestFields.classList.remove('login-content-hidden');
+    guestError.textContent = authError.message.includes('already registered')
+      ? 'Esse e-mail já tem cadastro. Volte e escolha "Já tenho cadastro".'
+      : 'Erro ao criar cadastro. Tente novamente.';
+    return;
+  }
+
+  const { data: visitanteSalvo, error } = await supabaseClient
     .from('visitantes')
-    .insert([{ email: emailValor, telefone: apenasDigitos, cpf: cpfDigitos, ip: ip }]);
+    .insert([{
+      nome: nomeValor,
+      email: emailValor,
+      telefone: apenasDigitos,
+      cpf: cpfDigitos,
+      ip: ip,
+      auth_uid: authData.user ? authData.user.id : null
+    }])
+    .select()
+    .single();
 
   btnLgpdConfirm.disabled = false;
   btnLgpdConfirm.textContent = 'Confirmar e continuar';
@@ -283,6 +380,8 @@ btnLgpdConfirm.addEventListener('click', async () => {
     return;
   }
 
+  const usuarioIdNovo = visitanteSalvo ? String(visitanteSalvo.id) : '';
+
   aoConfirmarConteudo = () => {
     // Limpa qualquer resquício de sessão anterior (de um login de membro
     // feito antes, no mesmo navegador) — sem isso, o visitante podia
@@ -292,12 +391,65 @@ btnLgpdConfirm.addEventListener('click', async () => {
     sessionStorage.removeItem('grupoUsuario');
     sessionStorage.removeItem('papelUsuario');
 
-    sessionStorage.setItem('mensagemBoasVindas', 'Obrigado por acessar!');
+    sessionStorage.setItem('mensagemBoasVindas', `Bem-vindo, ${nomeValor}!`);
     sessionStorage.setItem('tipoAcesso', 'visitante');
+    sessionStorage.setItem('usuarioId', usuarioIdNovo);
+    sessionStorage.setItem('nomeUsuario', nomeValor);
     window.location.href = 'area.html';
   };
 
   lgpdFields.classList.add('login-content-hidden');
+  contentConsentFields.classList.remove('login-content-hidden');
+});
+
+btnPublicLoginConfirm.addEventListener('click', async () => {
+  const emailValor = publicLoginEmail.value.trim();
+  const senhaValor = publicLoginPass.value;
+
+  publicLoginError.textContent = '';
+
+  if (!emailValido(emailValor) || !senhaValor) {
+    publicLoginError.textContent = 'Preencha e-mail e senha.';
+    return;
+  }
+
+  btnPublicLoginConfirm.disabled = true;
+  btnPublicLoginConfirm.textContent = 'Entrando...';
+
+  const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+    email: emailValor,
+    password: senhaValor
+  });
+
+  btnPublicLoginConfirm.disabled = false;
+  btnPublicLoginConfirm.textContent = 'Entrar';
+
+  if (authError) {
+    publicLoginError.textContent = 'E-mail ou senha incorretos.';
+    return;
+  }
+
+  const { data: visitantePerfil } = await supabaseClient
+    .from('visitantes')
+    .select('id, nome')
+    .eq('auth_uid', authData.user.id)
+    .single();
+
+  const usuarioIdVisitante = visitantePerfil ? String(visitantePerfil.id) : '';
+  const nomeVisitante = visitantePerfil && visitantePerfil.nome ? visitantePerfil.nome : '';
+
+  aoConfirmarConteudo = () => {
+    sessionStorage.removeItem('grupoUsuario');
+    sessionStorage.removeItem('papelUsuario');
+
+    sessionStorage.setItem('mensagemBoasVindas', nomeVisitante ? `Que bom te ver de novo, ${nomeVisitante}!` : 'Que bom te ver de novo!');
+    sessionStorage.setItem('tipoAcesso', 'visitante');
+    sessionStorage.setItem('usuarioId', usuarioIdVisitante);
+    sessionStorage.setItem('nomeUsuario', nomeVisitante);
+    window.location.href = 'area.html';
+  };
+
+  publicLoginFields.classList.add('login-content-hidden');
   contentConsentFields.classList.remove('login-content-hidden');
 });
 

@@ -73,6 +73,7 @@
     card.setAttribute('data-evento', item.nome_evento || '');
     card.setAttribute('data-year-label', item.ano || 'Sem data');
     card.setAttribute('data-visibility', item.visibilidade);
+    card.setAttribute('data-autor-id', item.autor_id ?? '');
     card.dataset.bgUrl = item.url_arquivo || '';
     card.style.backgroundImage = `url('${item.url_arquivo}')`;
 
@@ -91,6 +92,7 @@
     card.setAttribute('data-descricao', item.descricao || '');
     card.setAttribute('data-year-label', item.ano || 'Sem data');
     card.setAttribute('data-visibility', item.visibilidade);
+    card.setAttribute('data-autor-id', item.autor_id ?? '');
     card.dataset.videoUrl = item.url_arquivo || '';
 
     if (item.url_arquivo) {

@@ -53,15 +53,37 @@
         <p id="loginError" class="login-error"></p>
         <button id="btnEntrar" class="btn-entrar">Entrar</button>
         <button id="btnEsqueciSenha" class="btn-esqueci-senha">Esqueci minha senha</button>
-        <button id="btnPublico" class="btn-publico">Entrar como visitante</button>
+        <button id="btnPublico" class="btn-publico">Acessar como visitante</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="publicChoiceFields">
+        <p class="login-title">Acesso de visitante</p>
+        <p class="guest-note">Já tem um cadastro por aqui, ou é a primeira vez?</p>
+        <button id="btnJaTenhoCadastro" class="btn-entrar">Já tenho cadastro</button>
+        <button id="btnCriarCadastro" class="btn-entrar">Criar cadastro novo</button>
+        <button id="btnPublicChoiceBack" class="btn-publico">Voltar</button>
+      </div>
+
+      <div class="login-content login-content-hidden" id="publicLoginFields">
+        <p class="login-title">Entrar</p>
+        <input type="email" id="publicLoginEmail" placeholder="seu@email.com" autocomplete="email">
+        <div class="password-wrap">
+          <input type="password" id="publicLoginPass" placeholder="Senha" autocomplete="current-password">
+        </div>
+        <p id="publicLoginError" class="login-error"></p>
+        <button id="btnPublicLoginConfirm" class="btn-entrar">Entrar</button>
+        <button id="btnPublicLoginBack" class="btn-publico">Voltar</button>
       </div>
 
       <div class="login-content login-content-hidden" id="guestFields">
-        <p class="login-title">Antes de continuar</p>
-        <p class="guest-note">Informe seu e-mail, telefone e CPF para acessar a área pública e deixar recados.</p>
+        <p class="login-title">Criar cadastro</p>
+        <p class="guest-note">Informe seus dados para criar seu acesso. Guarde a senha — você vai usá-la pra entrar da próxima vez.</p>
+        <input type="text" id="guestNome" placeholder="Seu nome" autocomplete="name">
         <input type="email" id="guestEmail" placeholder="seu@email.com" autocomplete="email">
         <input type="tel" id="guestPhone" placeholder="Telefone (com DDD/código do país)" autocomplete="tel">
         <input type="text" id="guestCpf" placeholder="CPF (só números)" inputmode="numeric" maxlength="14" autocomplete="off">
+        <input type="password" id="guestPass" placeholder="Crie uma senha (mínimo 6 caracteres)" autocomplete="new-password">
+        <input type="password" id="guestPassConfirm" placeholder="Confirme a senha" autocomplete="new-password">
         <p id="guestError" class="login-error"></p>
         <button id="btnGuestConfirm" class="btn-entrar">Continuar</button>
         <button id="btnGuestBack" class="btn-publico">Voltar</button>
