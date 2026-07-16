@@ -1,9 +1,18 @@
 (function(){
   const SUPABASE_URL = 'https://igvtlqkkflpjrgasapos.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
+  const ITENS_POR_PAGINA = 10;
 
   const track = document.getElementById('sonhosCarrosselTrack');
   if (!track) return;
+
+  const paginacaoEl = document.getElementById('sonhosPaginacao');
+  const btnAnterior = document.getElementById('sonhosPaginaAnterior');
+  const btnProxima = document.getElementById('sonhosPaginaProxima');
+  const paginaTextoEl = document.getElementById('sonhosPaginaTexto');
+
+  let todosOsItens = [];
+  let paginaAtual = 0;
 
   const CORES = ['color-a', 'color-b', 'color-c', 'color-d'];
 
@@ -68,6 +77,7 @@
       return !!meuId && String(item.autor_id) === String(meuId);
     }
     const nivel = nivelDeAcessoAtual();
+    if (nivel === 'visitante') return false;
     if (item.visibilidade === 'ambos') return true;
     if (item.visibilidade === 'familia') return nivel === 'familia';
     if (item.visibilidade === 'membros') return nivel === 'membro';
@@ -77,7 +87,7 @@
   async function carregarSonhos(){
     try {
       const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/sonhos_sinais?status=eq.aprovado&select=*&order=criado_em.desc&limit=50`,
+        `${SUPABASE_URL}/rest/v1/sonhos_sinais?status=eq.aprovado&select=*&order=criado_em.desc&limit=500`,
         {
           headers: {
             apikey: SUPABASE_KEY,
@@ -88,29 +98,64 @@
       const dados = await resp.json();
       const itens = (Array.isArray(dados) ? dados : []).filter(item => podeVerSonho(item));
 
-      track.innerHTML = '';
-
-      if (itens.length === 0) {
-        track.classList.add('marquee-vazio');
-        const vazio = document.createElement('p');
-        vazio.className = 'hint-text';
-        vazio.style.margin = '0';
-        vazio.textContent = 'Nenhum sonho ou sinal por aqui ainda — registre o seu também!';
-        track.appendChild(vazio);
-        return;
-      }
-
-      track.classList.remove('marquee-vazio');
-      const listaParaExibir = [...itens, ...itens];
-
-      listaParaExibir.forEach((item, indice) => {
-        track.appendChild(criarCardSonho(item, indice));
-      });
-
-      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+      todosOsItens = itens;
+      paginaAtual = 0;
+      renderizarPagina();
     } catch (e) {
       console.error('Erro ao carregar sonhos e sinais:', e);
     }
+  }
+
+  function renderizarPagina(){
+    track.innerHTML = '';
+
+    if (todosOsItens.length === 0) {
+      const vazio = document.createElement('p');
+      vazio.className = 'hint-text';
+      vazio.style.margin = '0';
+      vazio.textContent = 'Nenhum sonho ou sinal por aqui ainda — registre o seu também!';
+      track.appendChild(vazio);
+      if (paginacaoEl) paginacaoEl.style.display = 'none';
+      return;
+    }
+
+    const inicio = paginaAtual * ITENS_POR_PAGINA;
+    const fim = inicio + ITENS_POR_PAGINA;
+    const itensDaPagina = todosOsItens.slice(inicio, fim);
+
+    itensDaPagina.forEach((item, indice) => {
+      track.appendChild(criarCardSonho(item, indice));
+    });
+
+    if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+
+    const totalPaginas = Math.ceil(todosOsItens.length / ITENS_POR_PAGINA);
+    if (paginacaoEl) {
+      paginacaoEl.style.display = totalPaginas > 1 ? 'flex' : 'none';
+    }
+    if (paginaTextoEl) paginaTextoEl.textContent = `Página ${paginaAtual + 1} de ${totalPaginas}`;
+    if (btnAnterior) btnAnterior.disabled = paginaAtual === 0;
+    if (btnProxima) btnProxima.disabled = paginaAtual >= totalPaginas - 1;
+  }
+
+  if (btnAnterior) {
+    btnAnterior.addEventListener('click', () => {
+      if (paginaAtual > 0) {
+        paginaAtual -= 1;
+        renderizarPagina();
+        track.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+  if (btnProxima) {
+    btnProxima.addEventListener('click', () => {
+      const totalPaginas = Math.ceil(todosOsItens.length / ITENS_POR_PAGINA);
+      if (paginaAtual < totalPaginas - 1) {
+        paginaAtual += 1;
+        renderizarPagina();
+        track.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   window.carregarSonhos = carregarSonhos;

@@ -3,7 +3,7 @@ const SUPABASE_SALVAR_MIDIA_URL = 'https://igvtlqkkflpjrgasapos.supabase.co/func
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
 
 const ANO_MINIMO = 2006;
-const ANO_MAXIMO = 2027;
+const ANO_MAXIMO = 2026;
 
 const arquivoInputEl = document.getElementById('conteudoArquivo');
 const uploadBoxTextoEl = arquivoInputEl.closest('.upload-box').querySelector('span');
