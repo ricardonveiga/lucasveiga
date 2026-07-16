@@ -1,4 +1,7 @@
 (function(){
+  const SUPABASE_URL = 'https://igvtlqkkflpjrgasapos.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
+
   const EMOJIS = [
     { key: 'coracao', symbol: '❤️', label: 'Coração' },
     { key: 'felicidade', symbol: '😊', label: 'Felicidade' },
@@ -6,48 +9,116 @@
     { key: 'teamo', symbol: '💌', label: 'Te amo' }
   ];
 
-  function carregarReacoes(){
-    try { return JSON.parse(localStorage.getItem('reacoesMidiaLucas')) || {}; }
-    catch(e){ return {}; }
+  function headersPadrao(){
+    return {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json'
+    };
   }
-  function salvarReacoes(dados){
-    localStorage.setItem('reacoesMidiaLucas', JSON.stringify(dados));
+
+  function meuId(){
+    return sessionStorage.getItem('usuarioId') || '';
   }
+
+  function meuNome(){
+    return sessionStorage.getItem('nomeUsuario') || 'Anônimo';
+  }
+
+  // Regra única pra quem pode reagir/comentar: exatamente quem já pode VER
+  // o conteúdo (mesma lógica de "quem enxerga o quê" usada no resto do
+  // site). "todos" inclui até visitante/cadastro público; "membros" inclui
+  // família e membros; "familia" só família; "privado" só o próprio autor.
+  function podeInteragir(visibilidade, autorId){
+    const nivel = nivelDeAcessoAtual();
+    if (visibilidade === 'privado') {
+      const meu = meuId();
+      return !!meu && String(autorId) === String(meu);
+    }
+    if (visibilidade === 'todos') return true;
+    if (nivel === 'visitante') return false;
+    if (visibilidade === 'familia') return nivel === 'familia';
+    if (visibilidade === 'membros') return nivel === 'familia' || nivel === 'membro';
+    return false;
+  }
+
   function getMediaId(card, indice){
-    return card.dataset.photoId || card.dataset.mediaId || card.dataset.recadoId
+    return card.dataset.photoId || card.dataset.mediaId || card.dataset.recadoId || card.dataset.videoId
       || ('card-' + (card.closest('section')?.id || 'sec') + '-' + (indice || 0));
   }
   function ehPrivado(card){
     return card && card.getAttribute('data-visibility') === 'privado';
   }
-  function getRegistro(mediaId){
-    return carregarReacoes()[mediaId] || {};
+
+  // ===================== Reações =====================
+  const cacheReacoes = {}; // item_id -> [{usuario_id, emoji}, ...]
+
+  async function buscarReacoesLote(itemIds){
+    const idsUnicos = [...new Set(itemIds)].filter(Boolean);
+    if (idsUnicos.length === 0) return;
+    try {
+      const filtro = idsUnicos.map(id => `"${id}"`).join(',');
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/reacoes?item_id=in.(${filtro})&select=item_id,usuario_id,emoji`,
+        { headers: headersPadrao() }
+      );
+      const dados = await resp.json();
+      idsUnicos.forEach(id => { cacheReacoes[id] = []; });
+      (Array.isArray(dados) ? dados : []).forEach(r => {
+        if (!cacheReacoes[r.item_id]) cacheReacoes[r.item_id] = [];
+        cacheReacoes[r.item_id].push(r);
+      });
+    } catch (e) {
+      console.error('Erro ao buscar reações:', e);
+    }
   }
+
   function totalCount(mediaId){
-    const reg = getRegistro(mediaId);
-    return EMOJIS.reduce((soma, e) => soma + (reg[e.key] || 0), 0);
+    return (cacheReacoes[mediaId] || []).length;
   }
   function topEmojis(mediaId, limite){
-    const reg = getRegistro(mediaId);
+    const lista = cacheReacoes[mediaId] || [];
+    const contagens = {};
+    lista.forEach(r => { contagens[r.emoji] = (contagens[r.emoji] || 0) + 1; });
     return EMOJIS
-      .map(e => ({ ...e, contagem: reg[e.key] || 0 }))
+      .map(e => ({ ...e, contagem: contagens[e.key] || 0 }))
       .filter(e => e.contagem > 0)
-      .sort((a,b) => b.contagem - a.contagem)
+      .sort((a, b) => b.contagem - a.contagem)
       .slice(0, limite || 2);
   }
-  function toggle(mediaId, key){
-    const dados = carregarReacoes();
-    if (!dados[mediaId]) dados[mediaId] = {};
-    const jaMarcado = dados[mediaId][key + '_marcado'];
-    let contagem = dados[mediaId][key] || 0;
-    contagem += jaMarcado ? -1 : 1;
-    if (contagem < 0) contagem = 0;
-    dados[mediaId][key] = contagem;
-    dados[mediaId][key + '_marcado'] = !jaMarcado;
-    salvarReacoes(dados);
-  }
   function marcado(mediaId, key){
-    return !!getRegistro(mediaId)[key + '_marcado'];
+    const meu = meuId();
+    if (!meu) return false;
+    return (cacheReacoes[mediaId] || []).some(r => String(r.usuario_id) === String(meu) && r.emoji === key);
+  }
+
+  async function toggle(mediaId, key, itemTipo){
+    const meu = meuId();
+    if (!meu) return;
+    const jaTem = marcado(mediaId, key);
+
+    if (jaTem) {
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/reacoes?item_id=eq.${encodeURIComponent(mediaId)}&usuario_id=eq.${meu}&emoji=eq.${key}`,
+        { method: 'DELETE', headers: headersPadrao() }
+      );
+      cacheReacoes[mediaId] = (cacheReacoes[mediaId] || []).filter(
+        r => !(String(r.usuario_id) === String(meu) && r.emoji === key)
+      );
+    } else {
+      await fetch(`${SUPABASE_URL}/rest/v1/reacoes`, {
+        method: 'POST',
+        headers: headersPadrao(),
+        body: JSON.stringify({
+          item_id: String(mediaId),
+          item_tipo: itemTipo || 'midia',
+          usuario_id: Number(meu),
+          emoji: key
+        })
+      });
+      if (!cacheReacoes[mediaId]) cacheReacoes[mediaId] = [];
+      cacheReacoes[mediaId].push({ usuario_id: Number(meu), emoji: key });
+    }
   }
 
   function renderBadge(card, mediaId){
@@ -63,21 +134,29 @@
     card.appendChild(badge);
   }
 
-  function iniciarBadges(){
-    document.querySelectorAll('.media-card, .recado-card').forEach((card, indice) => {
+  async function iniciarBadges(){
+    const cards = Array.from(document.querySelectorAll('.media-card, .recado-card'));
+    const ids = [];
+    cards.forEach((card, indice) => {
       const mediaId = getMediaId(card, indice);
       card.dataset.reactionId = mediaId;
-      renderBadge(card, mediaId);
+      ids.push(mediaId);
+    });
+    await buscarReacoesLote(ids);
+    cards.forEach((card, indice) => {
+      renderBadge(card, getMediaId(card, indice));
     });
   }
 
-  function buildInteractiveBar(mediaId, container, privado){
+  function buildInteractiveBar(mediaId, container, visibilidade, autorId){
     container.innerHTML = '';
 
-    if (privado) {
+    if (!podeInteragir(visibilidade, autorId)) {
       const aviso = document.createElement('p');
       aviso.className = 'lightbox-privado-aviso';
-      aviso.textContent = 'Este conteúdo não é compartilhado — sem reações ou comentários.';
+      aviso.textContent = visibilidade === 'privado'
+        ? 'Este conteúdo não é compartilhado — sem reações ou comentários.'
+        : 'Você não tem acesso pra reagir ou comentar neste conteúdo.';
       container.appendChild(aviso);
       return;
     }
@@ -86,16 +165,16 @@
     linha.className = 'lightbox-reaction-row';
 
     EMOJIS.forEach(e => {
-      const reg = getRegistro(mediaId);
-      const contagem = reg[e.key] || 0;
+      const contagem = (cacheReacoes[mediaId] || []).filter(r => r.emoji === e.key).length;
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'lightbox-reaction-btn' + (marcado(mediaId, e.key) ? ' is-marcado' : '');
       btn.innerHTML = `<span>${e.symbol}</span>` + (contagem > 0 ? `<em>${contagem}</em>` : '');
       btn.setAttribute('aria-label', e.label);
-      btn.addEventListener('click', () => {
-        toggle(mediaId, e.key);
-        buildInteractiveBar(mediaId, container, false);
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        await toggle(mediaId, e.key);
+        buildInteractiveBar(mediaId, container, visibilidade, autorId);
         const card = document.querySelector(`[data-reaction-id="${mediaId}"]`);
         if (card) renderBadge(card, mediaId);
       });
@@ -111,26 +190,56 @@
     container.appendChild(totalEl);
   }
 
-  function carregarComentarios(){
-    try { return JSON.parse(localStorage.getItem('comentariosMidiaLucas')) || {}; }
-    catch(e){ return {}; }
-  }
-  function salvarComentarios(dados){
-    localStorage.setItem('comentariosMidiaLucas', JSON.stringify(dados));
-  }
-  function getComentarios(mediaId){
-    return carregarComentarios()[mediaId] || [];
-  }
-  function addComentario(mediaId, texto, autor){
-    const dados = carregarComentarios();
-    if (!dados[mediaId]) dados[mediaId] = [];
-    dados[mediaId].push({ texto, autor: autor || 'Você', status: 'pendente' });
-    salvarComentarios(dados);
+  // ===================== Comentários =====================
+  const RANQUE_GRUPO = { familia: 0, membro: 1, visitante: 2 };
+
+  async function buscarComentarios(mediaId, itemTipo){
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/comentarios?item_id=eq.${encodeURIComponent(mediaId)}&item_tipo=eq.${itemTipo || 'midia'}&select=*&order=criado_em.desc`,
+        { headers: headersPadrao() }
+      );
+      const dados = await resp.json();
+      const meu = meuId();
+      const visiveis = (Array.isArray(dados) ? dados : []).filter(c =>
+        c.status === 'aprovado' || (c.status === 'pendente' && meu && String(c.autor_id) === String(meu))
+      );
+      // Família e membros aparecem primeiro; dentro do mesmo grupo, mais recente primeiro.
+      visiveis.sort((a, b) => {
+        const rankA = RANQUE_GRUPO[a.autor_grupo] ?? 3;
+        const rankB = RANQUE_GRUPO[b.autor_grupo] ?? 3;
+        if (rankA !== rankB) return rankA - rankB;
+        return new Date(b.criado_em) - new Date(a.criado_em);
+      });
+      return visiveis;
+    } catch (e) {
+      console.error('Erro ao buscar comentários:', e);
+      return [];
+    }
   }
 
-  function buildCommentsPanel(mediaId, container, privado){
+  async function enviarComentario(mediaId, itemTipo, texto){
+    const meu = meuId();
+    const nivel = nivelDeAcessoAtual();
+    await fetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
+      method: 'POST',
+      headers: headersPadrao(),
+      body: JSON.stringify({
+        item_id: String(mediaId),
+        item_tipo: itemTipo || 'midia',
+        autor_id: meu ? Number(meu) : null,
+        autor_nome: meuNome(),
+        autor_grupo: nivel,
+        texto,
+        status: 'pendente'
+      })
+    });
+  }
+
+  async function buildCommentsPanel(mediaId, container, visibilidade, autorId){
     container.innerHTML = '';
-    if (privado) return;
+
+    if (!podeInteragir(visibilidade, autorId)) return;
 
     const titulo = document.createElement('p');
     titulo.className = 'lightbox-comments-titulo';
@@ -139,7 +248,11 @@
 
     const lista = document.createElement('div');
     lista.className = 'lightbox-comments-list';
-    const comentarios = getComentarios(mediaId);
+    lista.textContent = 'Carregando comentários...';
+    container.appendChild(lista);
+
+    const comentarios = await buscarComentarios(mediaId, 'midia');
+    lista.innerHTML = '';
 
     if (comentarios.length === 0) {
       const vazio = document.createElement('p');
@@ -155,16 +268,17 @@
         p.textContent = c.texto;
         const meta = document.createElement('span');
         meta.className = 'lightbox-comment-meta';
-        meta.textContent = c.autor + ' · ';
-        const em = document.createElement('em');
-        em.textContent = 'Aguardando aprovação';
-        meta.appendChild(em);
+        meta.textContent = (c.autor_nome || 'Anônimo') + (c.status === 'pendente' ? ' · ' : '');
+        if (c.status === 'pendente') {
+          const em = document.createElement('em');
+          em.textContent = 'Aguardando aprovação';
+          meta.appendChild(em);
+        }
         item.appendChild(p);
         item.appendChild(meta);
         lista.appendChild(item);
       });
     }
-    container.appendChild(lista);
 
     const form = document.createElement('div');
     form.className = 'lightbox-comment-form';
@@ -175,12 +289,16 @@
     btnEnviar.type = 'button';
     btnEnviar.className = 'btn-limpar lightbox-comment-enviar';
     btnEnviar.textContent = 'Comentar';
-    btnEnviar.addEventListener('click', () => {
+    btnEnviar.addEventListener('click', async () => {
       const texto = textarea.value.trim();
       if (!texto) return;
-      addComentario(mediaId, texto);
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+      await enviarComentario(mediaId, 'midia', texto);
       textarea.value = '';
-      buildCommentsPanel(mediaId, container, false);
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Comentar';
+      buildCommentsPanel(mediaId, container, visibilidade, autorId);
       if (window.avisoSite) {
         window.avisoSite('Comentário enviado! Ele aparecerá para outras pessoas assim que for aprovado pelo administrador.', '💬');
       }
@@ -198,6 +316,7 @@
     toggle,
     marcado,
     ehPrivado,
+    podeInteragir,
     refreshCardBadge: renderBadge,
     refreshAllBadges: iniciarBadges,
     buildInteractiveBar,

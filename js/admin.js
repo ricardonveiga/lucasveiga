@@ -5,6 +5,8 @@
   const gridMidias = document.getElementById('admGrid');
   const gridRecados = document.getElementById('admGridRecados');
   const gridSonhos = document.getElementById('admGridSonhos');
+  const gridComentarios = document.getElementById('admGridComentarios');
+  const gridConversas = document.getElementById('admGridConversas');
   const listaSection = document.getElementById('listaPendentes');
   const acessoNegado = document.getElementById('acessoNegado');
 
@@ -72,6 +74,57 @@
     }
   }
 
+  async function buscarPendentesComentarios(){
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/comentarios?status=eq.pendente&select=*&order=criado_em.asc`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      const dados = await resp.json();
+      return Array.isArray(dados) ? dados : [];
+    } catch (e) {
+      console.error('Erro ao buscar comentários pendentes:', e);
+      return [];
+    }
+  }
+
+  async function buscarPendentesConversas(){
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/conversas?status=eq.pendente&select=*&order=criado_em.asc`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      const dados = await resp.json();
+      return Array.isArray(dados) ? dados : [];
+    } catch (e) {
+      console.error('Erro ao buscar conversas pendentes:', e);
+      return [];
+    }
+  }
+
+  async function atualizarStatusConversa(id, novoStatus){
+    await fetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ status: novoStatus })
+    });
+  }
+
   async function atualizarStatusMidia(id, novoStatus, extras){
     await fetch(`${SUPABASE_URL}/rest/v1/midias?id=eq.${id}`, {
       method: 'PATCH',
@@ -108,6 +161,33 @@
         Prefer: 'return=minimal'
       },
       body: JSON.stringify({ status: novoStatus, ...(extras || {}) })
+    });
+  }
+
+  async function aprovarComentario(id){
+    await fetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ status: 'aprovado' })
+    });
+  }
+
+  // Comentários não têm "rejeitado" (só pendente/aprovado) — rejeitar
+  // aqui significa apagar de vez, já que não faz sentido deixar um
+  // comentário rejeitado esperando pra sempre.
+  async function apagarComentario(id){
+    await fetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Prefer: 'return=minimal'
+      }
     });
   }
 
@@ -477,6 +557,139 @@
     return wrap;
   }
 
+  function criarCardComentario(item){
+    const wrap = document.createElement('div');
+    wrap.className = 'content-section';
+    wrap.style.padding = '1rem';
+
+    const info = document.createElement('p');
+    info.style.fontSize = '0.72rem';
+    info.style.margin = '0 0 0.5rem 0';
+    info.style.color = 'var(--ink-dim)';
+    info.innerHTML = `Em: ${item.item_tipo} #${item.item_id} · Grupo: ${item.autor_grupo || 'desconhecido'} · Autor: ${item.autor_nome || 'Anônimo'}`;
+
+    const texto = document.createElement('p');
+    texto.style.fontSize = '0.85rem';
+    texto.style.fontStyle = 'italic';
+    texto.style.margin = '0 0 0.7rem 0';
+    texto.textContent = `"${item.texto}"`;
+
+    const acoes = document.createElement('div');
+    acoes.style.display = 'flex';
+    acoes.style.gap = '0.6rem';
+
+    const btnAprovar = document.createElement('button');
+    btnAprovar.className = 'btn-publicar';
+    btnAprovar.style.margin = '0';
+    btnAprovar.textContent = 'Aprovar';
+    btnAprovar.addEventListener('click', async () => {
+      btnAprovar.disabled = true;
+      btnAprovar.textContent = 'Aprovando...';
+      await aprovarComentario(item.id);
+      if (window.avisoSite) window.avisoSite('Comentário aprovado.', '✅');
+      wrap.remove();
+    });
+
+    const btnRejeitar = document.createElement('button');
+    btnRejeitar.className = 'btn-limpar';
+    btnRejeitar.textContent = 'Excluir';
+    btnRejeitar.addEventListener('click', async () => {
+      btnRejeitar.disabled = true;
+      btnRejeitar.textContent = 'Excluindo...';
+      await apagarComentario(item.id);
+      if (window.avisoSite) window.avisoSite('Comentário excluído.', '🗑️');
+      wrap.remove();
+    });
+
+    acoes.appendChild(btnAprovar);
+    acoes.appendChild(btnRejeitar);
+
+    wrap.appendChild(info);
+    wrap.appendChild(texto);
+    wrap.appendChild(acoes);
+
+    return wrap;
+  }
+
+  function criarCardConversa(item){
+    const wrap = document.createElement('div');
+    wrap.className = 'content-section';
+    wrap.style.padding = '1rem';
+
+    if (item.tipo === 'print' && item.url_arquivo) {
+      const preview = document.createElement('div');
+      preview.style.width = '100%';
+      preview.style.height = '160px';
+      preview.style.borderRadius = '8px';
+      preview.style.marginBottom = '0.6rem';
+      preview.style.backgroundImage = `url('${item.url_arquivo}')`;
+      preview.style.backgroundSize = 'contain';
+      preview.style.backgroundRepeat = 'no-repeat';
+      preview.style.backgroundPosition = 'center';
+      preview.style.backgroundColor = '#000';
+      wrap.appendChild(preview);
+    } else if (item.tipo === 'audio' && item.url_arquivo) {
+      const audioEl = document.createElement('audio');
+      audioEl.controls = true;
+      audioEl.src = item.url_arquivo;
+      audioEl.style.width = '100%';
+      audioEl.style.marginBottom = '0.6rem';
+      wrap.appendChild(audioEl);
+    }
+
+    const info = document.createElement('p');
+    info.style.fontSize = '0.72rem';
+    info.style.margin = '0 0 0.6rem 0';
+    info.style.color = 'var(--ink-dim)';
+    info.innerHTML = `Tipo: ${item.tipo} · Visibilidade: ${item.visibilidade} · Autor: ${item.autor_nome || 'Anônimo'} (ID: ${item.autor_id ?? 'desconhecido'})`;
+
+    const campoTexto = criarCampoEditavel('Lembrança / texto', item.texto_lembranca, { multilinha: true });
+
+    const acoes = document.createElement('div');
+    acoes.style.display = 'flex';
+    acoes.style.gap = '0.6rem';
+    acoes.style.marginTop = '0.6rem';
+
+    const btnAprovar = document.createElement('button');
+    btnAprovar.className = 'btn-publicar';
+    btnAprovar.style.margin = '0';
+    btnAprovar.textContent = 'Aprovar';
+    btnAprovar.addEventListener('click', async () => {
+      btnAprovar.disabled = true;
+      btnAprovar.textContent = 'Aprovando...';
+      await atualizarStatusConversa(item.id, 'aprovado');
+      if (window.avisoSite) window.avisoSite('Conversa aprovada.', '✅');
+      wrap.remove();
+    });
+
+    const btnRejeitar = document.createElement('button');
+    btnRejeitar.className = 'btn-limpar';
+    btnRejeitar.textContent = 'Excluir';
+    btnRejeitar.addEventListener('click', async () => {
+      btnRejeitar.disabled = true;
+      btnRejeitar.textContent = 'Excluindo...';
+      await fetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${item.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Prefer: 'return=minimal'
+        }
+      });
+      if (window.avisoSite) window.avisoSite('Conversa excluída.', '🗑️');
+      wrap.remove();
+    });
+
+    acoes.appendChild(btnAprovar);
+    acoes.appendChild(btnRejeitar);
+
+    wrap.appendChild(info);
+    wrap.appendChild(campoTexto.bloco);
+    wrap.appendChild(acoes);
+
+    return wrap;
+  }
+
   async function carregarMidias(){
     const itens = await buscarPendentesMidias();
     gridMidias.innerHTML = '';
@@ -527,7 +740,43 @@
     itens.forEach(item => gridSonhos.appendChild(criarCardSonho(item)));
   }
 
+  async function carregarComentarios(){
+    if (!gridComentarios) return;
+    const itens = await buscarPendentesComentarios();
+    gridComentarios.innerHTML = '';
+
+    if (itens.length === 0) {
+      const vazio = document.createElement('p');
+      vazio.className = 'hint-text';
+      vazio.style.margin = '0';
+      vazio.textContent = 'Nenhum comentário aguardando aprovação no momento.';
+      gridComentarios.appendChild(vazio);
+      return;
+    }
+
+    itens.forEach(item => gridComentarios.appendChild(criarCardComentario(item)));
+  }
+
+  async function carregarConversas(){
+    if (!gridConversas) return;
+    const itens = await buscarPendentesConversas();
+    gridConversas.innerHTML = '';
+
+    if (itens.length === 0) {
+      const vazio = document.createElement('p');
+      vazio.className = 'hint-text';
+      vazio.style.margin = '0';
+      vazio.textContent = 'Nenhuma conversa aguardando aprovação no momento.';
+      gridConversas.appendChild(vazio);
+      return;
+    }
+
+    itens.forEach(item => gridConversas.appendChild(criarCardConversa(item)));
+  }
+
   carregarMidias();
   carregarRecados();
   carregarSonhos();
+  carregarComentarios();
+  carregarConversas();
 })();

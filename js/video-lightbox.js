@@ -47,8 +47,8 @@
     }
 
     if (window.ReactionsAPI) {
-      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.privado);
-      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.privado);
+      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.visibilidade, dados.autorId);
+      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.visibilidade, dados.autorId);
     }
 
     overlay.classList.add('active');
@@ -87,7 +87,8 @@
       caption,
       year,
       videoUrl: card.dataset.videoUrl || '',
-      privado: card.getAttribute('data-visibility') === 'privado'
+      visibilidade: card.getAttribute('data-visibility'),
+      autorId: card.getAttribute('data-autor-id') || ''
     });
   });
 
