@@ -92,6 +92,11 @@ async function salvarConversaSoTexto(texto, visibilidade, autorId, autorNome){
 const btnPublicarConversa = document.getElementById('btnPublicarConversa');
 if (btnPublicarConversa) {
   btnPublicarConversa.addEventListener('click', async () => {
+    if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
+      window.avisoSite('Adicionar conversas é exclusivo para membros e família.', '🔒');
+      return;
+    }
+
     const texto = document.getElementById('conversaTexto').value.trim();
     const printsInput = document.getElementById('conversaPrint');
     const audioInput = document.getElementById('conversaAudio');

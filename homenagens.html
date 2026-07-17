@@ -127,7 +127,7 @@
 
     <!-- Homenagens existentes (10 por página) -->
     <section class="content-section">
-      <div class="full-grid" id="homenagensGrid">
+      <div class="full-grid homenagens-grid" id="homenagensGrid">
         <p class="hint-text" style="margin:0;">Carregando...</p>
       </div>
       <div class="paginacao" id="homenagensPaginacao" style="display:none;">
@@ -142,7 +142,7 @@
       <div class="section-header">
         <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Deixar uma homenagem</h2>
       </div>
-      <p class="method-intro">Escreva sua homenagem e, se quiser, anexe uma foto ou um vídeo. Vai ficar assinada automaticamente com seu nome e a data de hoje.</p>
+      <p class="method-intro">Escreva sua homenagem e anexe uma foto ou um vídeo (obrigatório). Vai ficar assinada automaticamente com seu nome e a data de hoje.</p>
 
       <div class="form-grid">
         <div class="form-left">
@@ -154,7 +154,7 @@
             <label class="upload-box">
               <input type="file" id="homenagemArquivo" accept="image/*,video/*" hidden>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Anexar uma foto ou vídeo (opcional)<br><small>PNG, JPG, MP4, MOV</small></span>
+              <span>Anexar uma foto ou vídeo <span class="obrigatorio">*obrigatório</span><br><small>PNG, JPG, MP4, MOV</small></span>
             </label>
           </div>
         </div>

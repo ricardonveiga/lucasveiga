@@ -88,8 +88,12 @@ if (btnPublicarHomenagem) {
     const checkboxes = document.querySelectorAll('input[name="visibilidadeHomenagem"]:checked');
     const arquivo = arquivoInput.files.length > 0 ? arquivoInput.files[0] : null;
 
-    if (!texto && !arquivo) {
-      window.avisoSite('Escreva sua homenagem ou anexe uma foto/vídeo antes de publicar.', '💐');
+    if (!arquivo) {
+      window.avisoSite('Anexe uma foto ou vídeo — é obrigatório em Homenagens.', '💐');
+      return;
+    }
+    if (!texto) {
+      window.avisoSite('Escreva o texto da sua homenagem.', '💐');
       return;
     }
     if (checkboxes.length === 0) {
