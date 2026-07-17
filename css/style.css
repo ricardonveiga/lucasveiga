@@ -192,10 +192,15 @@ footer{
   max-height: calc(100vh - 1.5rem);
   max-height: calc(100dvh - 1.5rem);
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-radius: 14px;
   text-align: center;
   animation: rise 0.4s ease-out both;
   background: #000000;
+}
+.login-box::-webkit-scrollbar{
+  display: none;
 }
 
 .login-image{
