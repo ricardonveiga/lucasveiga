@@ -56,7 +56,7 @@ themeToggle.addEventListener('click', () => {
 const userName = document.getElementById('userName');
 const nomeSalvo = sessionStorage.getItem('nomeUsuario');
 if (nomeSalvo && userName) {
-  userName.textContent = nomeSalvo;
+  userName.textContent = nomeSalvo.trim().split(' ')[0];
 }
 
 // ===== Filtro de visibilidade por perfil (Fotos, Vídeos, Conversas, Mural) =====
