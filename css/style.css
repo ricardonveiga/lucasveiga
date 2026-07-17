@@ -189,23 +189,16 @@ footer{
   position: relative;
   width: 100%;
   max-width: 300px;
-  max-height: calc(100vh - 1.5rem);
-  max-height: calc(100dvh - 1.5rem);
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   border-radius: 14px;
+  overflow: hidden;
   text-align: center;
   animation: rise 0.4s ease-out both;
   background: #000000;
 }
-.login-box::-webkit-scrollbar{
-  display: none;
-}
 
 .login-image{
   display: block;
-  width: 75%;
+  width: 100%;
   height: auto;
   margin: 0 auto;
 }
@@ -213,7 +206,7 @@ footer{
 .login-content{
   position: relative;
   width: 100%;
-  padding: 0.6rem 1.5rem 1.1rem;
+  padding: 0.8rem 1.5rem 1.5rem;
   margin-top: -4px;
 }
 
@@ -226,15 +219,15 @@ footer{
   font-style: italic;
   font-size: 1rem;
   color: var(--ink);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.9rem 0;
 }
 
 .guest-note{
   font-family: 'Inter', sans-serif;
-  font-size: 0.65rem;
-  line-height: 1.25;
+  font-size: 0.72rem;
+  line-height: 1.5;
   color: var(--ink-dim);
-  margin: -0.15rem 0 0.45rem 0;
+  margin: -0.4rem 0 0.9rem 0;
 }
 
 .login-error{
@@ -247,14 +240,14 @@ footer{
 
 .login-box input{
   width: 100%;
-  padding: 0.45rem 0.8rem;
-  margin-bottom: 0.4rem;
+  padding: 0.65rem 0.8rem;
+  margin-bottom: 0.6rem;
   border-radius: 6px;
   border: 1px solid var(--line);
   background: rgba(242,244,248,0.06);
   color: var(--ink);
   font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   box-sizing: border-box;
 }
 .login-box input::placeholder{
@@ -293,8 +286,8 @@ footer{
 .login-box .btn-publico{
   display: block;
   width: 100%;
-  padding: 0.45rem;
-  margin-top: 0.25rem;
+  padding: 0.65rem;
+  margin-top: 0.4rem;
   border-radius: 6px;
   border: 1px solid var(--line);
   cursor: pointer;
@@ -320,6 +313,67 @@ footer{
 .login-box .btn-publico:hover{
   background: rgba(242,244,248,0.1);
   color: var(--ink);
+}
+
+/* ===== A partir daqui, só telas de desktop (celular fica com as regras
+   originais acima, sem nenhuma dessas mudanças) ===== */
+@media (min-width: 768px){
+  .login-box{
+    max-height: calc(100vh - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .login-box::-webkit-scrollbar{
+    display: none;
+  }
+
+  .login-image{
+    width: 75%;
+  }
+
+  /* Nas telas curtas (login, escolha de visitante, entrar com cadastro
+     existente, avisos) sobra espaço vertical de sobra — a imagem pode
+     ficar no tamanho original nelas. Só no formulário de cadastro (mais
+     longo, 6 campos) ela precisa ficar menor pra caber sem rolar. */
+  .login-box:has(#loginFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#publicChoiceFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#publicLoginFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#lgpdFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#contentConsentFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#welcomeFields:not(.login-content-hidden)) .login-image,
+  .login-box:has(#forgotFields:not(.login-content-hidden)) .login-image{
+    width: 100%;
+  }
+
+  .login-content{
+    padding: 0.6rem 1.5rem 1.1rem;
+  }
+
+  .login-title{
+    margin: 0 0 0.5rem 0;
+  }
+
+  .guest-note{
+    font-size: 0.65rem;
+    line-height: 1.25;
+    margin: -0.15rem 0 0.45rem 0;
+  }
+
+  .login-box input{
+    padding: 0.45rem 0.8rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .login-box .btn-entrar,
+  .login-box .btn-publico{
+    padding: 0.45rem;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+  }
 }
 
 .close-login{
