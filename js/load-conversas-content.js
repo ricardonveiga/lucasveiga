@@ -104,12 +104,23 @@
     track.innerHTML = '';
 
     if (todosOsItens.length === 0) {
+      track.classList.add('marquee-vazio');
       const vazio = document.createElement('p');
       vazio.className = 'hint-text';
       vazio.style.margin = '0';
       vazio.textContent = 'Nenhuma conversa por aqui ainda — adicione a sua também!';
       track.appendChild(vazio);
       if (paginacaoEl) paginacaoEl.style.display = 'none';
+      return;
+    }
+
+    // Sem controle de página na tela (widget do dashboard) = carrossel
+    // contínuo, precisa duplicar os itens pro loop ficar suave.
+    if (!paginacaoEl) {
+      track.classList.remove('marquee-vazio');
+      const paraExibir = [...todosOsItens, ...todosOsItens];
+      paraExibir.forEach(item => track.appendChild(criarCardConversa(item)));
+      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
       return;
     }
 
