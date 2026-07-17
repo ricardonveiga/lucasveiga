@@ -192,33 +192,8 @@
       </div>
       <p class="mural-intro">Os últimos prints e áudios que você pode ver, com base no seu perfil.</p>
       <div class="marquee-wrap">
-        <div class="marquee-track">
-          <div class="media-card photo-card" data-media-id="conv-1" data-visibility="familia">
-            <span class="badge badge-aprovado">Print</span>
-            <span class="media-caption">Conversa de 2024 <em>2024</em></span>
-          </div>
-          <div class="media-card video-card" data-media-id="conv-2" data-visibility="membros">
-            <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-            <span class="media-caption">Áudio de conversa <em>0:34</em></span>
-          </div>
-          <div class="media-card photo-card" data-media-id="conv-3" data-visibility="publico">
-            <span class="badge badge-aprovado">Print</span>
-            <span class="media-caption">Última mensagem <em>2024</em></span>
-          </div>
-
-          <!-- Duplicado para loop contínuo -->
-          <div class="media-card photo-card" data-media-id="conv-1" data-visibility="familia">
-            <span class="badge badge-aprovado">Print</span>
-            <span class="media-caption">Conversa de 2024 <em>2024</em></span>
-          </div>
-          <div class="media-card video-card" data-media-id="conv-2" data-visibility="membros">
-            <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-            <span class="media-caption">Áudio de conversa <em>0:34</em></span>
-          </div>
-          <div class="media-card photo-card" data-media-id="conv-3" data-visibility="publico">
-            <span class="badge badge-aprovado">Print</span>
-            <span class="media-caption">Última mensagem <em>2024</em></span>
-          </div>
+        <div class="marquee-track marquee-vazio" id="conversasGrid">
+          <p class="hint-text" style="margin:0;">Carregando...</p>
         </div>
       </div>
       <div class="ver-mais-row">
@@ -242,6 +217,23 @@
       <div class="ver-mais-row">
         <a href="sonhos.html" class="ver-mais-link">Ver mais</a>
         <a href="sonhos.html#registrar-sonho" class="btn-deixar-recado">Registrar um sonho ou sinal ✨</a>
+      </div>
+    </section>
+
+    <!-- Carrossel: Homenagens -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Homenagens</h2>
+      </div>
+      <p class="mural-intro">Homenagens deixadas pelos membros e pela família, sempre assinadas com nome e data.</p>
+      <div class="marquee-wrap">
+        <div class="marquee-track marquee-vazio" id="homenagensGrid">
+          <p class="hint-text" style="margin:0;">Carregando...</p>
+        </div>
+      </div>
+      <div class="ver-mais-row">
+        <a href="homenagens.html" class="ver-mais-link">Ver mais</a>
+        <a href="homenagens.html#deixar-homenagem" class="btn-deixar-recado">Deixar uma homenagem 💐</a>
       </div>
     </section>
 
@@ -274,6 +266,7 @@
       <p class="hint-text">Itens enviados por você não podem ser excluídos aqui — fale com o administrador se precisar remover algo.</p>
     </section>
 
+    <footer class="site-footer">veigalucas.com.br © 2026 · Todos os direitos reservados</footer>
   </main>
 
   <!-- Detalhe de uma foto (favoritar) -->
@@ -446,8 +439,10 @@
   <script src="js/load-my-content.js"></script>
   <script src="js/load-dashboard-content.js"></script>
   <script src="js/load-mural-content.js"></script>
+  <script src="js/load-conversas-content.js"></script>
   <script src="js/sonhos-lightbox.js"></script>
   <script src="js/load-sonhos-content.js"></script>
+  <script src="js/load-homenagens-content.js"></script>
   <script src="js/photo-lightbox.js"></script>
   <script src="js/video-lightbox.js"></script>
   <script src="js/recado-lightbox.js"></script>

@@ -110,12 +110,23 @@
     track.innerHTML = '';
 
     if (todosOsItens.length === 0) {
+      track.classList.add('marquee-vazio');
       const vazio = document.createElement('p');
       vazio.className = 'hint-text';
       vazio.style.margin = '0';
       vazio.textContent = 'Nenhum sonho ou sinal por aqui ainda — registre o seu também!';
       track.appendChild(vazio);
       if (paginacaoEl) paginacaoEl.style.display = 'none';
+      return;
+    }
+
+    // Sem controle de página na tela (widget do dashboard) = carrossel
+    // contínuo, precisa duplicar os itens pro loop ficar suave.
+    if (!paginacaoEl) {
+      track.classList.remove('marquee-vazio');
+      const paraExibir = [...todosOsItens, ...todosOsItens];
+      paraExibir.forEach((item, indice) => track.appendChild(criarCardSonho(item, indice)));
+      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
       return;
     }
 
