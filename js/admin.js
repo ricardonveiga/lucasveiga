@@ -7,6 +7,7 @@
   const gridSonhos = document.getElementById('admGridSonhos');
   const gridComentarios = document.getElementById('admGridComentarios');
   const gridConversas = document.getElementById('admGridConversas');
+  const gridHomenagens = document.getElementById('admGridHomenagens');
   const listaSection = document.getElementById('listaPendentes');
   const acessoNegado = document.getElementById('acessoNegado');
 
@@ -114,6 +115,38 @@
 
   async function atualizarStatusConversa(id, novoStatus){
     await fetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ status: novoStatus })
+    });
+  }
+
+  async function buscarPendentesHomenagens(){
+    try {
+      const resp = await fetch(
+        `${SUPABASE_URL}/rest/v1/homenagens?status=eq.pendente&select=*&order=criado_em.asc`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      const dados = await resp.json();
+      return Array.isArray(dados) ? dados : [];
+    } catch (e) {
+      console.error('Erro ao buscar homenagens pendentes:', e);
+      return [];
+    }
+  }
+
+  async function atualizarStatusHomenagem(id, novoStatus){
+    await fetch(`${SUPABASE_URL}/rest/v1/homenagens?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -690,6 +723,81 @@
     return wrap;
   }
 
+  function criarCardHomenagem(item){
+    const wrap = document.createElement('div');
+    wrap.className = 'content-section';
+    wrap.style.padding = '1rem';
+
+    if (item.url_arquivo) {
+      if (item.tipo === 'foto') {
+        const preview = document.createElement('div');
+        preview.style.width = '100%';
+        preview.style.height = '160px';
+        preview.style.borderRadius = '8px';
+        preview.style.marginBottom = '0.6rem';
+        preview.style.backgroundImage = `url('${item.url_arquivo}')`;
+        preview.style.backgroundSize = 'contain';
+        preview.style.backgroundRepeat = 'no-repeat';
+        preview.style.backgroundPosition = 'center';
+        preview.style.backgroundColor = '#000';
+        wrap.appendChild(preview);
+      } else {
+        const videoEl = document.createElement('video');
+        videoEl.controls = true;
+        videoEl.src = item.url_arquivo;
+        videoEl.style.width = '100%';
+        videoEl.style.marginBottom = '0.6rem';
+        wrap.appendChild(videoEl);
+      }
+    }
+
+    const dataFormatada = item.criado_em ? new Date(item.criado_em).toLocaleDateString('pt-BR') : '';
+    const info = document.createElement('p');
+    info.style.fontSize = '0.72rem';
+    info.style.margin = '0 0 0.6rem 0';
+    info.style.color = 'var(--ink-dim)';
+    info.innerHTML = `Visibilidade: ${item.visibilidade} · Assinado por: ${item.autor_nome || 'Anônimo'} (${dataFormatada}) · Grupo: ${item.autor_grupo || 'desconhecido'}`;
+
+    const campoTexto = criarCampoEditavel('Texto da homenagem', item.texto, { multilinha: true });
+
+    const acoes = document.createElement('div');
+    acoes.style.display = 'flex';
+    acoes.style.gap = '0.6rem';
+    acoes.style.marginTop = '0.6rem';
+
+    const btnAprovar = document.createElement('button');
+    btnAprovar.className = 'btn-publicar';
+    btnAprovar.style.margin = '0';
+    btnAprovar.textContent = 'Aprovar';
+    btnAprovar.addEventListener('click', async () => {
+      btnAprovar.disabled = true;
+      btnAprovar.textContent = 'Aprovando...';
+      await atualizarStatusHomenagem(item.id, 'aprovado');
+      if (window.avisoSite) window.avisoSite('Homenagem aprovada.', '✅');
+      wrap.remove();
+    });
+
+    const btnRejeitar = document.createElement('button');
+    btnRejeitar.className = 'btn-limpar';
+    btnRejeitar.textContent = 'Rejeitar';
+    btnRejeitar.addEventListener('click', async () => {
+      btnRejeitar.disabled = true;
+      btnRejeitar.textContent = 'Rejeitando...';
+      await atualizarStatusHomenagem(item.id, 'rejeitado');
+      if (window.avisoSite) window.avisoSite('Homenagem rejeitada.', '⚠️');
+      wrap.remove();
+    });
+
+    acoes.appendChild(btnAprovar);
+    acoes.appendChild(btnRejeitar);
+
+    wrap.appendChild(info);
+    wrap.appendChild(campoTexto.bloco);
+    wrap.appendChild(acoes);
+
+    return wrap;
+  }
+
   async function carregarMidias(){
     const itens = await buscarPendentesMidias();
     gridMidias.innerHTML = '';
@@ -774,9 +882,27 @@
     itens.forEach(item => gridConversas.appendChild(criarCardConversa(item)));
   }
 
+  async function carregarHomenagens(){
+    if (!gridHomenagens) return;
+    const itens = await buscarPendentesHomenagens();
+    gridHomenagens.innerHTML = '';
+
+    if (itens.length === 0) {
+      const vazio = document.createElement('p');
+      vazio.className = 'hint-text';
+      vazio.style.margin = '0';
+      vazio.textContent = 'Nenhuma homenagem aguardando aprovação no momento.';
+      gridHomenagens.appendChild(vazio);
+      return;
+    }
+
+    itens.forEach(item => gridHomenagens.appendChild(criarCardHomenagem(item)));
+  }
+
   carregarMidias();
   carregarRecados();
   carregarSonhos();
   carregarComentarios();
   carregarConversas();
+  carregarHomenagens();
 })();
