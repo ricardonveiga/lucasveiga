@@ -189,8 +189,8 @@ footer{
   position: relative;
   width: 100%;
   max-width: 300px;
-  max-height: calc(100vh - 3rem);
-  max-height: calc(100dvh - 3rem);
+  max-height: calc(100vh - 1.5rem);
+  max-height: calc(100dvh - 1.5rem);
   overflow-y: auto;
   border-radius: 14px;
   text-align: center;
@@ -288,8 +288,8 @@ footer{
 .login-box .btn-publico{
   display: block;
   width: 100%;
-  padding: 0.55rem;
-  margin-top: 0.35rem;
+  padding: 0.45rem;
+  margin-top: 0.25rem;
   border-radius: 6px;
   border: 1px solid var(--line);
   cursor: pointer;
