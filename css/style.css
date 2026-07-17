@@ -200,7 +200,7 @@ footer{
 
 .login-image{
   display: block;
-  width: 100%;
+  width: 75%;
   height: auto;
   margin: 0 auto;
 }
@@ -242,8 +242,8 @@ footer{
 
 .login-box input{
   width: 100%;
-  padding: 0.5rem 0.8rem;
-  margin-bottom: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  margin-bottom: 0.4rem;
   border-radius: 6px;
   border: 1px solid var(--line);
   background: rgba(242,244,248,0.06);
