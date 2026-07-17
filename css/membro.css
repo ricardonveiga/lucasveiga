@@ -385,6 +385,7 @@ a{ text-decoration: none; color: inherit; }
   /* Deve sempre corresponder à proporção real da imagem do banner em uso
      (bannersuperior_dashboard5.png = 1774x887). Se trocar a imagem, atualizar aqui. */
   aspect-ratio: 1774 / 887;
+  max-height: 480px;
   border: 1px solid var(--line);
   background: #0d1b2e;
 }
@@ -420,7 +421,9 @@ a{ text-decoration: none; color: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  /* 61% prioriza a parte de baixo: mantém silhueta e assinatura inteiras,
+     cortando apenas o céu vazio do topo em telas largas */
+  object-position: center 61%;
 }
 
 .hero-text{
