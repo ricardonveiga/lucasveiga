@@ -279,9 +279,7 @@
       lembrancaEngracada: document.getElementById('pLembrancaEngracada').value.trim(),
       algoNuncaDisse: document.getElementById('pAlgoNuncaDisse').value.trim(),
       algoQueGostariaOuvir: document.getElementById('pAlgoQueGostariaOuvir').value.trim(),
-      momentoAbraco: document.getElementById('pMomentoAbraco').value.trim(),
-      sentimentoDesejado: document.getElementById('pSentimentoDesejado').value,
-      fraseEspecial: document.getElementById('pFraseEspecial').value.trim()
+      momentoAbraco: document.getElementById('pMomentoAbraco').value.trim()
     };
 
     const algumaResposta = Object.values(respostas).some(v => v && v.length > 0);
