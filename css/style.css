@@ -189,8 +189,10 @@ footer{
   position: relative;
   width: 100%;
   max-width: 300px;
+  max-height: calc(100vh - 3rem);
+  max-height: calc(100dvh - 3rem);
+  overflow-y: auto;
   border-radius: 14px;
-  overflow: hidden;
   text-align: center;
   animation: rise 0.4s ease-out both;
   background: #000000;
