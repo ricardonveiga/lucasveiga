@@ -303,7 +303,6 @@
     await salvarRespostas(respostas, mensagemGerada);
 
     document.querySelectorAll('#perguntasModal textarea').forEach(t => (t.value = ''));
-    document.getElementById('pSentimentoDesejado').value = '';
 
     fecharModalPerguntas();
     bell.classList.add('has-unread');
