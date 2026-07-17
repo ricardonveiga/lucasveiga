@@ -312,14 +312,11 @@
     }
     // O botão continua visível para todos, mas só membros e família podem
     // de fato publicar — visitante (cadastro público) vê uma mensagem no
-    // lugar do formulário quando tenta usar.
+    // lugar da seção inteira quando tenta usar.
     if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
       const formHomenagem = document.getElementById('deixar-homenagem');
       if (formHomenagem) {
-        const formGrid = formHomenagem.querySelector('.form-grid');
-        if (formGrid) {
-          formGrid.outerHTML = '<p class="hint-text" style="margin:0;">Deixar uma homenagem é exclusivo para membros e família. Você ainda pode ver as homenagens compartilhadas com todos.</p>';
-        }
+        formHomenagem.innerHTML = '<p class="hint-text" style="margin:0;">Deixar uma homenagem é exclusivo para membros e família. Você ainda pode ver as homenagens compartilhadas com todos.</p>';
       }
     }
   </script>
