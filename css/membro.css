@@ -382,8 +382,9 @@ a{ text-decoration: none; color: inherit; }
   overflow: hidden;
   margin-bottom: 1.6rem;
   width: 100%;
-  aspect-ratio: 1774 / 724;
-  max-height: 400px;
+  /* Deve sempre corresponder à proporção real da imagem do banner em uso
+     (bannersuperior_dashboard5.png = 1774x887). Se trocar a imagem, atualizar aqui. */
+  aspect-ratio: 1774 / 887;
   border: 1px solid var(--line);
   background: #0d1b2e;
 }
