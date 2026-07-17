@@ -321,6 +321,13 @@
       const linkAdmin = document.getElementById('navAdminLink');
       if (linkAdmin) linkAdmin.style.display = '';
     }
+    // Visitante (cadastro público) só visualiza — não pode adicionar conversas.
+    if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
+      const formConversa = document.getElementById('adicionar-conversa');
+      if (formConversa) {
+        formConversa.innerHTML = '<p class="hint-text" style="margin:0;">Adicionar conversas é exclusivo para membros e família. Você ainda pode ver o que já foi compartilhado com todos.</p>';
+      }
+    }
   </script>
 </body>
 </html>
