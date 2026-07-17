@@ -189,11 +189,19 @@ footer{
   position: relative;
   width: 100%;
   max-width: 300px;
+  max-height: calc(100vh - 1.5rem);
+  max-height: calc(100dvh - 1.5rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-radius: 14px;
-  overflow: hidden;
   text-align: center;
   animation: rise 0.4s ease-out both;
   background: #000000;
+}
+.login-box::-webkit-scrollbar{
+  display: none;
 }
 
 .login-image{
@@ -315,21 +323,9 @@ footer{
   color: var(--ink);
 }
 
-/* ===== A partir daqui, só telas de desktop (celular fica com as regras
-   originais acima, sem nenhuma dessas mudanças) ===== */
+/* ===== A partir daqui, só telas de desktop (celular usa o tamanho e
+   espaçamento originais, só a rolagem acima é compartilhada por todos) ===== */
 @media (min-width: 768px){
-  .login-box{
-    max-height: calc(100vh - 1.5rem);
-    max-height: calc(100dvh - 1.5rem);
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .login-box::-webkit-scrollbar{
-    display: none;
-  }
-
   .login-image{
     width: 75%;
   }
