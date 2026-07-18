@@ -409,41 +409,19 @@ a{ text-decoration: none; color: inherit; }
   opacity: 0;
   transition: opacity 0.8s ease;
   pointer-events: none;
-  overflow: hidden;
 }
 .hero-slide.active{
   opacity: 1;
   pointer-events: auto;
 }
 
-.hero-slide::before{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: inherit;
-  background-size: cover;
-  background-position: center;
-  filter: blur(35px) brightness(0.85) saturate(1.15);
-  transform: scale(1.15);
-  z-index: 0;
-}
-.hero-slide-default::before{
-  background-image: url('../images/bannersuperior_dashboard5.png');
-}
-
 .hero-image{
   position: absolute;
   inset: 0;
-  z-index: 1;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  /* Este número é o único controle da distância: reduzindo, a "lua"
-     (silhueta) se afasta e fica menor dentro do quadro; aumentando, ela
-     se aproxima. 1 = tamanho normal. Não mexe em mais nada do layout. */
-  transform: scale(0.72);
-  transform-origin: center;
 }
 
 .hero-text{
