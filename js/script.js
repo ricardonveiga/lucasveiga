@@ -7,28 +7,19 @@ const DOMINIO_LOGIN = 'veigalucas.com.br';
 const loginToggle = document.getElementById('loginToggle');
 const loginOverlay = document.getElementById('loginOverlay');
 const closeLogin = document.getElementById('closeLogin');
-const btnPublico = document.getElementById('btnPublico');
 const btnEntrar = document.getElementById('btnEntrar');
 const loginUser = document.getElementById('loginUser');
 const loginPass = document.getElementById('loginPass');
 const loginError = document.getElementById('loginError');
+const loginSuccess = document.getElementById('loginSuccess');
 const togglePass = document.getElementById('togglePass');
 
 const loginFields = document.getElementById('loginFields');
-const publicChoiceFields = document.getElementById('publicChoiceFields');
-const publicLoginFields = document.getElementById('publicLoginFields');
 const guestFields = document.getElementById('guestFields');
 const lgpdFields = document.getElementById('lgpdFields');
 const contentConsentFields = document.getElementById('contentConsentFields');
 const forgotFields = document.getElementById('forgotFields');
-const btnJaTenhoCadastro = document.getElementById('btnJaTenhoCadastro');
 const btnCriarCadastro = document.getElementById('btnCriarCadastro');
-const btnPublicChoiceBack = document.getElementById('btnPublicChoiceBack');
-const publicLoginEmail = document.getElementById('publicLoginEmail');
-const publicLoginPass = document.getElementById('publicLoginPass');
-const publicLoginError = document.getElementById('publicLoginError');
-const btnPublicLoginConfirm = document.getElementById('btnPublicLoginConfirm');
-const btnPublicLoginBack = document.getElementById('btnPublicLoginBack');
 const btnGuestConfirm = document.getElementById('btnGuestConfirm');
 const btnGuestBack = document.getElementById('btnGuestBack');
 const btnLgpdConfirm = document.getElementById('btnLgpdConfirm');
@@ -83,8 +74,6 @@ let aoConfirmarConteudo = null;
 
 function resetLoginView() {
   loginFields.classList.remove('login-content-hidden');
-  publicChoiceFields.classList.add('login-content-hidden');
-  publicLoginFields.classList.add('login-content-hidden');
   guestFields.classList.add('login-content-hidden');
   lgpdFields.classList.add('login-content-hidden');
   contentConsentFields.classList.add('login-content-hidden');
@@ -100,10 +89,8 @@ function resetLoginView() {
   if (guestCpf) guestCpf.style.borderColor = '';
   if (guestPass) guestPass.style.borderColor = '';
   guestError.textContent = '';
-  if (publicLoginEmail) publicLoginEmail.value = '';
-  if (publicLoginPass) publicLoginPass.value = '';
-  if (publicLoginError) publicLoginError.textContent = '';
   loginError.textContent = '';
+  if (loginSuccess) loginSuccess.textContent = '';
 }
 
 loginToggle.addEventListener('click', () => {
@@ -139,9 +126,10 @@ btnEntrar.addEventListener('click', async () => {
   const password = loginPass.value;
 
   loginError.textContent = '';
+  if (loginSuccess) loginSuccess.textContent = '';
 
   if (!usuarioDigitado || !password) {
-    loginError.textContent = 'Preencha usuário e senha.';
+    loginError.textContent = 'Preencha email e senha.';
     return;
   }
 
@@ -152,7 +140,7 @@ btnEntrar.addEventListener('click', async () => {
   btnEntrar.disabled = true;
   btnEntrar.textContent = 'Entrando...';
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
+  const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
     email: email,
     password: password
   });
@@ -161,73 +149,71 @@ btnEntrar.addEventListener('click', async () => {
   btnEntrar.textContent = 'Entrar';
 
   if (error) {
-    loginError.textContent = 'Usuário ou senha incorretos.';
+    loginError.textContent = 'Email ou senha incorretos.';
     return;
   }
 
+  // Primeiro tenta como membro/família (tabela usuários);
+  // se não encontrar, tenta como visitante (tabela visitantes).
   const { data: perfil } = await supabaseClient
     .from('usuários')
     .select('id, nome, mensagem_boas_vindas, grupo, papel')
     .eq('login', email)
-    .single();
+    .maybeSingle();
 
-  let mensagem = 'Bem-vindo!';
-  let nome = '';
-  let usuarioId = '';
-  let grupo = 'membro';
-  let papel = 'membro';
+  if (perfil) {
+    let mensagem = 'Bem-vindo!';
+    if (perfil.mensagem_boas_vindas) {
+      mensagem = perfil.mensagem_boas_vindas;
+    } else if (perfil.nome) {
+      mensagem = `Bem-vindo, ${perfil.nome}!`;
+    }
 
-  if (perfil && perfil.mensagem_boas_vindas) {
-    mensagem = perfil.mensagem_boas_vindas;
-  } else if (perfil && perfil.nome) {
-    mensagem = `Bem-vindo, ${perfil.nome}!`;
+    aoConfirmarConteudo = () => {
+      sessionStorage.setItem('mensagemBoasVindas', mensagem);
+      sessionStorage.setItem('tipoAcesso', 'membro');
+      sessionStorage.setItem('nomeUsuario', perfil.nome || '');
+      sessionStorage.setItem('usuarioId', perfil.id ? String(perfil.id) : '');
+      sessionStorage.setItem('grupoUsuario', perfil.grupo || 'membro');
+      sessionStorage.setItem('papelUsuario', perfil.papel || 'membro');
+      window.location.href = 'area.html';
+    };
+  } else {
+    const { data: visitantePerfil } = await supabaseClient
+      .from('visitantes')
+      .select('id, nome')
+      .eq('auth_uid', authData.user.id)
+      .maybeSingle();
+
+    const usuarioIdVisitante = visitantePerfil ? String(visitantePerfil.id) : '';
+    const nomeVisitante = visitantePerfil && visitantePerfil.nome ? visitantePerfil.nome : '';
+
+    aoConfirmarConteudo = () => {
+      sessionStorage.removeItem('grupoUsuario');
+      sessionStorage.removeItem('papelUsuario');
+
+      sessionStorage.setItem('mensagemBoasVindas', nomeVisitante ? `Que bom te ver de novo, ${nomeVisitante}!` : 'Que bom te ver de novo!');
+      sessionStorage.setItem('tipoAcesso', 'visitante');
+      sessionStorage.setItem('usuarioId', usuarioIdVisitante);
+      sessionStorage.setItem('nomeUsuario', nomeVisitante);
+      window.location.href = 'area.html';
+    };
   }
-  if (perfil && perfil.nome) nome = perfil.nome;
-  if (perfil && perfil.id) usuarioId = String(perfil.id);
-  if (perfil && perfil.grupo) grupo = perfil.grupo;
-  if (perfil && perfil.papel) papel = perfil.papel;
-
-  aoConfirmarConteudo = () => {
-    sessionStorage.setItem('mensagemBoasVindas', mensagem);
-    sessionStorage.setItem('tipoAcesso', 'membro');
-    sessionStorage.setItem('nomeUsuario', nome);
-    sessionStorage.setItem('usuarioId', usuarioId);
-    sessionStorage.setItem('grupoUsuario', grupo);
-    sessionStorage.setItem('papelUsuario', papel);
-    window.location.href = 'area.html';
-  };
 
   loginFields.classList.add('login-content-hidden');
   contentConsentFields.classList.remove('login-content-hidden');
 });
 
-btnPublico.addEventListener('click', () => {
-  loginFields.classList.add('login-content-hidden');
-  publicChoiceFields.classList.remove('login-content-hidden');
-});
-
-btnPublicChoiceBack.addEventListener('click', () => {
-  resetLoginView();
-});
-
-btnJaTenhoCadastro.addEventListener('click', () => {
-  publicChoiceFields.classList.add('login-content-hidden');
-  publicLoginFields.classList.remove('login-content-hidden');
-});
-
 btnCriarCadastro.addEventListener('click', () => {
-  publicChoiceFields.classList.add('login-content-hidden');
+  loginError.textContent = '';
+  if (loginSuccess) loginSuccess.textContent = '';
+  loginFields.classList.add('login-content-hidden');
   guestFields.classList.remove('login-content-hidden');
-});
-
-btnPublicLoginBack.addEventListener('click', () => {
-  publicLoginFields.classList.add('login-content-hidden');
-  publicChoiceFields.classList.remove('login-content-hidden');
 });
 
 btnGuestBack.addEventListener('click', () => {
   guestFields.classList.add('login-content-hidden');
-  publicChoiceFields.classList.remove('login-content-hidden');
+  loginFields.classList.remove('login-content-hidden');
 });
 
 btnEsqueciSenha.addEventListener('click', () => {
@@ -351,7 +337,7 @@ btnLgpdConfirm.addEventListener('click', async () => {
     lgpdFields.classList.add('login-content-hidden');
     guestFields.classList.remove('login-content-hidden');
     guestError.textContent = authError.message.includes('already registered')
-      ? 'Esse e-mail já tem cadastro. Volte e escolha "Já tenho cadastro".'
+      ? 'Esse e-mail já tem cadastro. Volte e entre com seu email e senha na tela de login.'
       : 'Erro ao criar cadastro. Tente novamente.';
     return;
   }
@@ -380,77 +366,26 @@ btnLgpdConfirm.addEventListener('click', async () => {
     return;
   }
 
-  const usuarioIdNovo = visitanteSalvo ? String(visitanteSalvo.id) : '';
+  // O signUp deixa uma sessão aberta; encerra para a pessoa entrar
+  // de verdade pela tela de login, com o email e a senha que criou.
+  await supabaseClient.auth.signOut();
 
-  aoConfirmarConteudo = () => {
-    // Limpa qualquer resquício de sessão anterior (de um login de membro
-    // feito antes, no mesmo navegador) — sem isso, o visitante podia
-    // "herdar" nome/permissões de quem usou o site antes dele.
-    sessionStorage.removeItem('nomeUsuario');
-    sessionStorage.removeItem('usuarioId');
-    sessionStorage.removeItem('grupoUsuario');
-    sessionStorage.removeItem('papelUsuario');
-
-    sessionStorage.setItem('mensagemBoasVindas', `Bem-vindo, ${nomeValor}!`);
-    sessionStorage.setItem('tipoAcesso', 'visitante');
-    sessionStorage.setItem('usuarioId', usuarioIdNovo);
-    sessionStorage.setItem('nomeUsuario', nomeValor);
-    window.location.href = 'area.html';
-  };
-
+  // Volta para a tela inicial de login com o email já preenchido
   lgpdFields.classList.add('login-content-hidden');
-  contentConsentFields.classList.remove('login-content-hidden');
-});
+  loginFields.classList.remove('login-content-hidden');
+  loginUser.value = emailValor;
+  loginPass.value = '';
+  loginError.textContent = '';
+  if (loginSuccess) loginSuccess.textContent = 'Cadastro criado! Agora entre com seu email e senha.';
 
-btnPublicLoginConfirm.addEventListener('click', async () => {
-  const emailValor = publicLoginEmail.value.trim();
-  const senhaValor = publicLoginPass.value;
-
-  publicLoginError.textContent = '';
-
-  if (!emailValido(emailValor) || !senhaValor) {
-    publicLoginError.textContent = 'Preencha e-mail e senha.';
-    return;
-  }
-
-  btnPublicLoginConfirm.disabled = true;
-  btnPublicLoginConfirm.textContent = 'Entrando...';
-
-  const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-    email: emailValor,
-    password: senhaValor
-  });
-
-  btnPublicLoginConfirm.disabled = false;
-  btnPublicLoginConfirm.textContent = 'Entrar';
-
-  if (authError) {
-    publicLoginError.textContent = 'E-mail ou senha incorretos.';
-    return;
-  }
-
-  const { data: visitantePerfil } = await supabaseClient
-    .from('visitantes')
-    .select('id, nome')
-    .eq('auth_uid', authData.user.id)
-    .single();
-
-  const usuarioIdVisitante = visitantePerfil ? String(visitantePerfil.id) : '';
-  const nomeVisitante = visitantePerfil && visitantePerfil.nome ? visitantePerfil.nome : '';
-
-  aoConfirmarConteudo = () => {
-    sessionStorage.removeItem('grupoUsuario');
-    sessionStorage.removeItem('papelUsuario');
-
-    sessionStorage.setItem('mensagemBoasVindas', nomeVisitante ? `Que bom te ver de novo, ${nomeVisitante}!` : 'Que bom te ver de novo!');
-    sessionStorage.setItem('tipoAcesso', 'visitante');
-    sessionStorage.setItem('usuarioId', usuarioIdVisitante);
-    sessionStorage.setItem('nomeUsuario', nomeVisitante);
-    window.location.href = 'area.html';
-  };
-
-  publicLoginFields.classList.add('login-content-hidden');
-  contentConsentFields.classList.remove('login-content-hidden');
+  // Limpa o formulário de cadastro
+  if (guestNome) guestNome.value = '';
+  guestEmail.value = '';
+  guestPhone.value = '';
+  if (guestCpf) guestCpf.value = '';
+  if (guestPass) guestPass.value = '';
+  if (guestPassConfirm) guestPassConfirm.value = '';
+  guestError.textContent = '';
 });
 
 btnContentConsentConfirm.addEventListener('click', () => {
