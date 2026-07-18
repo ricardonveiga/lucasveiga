@@ -6,6 +6,7 @@
   if (!container) return;
 
   const usuarioId = sessionStorage.getItem('usuarioId');
+  const tipoUsuario = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
 
   function mostrarMensagem(texto){
     container.innerHTML = '';
@@ -119,8 +120,12 @@
 
   async function buscar(tabela){
     try {
+      // Filtra pelo ID E pelo tipo do autor — visitante e membro podem ter
+      // o mesmo número de ID (tabelas diferentes). Linhas antigas sem tipo
+      // continuam aparecendo (is.null).
+      const filtroTipo = `&or=(autor_tipo.eq.${tipoUsuario},autor_tipo.is.null)`;
       const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/${tabela}?autor_id=eq.${usuarioId}&select=*&order=criado_em.desc&limit=100`,
+        `${SUPABASE_URL}/rest/v1/${tabela}?autor_id=eq.${usuarioId}${filtroTipo}&select=*&order=criado_em.desc&limit=100`,
         { headers: HEADERS }
       );
       const dados = await resp.json();

@@ -93,3 +93,21 @@ function aplicarFiltroVisibilidade(){
 }
 
 document.addEventListener('DOMContentLoaded', aplicarFiltroVisibilidade);
+
+// ============================================================
+// Sair de verdade: limpa a sessão deste usuário e o token de
+// autenticação do Supabase salvo no navegador. Sem isso, a próxima
+// pessoa a usar o mesmo computador herdava o acesso de quem saiu.
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const btnSair = document.getElementById('btnSair');
+  if (!btnSair) return;
+  btnSair.addEventListener('click', () => {
+    try { sessionStorage.clear(); } catch(e){}
+    try {
+      Object.keys(localStorage).forEach(chave => {
+        if (chave.startsWith('sb-')) localStorage.removeItem(chave);
+      });
+    } catch(e){}
+  });
+});

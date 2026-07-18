@@ -132,6 +132,7 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
   formData.append('autor_nome', autorNome);
   formData.append('visibilidade', visibilidade);
   formData.append('usuario_id', usuarioId);
+  formData.append('autor_tipo', sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante');
 
   if (metodoAtivo === 'tela') {
     const blob = await canvasParaBlob(canvas);

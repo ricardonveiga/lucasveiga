@@ -36,7 +36,9 @@
       // Membros e família também veem os próprios itens "não compartilhar".
       return itens.filter(item => {
         if (item.visibilidade === 'privado') {
-          return !!meuId && String(item.autor_id) === String(meuId);
+          const meuTipo = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
+            const tipoConfere = !item.autor_tipo || item.autor_tipo === meuTipo;
+            return !!meuId && tipoConfere && String(item.autor_id) === String(meuId);
         }
         return true;
       });
