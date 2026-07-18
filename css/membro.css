@@ -435,11 +435,11 @@ a{ text-decoration: none; color: inherit; }
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100%;
-  /* "contain" garante que NADA seja cortado: pássaros, silhueta e
-     assinatura sempre aparecem inteiros. As laterais que sobram são
-     preenchidas pelo fundo desfocado acima (mesma imagem, sem precisar
-     de outro arquivo). */
+  /* Esta altura (menor que 100%) é o controle da distância: reduzindo o
+     valor, a "lua" (silhueta) se afasta e fica menor dentro do quadro,
+     com mais céu desfocado ao redor. Aumentando, ela se aproxima.
+     Ajuste só este número para reaproximar/afastar. */
+  height: 72%;
   object-fit: contain;
   object-position: center;
 }
