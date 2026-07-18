@@ -13,7 +13,21 @@
   const usuarioId = sessionStorage.getItem('usuarioId');
   if (!usuarioId) return;
 
-  const CHAVE_ULTIMA_EXIBICAO = 'perguntasUltimaExibicao_' + usuarioId;
+  // Membro e visitante vêm de tabelas diferentes (usuários × visitantes) e os
+  // IDs numéricos podem coincidir. O tipo_usuario separa as caixas de entrada.
+  const tipoUsuario = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
+
+  // Se a coluna tipo_usuario ainda não existir no banco (SQL de atualização
+  // não rodado), o código cai automaticamente no comportamento antigo.
+  let colunaTipoDisponivel = true;
+
+  const HEADERS = {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${SUPABASE_KEY}`
+  };
+  const HEADERS_JSON = { ...HEADERS, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
+
+  const CHAVE_ULTIMA_EXIBICAO = 'perguntasUltimaExibicao_' + tipoUsuario + '_' + usuarioId;
 
   function hoje(){
     return new Date().toISOString().slice(0, 10);
@@ -53,36 +67,71 @@
     }
   }
 
+  // Agora VERIFICA se o banco aceitou a gravação — antes, uma falha aqui
+  // passava despercebida: o sino acendia e a mensagem nunca existia.
   async function salvarRespostas(respostas, mensagemGerada){
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas`, {
+    const corpoBase = {
+      usuario_id: Number(usuarioId),
+      respostas,
+      mensagem_gerada: mensagemGerada,
+      lida: false
+    };
+
+    async function tentar(corpo){
+      const resp = await fetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas`, {
         method: 'POST',
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
-          Prefer: 'return=minimal'
-        },
-        body: JSON.stringify({
-          usuario_id: Number(usuarioId),
-          respostas,
-          mensagem_gerada: mensagemGerada,
-          lida: false
-        })
+        headers: HEADERS_JSON,
+        body: JSON.stringify(corpo)
       });
+      if (resp.ok) return { ok: true };
+      let detalhe = '';
+      try { detalhe = (await resp.json()).message || ''; } catch(e){}
+      return { ok: false, status: resp.status, detalhe };
+    }
+
+    try {
+      if (colunaTipoDisponivel) {
+        const r = await tentar({ ...corpoBase, tipo_usuario: tipoUsuario });
+        if (r.ok) return { ok: true };
+        // Coluna ainda não existe no banco → tenta no formato antigo
+        if (r.status === 400 && /tipo_usuario/.test(r.detalhe)) {
+          colunaTipoDisponivel = false;
+        } else {
+          console.error('Erro ao salvar mensagem:', r.status, r.detalhe);
+          return { ok: false, detalhe: r.detalhe };
+        }
+      }
+      const r2 = await tentar(corpoBase);
+      if (r2.ok) return { ok: true };
+      console.error('Erro ao salvar mensagem:', r2.status, r2.detalhe);
+      return { ok: false, detalhe: r2.detalhe };
     } catch (e) {
       console.error('Erro ao salvar respostas:', e);
+      return { ok: false, detalhe: String(e) };
     }
   }
 
   async function buscarMensagensLucas(){
-    try {
-      const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/respostas_perguntas?usuario_id=eq.${usuarioId}&select=id,mensagem_gerada,lida,criado_em&order=criado_em.desc`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-      );
+    const base = `${SUPABASE_URL}/rest/v1/respostas_perguntas?usuario_id=eq.${usuarioId}` +
+      `&select=id,mensagem_gerada,lida,criado_em&order=criado_em.desc`;
+    // Inclui também linhas antigas (tipo_usuario nulo, de antes da atualização)
+    const filtroTipo = `&or=(tipo_usuario.eq.${tipoUsuario},tipo_usuario.is.null)`;
+
+    async function tentar(url){
+      const resp = await fetch(url, { headers: HEADERS });
+      if (!resp.ok) return null;
       const dados = await resp.json();
-      return Array.isArray(dados) ? dados : [];
+      return Array.isArray(dados) ? dados : null;
+    }
+
+    try {
+      if (colunaTipoDisponivel) {
+        const dados = await tentar(base + filtroTipo);
+        if (dados) return dados;
+        colunaTipoDisponivel = false;
+      }
+      const legado = await tentar(base);
+      return legado || [];
     } catch (e) {
       console.error('Erro ao buscar mensagens:', e);
       return [];
@@ -93,7 +142,7 @@
     try {
       const resp = await fetch(
         `${SUPABASE_URL}/rest/v1/notificacoes_moderacao?usuario_id=eq.${usuarioId}&select=*&order=criado_em.desc`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+        { headers: HEADERS }
       );
       const dados = await resp.json();
       if (!Array.isArray(dados) || dados.length === 0) return [];
@@ -105,17 +154,13 @@
 
       if (midiaIds.length > 0) {
         const ids = midiaIds.map(id => `"${id}"`).join(',');
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/midias?id=in.(${ids})&select=id,nome_evento,ano`, {
-          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-        });
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/midias?id=in.(${ids})&select=id,nome_evento,ano`, { headers: HEADERS });
         const d = await r.json();
         if (Array.isArray(d)) mapaMidias = new Map(d.map(m => [String(m.id), m]));
       }
       if (recadoIds.length > 0) {
         const ids = recadoIds.map(id => `"${id}"`).join(',');
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=in.(${ids})&select=id,autor_nome`, {
-          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-        });
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=in.(${ids})&select=id,autor_nome`, { headers: HEADERS });
         const d = await r.json();
         if (Array.isArray(d)) mapaRecados = new Map(d.map(rc => [String(rc.id), rc]));
       }
@@ -144,39 +189,37 @@
     }
   }
 
-  async function marcarComoLida(id){
+  async function patchOuDelete(url, metodo, corpo){
     try {
-      await fetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-        body: JSON.stringify({ lida: true })
+      const resp = await fetch(url, {
+        method: metodo,
+        headers: metodo === 'PATCH' ? HEADERS_JSON : HEADERS,
+        body: corpo ? JSON.stringify(corpo) : undefined
       });
-    } catch (e) { console.error(e); }
+      if (!resp.ok) {
+        let detalhe = '';
+        try { detalhe = (await resp.json()).message || ''; } catch(e){}
+        console.error(`Falha ${metodo} ${url}:`, resp.status, detalhe);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      console.error(`Erro ${metodo}:`, e);
+      return false;
+    }
   }
-  async function marcarNotificacaoComoLida(id){
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-        body: JSON.stringify({ lida: true })
-      });
-    } catch (e) { console.error(e); }
+
+  function marcarComoLida(id){
+    return patchOuDelete(`${SUPABASE_URL}/rest/v1/respostas_perguntas?id=eq.${id}`, 'PATCH', { lida: true });
   }
-  async function excluirMensagem(id){
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-      });
-    } catch (e) { console.error(e); }
+  function marcarNotificacaoComoLida(id){
+    return patchOuDelete(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao?id=eq.${id}`, 'PATCH', { lida: true });
   }
-  async function excluirNotificacao(id){
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao?id=eq.${id}`, {
-        method: 'DELETE',
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-      });
-    } catch (e) { console.error(e); }
+  function excluirMensagem(id){
+    return patchOuDelete(`${SUPABASE_URL}/rest/v1/respostas_perguntas?id=eq.${id}`, 'DELETE');
+  }
+  function excluirNotificacao(id){
+    return patchOuDelete(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao?id=eq.${id}`, 'DELETE');
   }
 
   async function buscarFeedCompleto(){
@@ -225,9 +268,14 @@
       btnExcluir.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       btnExcluir.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const confirmar = await window.confirmarSite('Excluir esta mensagem? Essa ação não pode ser desfeita.');
+        const confirmar = window.confirmarSite
+          ? await window.confirmarSite('Excluir esta mensagem? Essa ação não pode ser desfeita.')
+          : window.confirm('Excluir esta mensagem? Essa ação não pode ser desfeita.');
         if (!confirmar) return;
-        if (item.origem === 'lucas') await excluirMensagem(item.id); else await excluirNotificacao(item.id);
+        const conseguiu = item.origem === 'lucas' ? await excluirMensagem(item.id) : await excluirNotificacao(item.id);
+        if (!conseguiu && window.avisoSite) {
+          window.avisoSite('Não foi possível excluir agora — tente de novo em instantes.', '❌');
+        }
         await renderizarInbox();
         await atualizarSinoBadge();
       });
@@ -249,9 +297,11 @@
 
       if (!item.lida) {
         card.addEventListener('click', async () => {
-          if (item.origem === 'lucas') await marcarComoLida(item.id); else await marcarNotificacaoComoLida(item.id);
-          card.classList.remove('nao-lida');
-          card.querySelector('.mensagem-inbox-data').textContent = formatarData(item.criado_em);
+          const conseguiu = item.origem === 'lucas' ? await marcarComoLida(item.id) : await marcarNotificacaoComoLida(item.id);
+          if (conseguiu) {
+            card.classList.remove('nao-lida');
+            card.querySelector('.mensagem-inbox-data').textContent = formatarData(item.criado_em);
+          }
           atualizarSinoBadge();
         }, { once: true });
       }
@@ -292,20 +342,30 @@
 
     const mensagemGerada = await gerarMensagemComIA(respostas);
 
-    btnEnviar.disabled = false;
-    btnEnviar.textContent = textoOriginal;
-
     if (!mensagemGerada) {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = textoOriginal;
       window.avisoSite('Não foi possível gerar a mensagem agora. Tente novamente em instantes.', '❌');
       return;
     }
 
-    await salvarRespostas(respostas, mensagemGerada);
+    btnEnviar.textContent = 'Salvando...';
+    const resultado = await salvarRespostas(respostas, mensagemGerada);
+
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = textoOriginal;
+
+    // Só confirma e acende o sino se a mensagem REALMENTE foi gravada —
+    // antes, uma falha aqui acendia o sino com a caixa vazia.
+    if (!resultado.ok) {
+      window.avisoSite('A mensagem foi gerada, mas não foi possível salvá-la. Tente novamente em instantes.', '❌');
+      return;
+    }
 
     document.querySelectorAll('#perguntasModal textarea').forEach(t => (t.value = ''));
 
     fecharModalPerguntas();
-    bell.classList.add('has-unread');
+    await atualizarSinoBadge();
     window.avisoSite('Sua mensagem foi gerada! Clique no sino para ler.', '💌');
   });
 
