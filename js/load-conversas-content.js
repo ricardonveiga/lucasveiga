@@ -26,6 +26,7 @@
     const card = document.createElement('div');
     card.className = 'media-card ' + (ehAudio ? 'video-card' : 'photo-card');
     card.setAttribute('data-conversa-id', item.id);
+    card.setAttribute('data-item-id', String(item.id));
     card.setAttribute('data-visibility', item.visibilidade);
     card.setAttribute('data-autor-id', item.autor_id ?? '');
 
@@ -93,6 +94,22 @@
       }
 
       todosOsItens = itens;
+
+      // Aplica a ordem definida em "Organizar meus prints", se existir
+      try {
+        const ordemSalva = JSON.parse(localStorage.getItem('ordemConversa_padrao'));
+        if (ordemSalva && ordemSalva.length) {
+          todosOsItens.sort((a, b) => {
+            const posA = ordemSalva.indexOf(String(a.id));
+            const posB = ordemSalva.indexOf(String(b.id));
+            if (posA === -1 && posB === -1) return 0;
+            if (posA === -1) return 1;
+            if (posB === -1) return -1;
+            return posA - posB;
+          });
+        }
+      } catch(e){}
+
       paginaAtual = 0;
       renderizarPagina();
     } catch (e) {

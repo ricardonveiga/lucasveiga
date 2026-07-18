@@ -25,8 +25,8 @@
 
     if (ordemSalva && ordemSalva.length) {
       itens.sort((a, b) => {
-        const idA = a.dataset.itemId || a.dataset.mediaId || '';
-        const idB = b.dataset.itemId || b.dataset.mediaId || '';
+        const idA = a.dataset.itemId || a.dataset.conversaId || a.dataset.mediaId || '';
+        const idB = b.dataset.itemId || b.dataset.conversaId || b.dataset.mediaId || '';
         const posA = ordemSalva.indexOf(idA);
         const posB = ordemSalva.indexOf(idB);
         if (posA === -1 && posB === -1) return 0;

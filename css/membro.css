@@ -741,6 +741,11 @@ a{ text-decoration: none; color: inherit; }
 .marquee-track.marquee-vazio{
   animation: none;
   width: 100%;
+  /* Altura reservada igual à dos cards de mídia (140px) para que todas as
+     seções do dashboard tenham o mesmo tamanho, com ou sem conteúdo */
+  min-height: 140px;
+  display: flex;
+  align-items: center;
 }
 
 .marquee-wrap:has(.marquee-track.marquee-vazio){
