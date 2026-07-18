@@ -432,16 +432,18 @@ a{ text-decoration: none; color: inherit; }
 }
 
 .hero-image{
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   width: 100%;
-  /* Esta altura (menor que 100%) é o controle da distância: reduzindo o
-     valor, a "lua" (silhueta) se afasta e fica menor dentro do quadro,
-     com mais céu desfocado ao redor. Aumentando, ela se aproxima.
-     Ajuste só este número para reaproximar/afastar. */
-  height: 72%;
+  height: 100%;
   object-fit: contain;
   object-position: center;
+  /* Este número é o único controle da distância: reduzindo, a "lua"
+     (silhueta) se afasta e fica menor dentro do quadro; aumentando, ela
+     se aproxima. 1 = tamanho normal. Não mexe em mais nada do layout. */
+  transform: scale(0.72);
+  transform-origin: center;
 }
 
 .hero-text{
