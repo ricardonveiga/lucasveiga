@@ -160,6 +160,7 @@ async function enviarUmArquivo(arquivo, ano, evento, texto, visibilidade, autorI
       nome_evento: evento,
       visibilidade,
       autor_id: autorId,
+      autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       url_arquivo: urlArquivo
     })
   });

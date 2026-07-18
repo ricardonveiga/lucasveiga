@@ -74,7 +74,9 @@
   function podeVerSonho(item){
     if (item.visibilidade === 'privado') {
       const meuId = sessionStorage.getItem('usuarioId');
-      return !!meuId && String(item.autor_id) === String(meuId);
+      const meuTipo = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
+            const tipoConfere = !item.autor_tipo || item.autor_tipo === meuTipo;
+            return !!meuId && tipoConfere && String(item.autor_id) === String(meuId);
     }
     const nivel = nivelDeAcessoAtual();
     if (nivel === 'visitante') return false;

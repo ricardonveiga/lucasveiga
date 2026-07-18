@@ -54,6 +54,7 @@ async function enviarArquivoConversa(arquivo, tipo, texto, visibilidade, autorId
       texto_lembranca: texto,
       visibilidade,
       autor_id: autorId,
+      autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       autor_nome: autorNome
     })
   });
@@ -79,6 +80,7 @@ async function salvarConversaSoTexto(texto, visibilidade, autorId, autorNome){
       texto_lembranca: texto,
       visibilidade,
       autor_id: autorId,
+      autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       autor_nome: autorNome
     })
   });

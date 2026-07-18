@@ -65,6 +65,7 @@ if (btnPublicarSonho) {
     formData.append('autor_nome', autorNome);
     formData.append('visibilidade', visibilidade);
     formData.append('usuario_id', usuarioId);
+    formData.append('autor_tipo', sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante');
     if (temFoto) formData.append('foto', fotoInput.files[0]);
     if (temVideo) formData.append('video', videoInput.files[0]);
 

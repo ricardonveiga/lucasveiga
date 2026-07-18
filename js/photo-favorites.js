@@ -1,5 +1,17 @@
-const CHAVE_FAVORITAS = 'fotosFavoritasLucas';
+// As favoritas são separadas por usuário (tipo + ID) — antes, todos os
+// usuários do mesmo navegador compartilhavam e editavam a mesma lista.
+const FAVORITAS_TIPO = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
+const FAVORITAS_DONO = sessionStorage.getItem('usuarioId') || 'anon';
+const CHAVE_FAVORITAS = 'fotosFavoritasLucas_' + FAVORITAS_TIPO + '_' + FAVORITAS_DONO;
 const LIMITE_FAVORITAS = 15; // 5 banners de 3 fotos cada
+
+// Migração única: as favoritas antigas (chave compartilhada) eram as
+// escolhas do membro — aproveita para ele e ignora para visitantes.
+try {
+  if (FAVORITAS_TIPO === 'membro' && !localStorage.getItem(CHAVE_FAVORITAS) && localStorage.getItem('fotosFavoritasLucas')) {
+    localStorage.setItem(CHAVE_FAVORITAS, localStorage.getItem('fotosFavoritasLucas'));
+  }
+} catch(e){}
 
 function obterFavoritas(){
   try {

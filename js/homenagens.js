@@ -62,6 +62,7 @@ async function enviarArquivoHomenagem(arquivo, tipo, texto, visibilidade, autorI
       texto,
       visibilidade,
       autor_id: autorId,
+      autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       autor_nome: autorNome,
       autor_grupo: autorGrupo
     })
