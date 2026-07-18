@@ -2361,3 +2361,29 @@ a{ text-decoration: none; color: inherit; }
   gap:0.7rem;
 }
 .site-modal-acoes button{ flex:1; margin-top:0; }
+/* ===== Página Biografia ===== */
+.section-title{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--gold, #b8860b);
+  margin: 0 0 0.7rem 0;
+}
+
+.bio-texto{
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink, inherit);
+  margin: 0 0 0.6rem 0;
+  white-space: pre-line;
+}
+
+.bio-assinatura{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  opacity: 0.85;
+  margin: 1.2rem 0 0 0;
+  text-align: center;
+}
