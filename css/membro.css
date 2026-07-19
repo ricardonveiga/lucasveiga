@@ -2489,3 +2489,32 @@ a{ text-decoration: none; color: inherit; }
 }
 .recados-sequencia-anterior{ left: 0; }
 .recados-sequencia-proximo{ right: 0; }
+
+/* Setas de navegação da vitrine de recados */
+.recados-sequencia-nav{
+  display: flex;
+  align-items: center;
+}
+.recados-sequencia-anterior{ justify-content: flex-start; padding-left: 1rem; }
+.recados-sequencia-proximo{ justify-content: flex-end; padding-right: 1rem; }
+
+.recados-sequencia-seta{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(244,239,230,0.12);
+  color: #f4efe6;
+  transition: background 0.2s;
+}
+.recados-sequencia-nav:hover .recados-sequencia-seta{
+  background: rgba(216,180,106,0.35);
+}
+
+@media (max-width: 900px){
+  .recados-sequencia-seta{ width: 38px; height: 38px; }
+  .recados-sequencia-anterior{ padding-left: 0.4rem; }
+  .recados-sequencia-proximo{ padding-right: 0.4rem; }
+}
