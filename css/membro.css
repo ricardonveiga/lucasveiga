@@ -2518,3 +2518,22 @@ a{ text-decoration: none; color: inherit; }
   .recados-sequencia-anterior{ padding-left: 0.4rem; }
   .recados-sequencia-proximo{ padding-right: 0.4rem; }
 }
+
+
+/* ===== Ajustes SÓ para mobile (desktop permanece como está) ===== */
+@media (max-width: 900px){
+  .media-card{
+    width: 190px;
+    height: 130px;
+  }
+  .photo-card{
+    width: 150px;
+    height: 150px;
+  }
+  .recado-card{
+    width: 215px;
+  }
+  .marquee-track.marquee-vazio{
+    min-height: 150px;
+  }
+}
