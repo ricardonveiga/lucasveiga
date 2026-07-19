@@ -39,8 +39,8 @@ if (btnPublicarSonho) {
     const temFoto = fotoInput.files.length > 0;
     const temVideo = videoInput.files.length > 0;
 
-    if (!texto && !temFoto && !temVideo) {
-      window.avisoSite('Escreva o que sonhou ou sentiu, ou envie uma foto/vídeo antes de publicar.', '🌙');
+    if (!texto) {
+      window.avisoSite('Escreva o que sonhou ou sentiu — o texto é obrigatório (a foto/vídeo é opcional).', '🌙');
       return;
     }
 

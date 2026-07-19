@@ -566,8 +566,8 @@ a{ text-decoration: none; color: inherit; }
 .media-card{
   position: relative;
   flex-shrink: 0;
-  width: 200px;
-  height: 140px;
+  width: 240px;
+  height: 165px;
   border-radius: 10px;
   background: var(--card-inner);
   background-size: cover;
@@ -741,7 +741,7 @@ a{ text-decoration: none; color: inherit; }
   width: 100%;
   /* Altura reservada igual à dos cards de mídia (140px) para que todas as
      seções do dashboard tenham o mesmo tamanho, com ou sem conteúdo */
-  min-height: 140px;
+  min-height: 165px;
   display: flex;
   align-items: center;
 }
@@ -770,7 +770,7 @@ a{ text-decoration: none; color: inherit; }
 .recado-card{
   position: relative;
   flex-shrink: 0;
-  width: 220px;
+  width: 255px;
   background: var(--card-inner);
   border: 1px solid var(--line);
   border-left: 3px solid var(--accent);
