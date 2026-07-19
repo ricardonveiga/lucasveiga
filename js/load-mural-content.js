@@ -139,14 +139,29 @@
     const fim = inicio + ITENS_POR_PAGINA;
     const itensDaPagina = todosOsItens.slice(inicio, fim);
 
-    if (!paginacaoEl) {
-      // Dashboard: carrossel contínuo (ou estático, se couber na tela)
-      window.renderizarCarrossel(track, itensDaPagina, (item, indice) => criarCardRecado(item, indice));
-    } else {
-      itensDaPagina.forEach((item, indice) => {
-        track.appendChild(criarCardRecado(item, indice));
-      });
+    // No celular, a página do Mural vira carrossel rolando (como no
+    // dashboard) — a grade com paginação fica só para o desktop.
+    const carrosselMobile = paginacaoEl && window.matchMedia('(max-width: 900px)').matches;
+
+    if (!paginacaoEl || carrosselMobile) {
+      if (carrosselMobile) {
+        track.classList.remove('full-grid');
+        track.classList.add('marquee-track');
+        if (track.parentElement) track.parentElement.style.overflow = 'hidden';
+        paginacaoEl.style.display = 'none';
+      }
+      window.renderizarCarrossel(
+        track,
+        carrosselMobile ? todosOsItens : itensDaPagina,
+        (item, indice) => criarCardRecado(item, indice)
+      );
+      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+      return;
     }
+
+    itensDaPagina.forEach((item, indice) => {
+      track.appendChild(criarCardRecado(item, indice));
+    });
 
     if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
 
