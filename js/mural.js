@@ -148,6 +148,9 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
   formData.append('visibilidade', visibilidade);
   formData.append('usuario_id', usuarioId);
   formData.append('autor_tipo', sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante');
+  formData.append('autor_grupo',
+    sessionStorage.getItem('tipoAcesso') !== 'membro' ? 'visitante'
+    : (sessionStorage.getItem('grupoUsuario') === 'familia' ? 'familia' : 'membro'));
 
   // Trava o botão ANTES de qualquer passo assíncrono — sem isso, um clique
   // duplo durante a conversão do desenho criava o recado em dobro.
