@@ -158,10 +158,10 @@
       return;
     }
 
-    container.classList.remove('marquee-vazio');
-    container.innerHTML = '';
+    window.renderizarCarrossel(container, todos, (item, indice) => montarCard(item, indice));
+  }
 
-    todos.forEach((item, indice) => {
+  function montarCard(item, indice){
       let card;
       if (item.origem === 'midia') {
         card = cardMidia(item, item.tipo === 'video' ? 'Vídeo' : 'Foto');
@@ -183,8 +183,7 @@
           card = cardTexto(item, 'Recado', emoji, item.texto, indice);
         }
       }
-      container.appendChild(card);
-    });
+      return card;
   }
 
   carregar();
