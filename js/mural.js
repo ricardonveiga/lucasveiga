@@ -134,16 +134,19 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
   formData.append('usuario_id', usuarioId);
   formData.append('autor_tipo', sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante');
 
+  // Trava o botão ANTES de qualquer passo assíncrono — sem isso, um clique
+  // duplo durante a conversão do desenho criava o recado em dobro.
+  if (btn.disabled) return;
+  btn.disabled = true;
+  const textoOriginalBtn = btn.textContent;
+  btn.textContent = 'Publicando...';
+
   if (metodoAtivo === 'tela') {
     const blob = await canvasParaBlob(canvas);
     formData.append('arquivo', blob, 'recado-tela.png');
   } else if (metodoAtivo === 'foto') {
     formData.append('arquivo', arquivoFotoInput.files[0]);
   }
-
-  btn.disabled = true;
-  const textoOriginalBtn = btn.textContent;
-  btn.textContent = 'Publicando...';
 
   try {
     const resposta = await fetch(SUPABASE_FUNCTIONS_URL_RECADO, {
