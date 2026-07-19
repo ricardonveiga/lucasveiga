@@ -15,6 +15,11 @@ methodTabs.forEach(tab => {
       metodo === 'tela' ? 'painelTela' :
       metodo === 'foto' ? 'painelFoto' : 'painelDigitar'
     ).classList.add('active');
+
+    // Descrição obrigatória só para desenho/foto — no digitado, o próprio
+    // recado já é o texto
+    const boxDescricao = document.getElementById('recadoDescricaoBox');
+    if (boxDescricao) boxDescricao.style.display = (metodo === 'digitar') ? 'none' : '';
   });
 });
 
@@ -110,6 +115,16 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
     return;
   }
 
+  const descricaoInput = document.getElementById('recadoDescricao');
+  const descricaoRecado = descricaoInput ? descricaoInput.value.trim() : '';
+  if (metodoAtivo !== 'digitar' && !descricaoRecado) {
+    if (descricaoInput) descricaoInput.style.borderColor = '#e07a7a';
+    window.avisoSite('Escreva uma breve descrição do seu recado — ela é obrigatória.', '📝');
+    if (descricaoInput) descricaoInput.focus();
+    return;
+  }
+  if (descricaoInput) descricaoInput.style.borderColor = '';
+
   if (!autorInput.value.trim()) {
     autorInput.style.borderColor = '#e07a7a';
     autorErro.textContent = 'Identifique-se para deixar o recado — escreva seu nome.';
@@ -128,7 +143,7 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
 
   const formData = new FormData();
   formData.append('metodo', metodoAtivo === 'digitar' ? 'digitado' : metodoAtivo);
-  formData.append('texto', texto);
+  formData.append('texto', metodoAtivo === 'digitar' ? texto : descricaoRecado);
   formData.append('autor_nome', autorNome);
   formData.append('visibilidade', visibilidade);
   formData.append('usuario_id', usuarioId);
@@ -170,6 +185,7 @@ document.getElementById('btnPublicarRecado').addEventListener('click', async () 
     window.avisoSite(`Recado adicionado! Ele ${mensagemAprovacao}`, '✅');
 
     document.getElementById('recadoTexto').value = '';
+    if (descricaoInput) descricaoInput.value = '';
     arquivoFotoInput.value = '';
     autorInput.value = '';
     checkboxes.forEach(c => (c.checked = false));
