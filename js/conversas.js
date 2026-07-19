@@ -107,8 +107,8 @@ if (btnPublicarConversa) {
     const temPrints = printsInput.files.length > 0;
     const temAudio = audioInput.files.length > 0;
 
-    if (!texto && !temPrints && !temAudio) {
-      window.avisoSite('Envie um print, um áudio ou escreva algo antes de publicar.', '📎');
+    if (!texto) {
+      window.avisoSite('Escreva uma breve descrição ou lembrança — ela é obrigatória.', '📝');
       return;
     }
     if (checkboxes.length === 0) {

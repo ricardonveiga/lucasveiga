@@ -160,6 +160,7 @@ async function enviarUmArquivo(arquivo, ano, evento, texto, visibilidade, autorI
       nome_evento: evento,
       visibilidade,
       autor_id: autorId,
+      autor_nome: sessionStorage.getItem('nomeUsuario') || 'Anônimo',
       autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       url_arquivo: urlArquivo
     })
@@ -202,6 +203,12 @@ document.getElementById('btnPublicar').addEventListener('click', async () => {
   if (!evento) {
     eventoEl.focus();
     window.avisoSite('Informe o nome do evento ou momento — é obrigatório.', '🏷️');
+    return;
+  }
+
+  const descricaoDigitada = document.getElementById('conteudoTexto') ? document.getElementById('conteudoTexto').value.trim() : '';
+  if (!descricaoDigitada) {
+    window.avisoSite('Escreva uma breve descrição — ela é obrigatória.', '📝');
     return;
   }
   if (checkboxes.length === 0) {
