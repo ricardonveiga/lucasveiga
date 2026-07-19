@@ -88,8 +88,16 @@
       <p class="recados-sequencia-grupo"></p>
       <div class="recados-sequencia-palco"></div>
       <p class="recados-sequencia-contador"></p>
-      <div class="recados-sequencia-nav recados-sequencia-anterior"></div>
-      <div class="recados-sequencia-nav recados-sequencia-proximo"></div>
+      <div class="recados-sequencia-nav recados-sequencia-anterior">
+        <span class="recados-sequencia-seta" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+      <div class="recados-sequencia-nav recados-sequencia-proximo">
+        <span class="recados-sequencia-seta" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
     `;
     document.body.appendChild(overlay);
 
