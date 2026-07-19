@@ -118,9 +118,7 @@
       }
       return;
     }
-    track.classList.remove('marquee-vazio');
-    const lista = itens.length > 0 ? [...itens, ...itens] : itens;
-    lista.forEach(item => track.appendChild(criarCard(item)));
+    window.renderizarCarrossel(track, itens, (item) => criarCard(item));
   }
 
   // ===== Página com várias seções, uma por ano (fotos.html / videos.html) =====

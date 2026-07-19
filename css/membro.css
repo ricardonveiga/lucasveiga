@@ -746,6 +746,12 @@ a{ text-decoration: none; color: inherit; }
   align-items: center;
 }
 
+/* Poucos itens (não atravessam a tela): exibe uma vez, sem deslizar */
+.marquee-track.marquee-estatico{
+  animation: none;
+  width: 100%;
+}
+
 .marquee-wrap:has(.marquee-track.marquee-vazio){
   -webkit-mask-image: none;
   mask-image: none;

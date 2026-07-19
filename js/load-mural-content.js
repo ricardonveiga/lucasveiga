@@ -139,9 +139,14 @@
     const fim = inicio + ITENS_POR_PAGINA;
     const itensDaPagina = todosOsItens.slice(inicio, fim);
 
-    itensDaPagina.forEach((item, indice) => {
-      track.appendChild(criarCardRecado(item, indice));
-    });
+    if (!paginacaoEl) {
+      // Dashboard: carrossel contínuo (ou estático, se couber na tela)
+      window.renderizarCarrossel(track, itensDaPagina, (item, indice) => criarCardRecado(item, indice));
+    } else {
+      itensDaPagina.forEach((item, indice) => {
+        track.appendChild(criarCardRecado(item, indice));
+      });
+    }
 
     if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
 

@@ -111,3 +111,36 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e){}
   });
 });
+
+
+// ============================================================
+// Carrossel inteligente do dashboard.
+// - Conteúdo que não atravessa a tela: mostra UMA vez, parado
+//   (sem duplicação aparente).
+// - Conteúdo maior que a tela: cria uma segunda cópia (que fica
+//   fora da área visível) e desliza continuamente da direita para
+//   a esquerda, de ponta a ponta, com velocidade proporcional.
+// ============================================================
+window.renderizarCarrossel = function(track, itens, criarCard){
+  if (!track) return;
+  track.classList.remove('marquee-vazio');
+  track.classList.remove('marquee-estatico');
+  track.style.animationDuration = '';
+  track.innerHTML = '';
+
+  itens.forEach((item, indice) => track.appendChild(criarCard(item, indice)));
+
+  const wrap = track.parentElement;
+  const larguraVisivel = wrap ? wrap.clientWidth : 0;
+  const larguraBase = track.scrollWidth;
+
+  if (larguraVisivel > 0 && larguraBase > larguraVisivel + 8) {
+    // Segunda cópia para o loop sem emenda — os cards repetidos entram
+    // por um lado conforme os originais saem pelo outro.
+    itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
+    const duracao = Math.max(18, Math.round(larguraBase / 45));
+    track.style.animationDuration = duracao + 's';
+  } else {
+    track.classList.add('marquee-estatico');
+  }
+};

@@ -123,9 +123,7 @@
     // Sem controle de página na tela (widget do dashboard) = carrossel
     // contínuo, precisa duplicar os itens pro loop ficar suave.
     if (!paginacaoEl) {
-      track.classList.remove('marquee-vazio');
-      const paraExibir = [...todosOsItens, ...todosOsItens];
-      paraExibir.forEach(item => track.appendChild(criarCardHomenagem(item)));
+      window.renderizarCarrossel(track, todosOsItens, (item) => criarCardHomenagem(item));
       if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
       return;
     }
