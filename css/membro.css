@@ -1141,11 +1141,10 @@ a{ text-decoration: none; color: inherit; }
 /* Homenagens tem cara de álbum/memorial — cards maiores, com moldura,
    diferente do resto do site (que é mais "grade de miniaturas"). */
 .homenagens-grid{
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.6rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
 }
 .homenagens-grid .media-card{
-  height: 280px;
   border: 1px solid rgba(200,160,90,0.35);
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
