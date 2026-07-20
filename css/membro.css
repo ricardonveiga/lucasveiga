@@ -443,6 +443,7 @@ a{ text-decoration: none; color: inherit; }
 }
 
 .hero-text p{
+  font-style: italic;
   font-size: 1.05rem;
   color: #3a3226;
   margin: 0;
