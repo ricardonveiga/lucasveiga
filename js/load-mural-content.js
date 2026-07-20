@@ -29,6 +29,7 @@
     card.setAttribute('data-recado-id', item.id);
     card.setAttribute('data-visibility', item.visibilidade);
     card.setAttribute('data-autor', item.autor_nome || '');
+    card.setAttribute('data-autor-id', item.autor_id ?? '');
     card.setAttribute('data-texto', item.texto || '');
     card.setAttribute('data-imagem', item.imagem_url || '');
 

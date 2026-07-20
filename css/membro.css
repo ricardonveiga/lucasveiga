@@ -2537,3 +2537,29 @@ a{ text-decoration: none; color: inherit; }
     min-height: 150px;
   }
 }
+
+/* ===== Caixa explicativa das páginas de seção (não aparece no dashboard) ===== */
+.secao-explicacao{
+  border: 1px solid rgba(200,160,90,0.35);
+  border-left: 3px solid #d8b46a;
+  border-radius: 12px;
+  background: rgba(216,180,106,0.06);
+  padding: 1rem 1.3rem;
+  margin: 1.1rem 0 1.4rem 0;
+}
+
+.secao-explicacao-titulo{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #d8b46a;
+  margin: 0 0 0.4rem 0;
+}
+
+.secao-explicacao-texto{
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin: 0;
+  opacity: 0.92;
+}

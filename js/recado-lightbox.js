@@ -29,8 +29,10 @@
       const p = card.querySelector('p');
       texto = p ? p.textContent.replace(/^"|"$/g, '') : '';
     }
-    const privado = card.getAttribute('data-visibility') === 'privado';
-    return { id, autor, imagem, texto, privado };
+    const visibilidade = card.getAttribute('data-visibility') || 'todos';
+    const autorId = card.getAttribute('data-autor-id') || '';
+    const privado = visibilidade === 'privado';
+    return { id, autor, imagem, texto, privado, visibilidade, autorId };
   }
 
   function abrir(dados){
@@ -52,8 +54,8 @@
     autorEl.textContent = `— ${dados.autor}`;
 
     if (window.ReactionsAPI && dados.id) {
-      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.privado);
-      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.privado);
+      ReactionsAPI.buildInteractiveBar(dados.id, reactionsContainer, dados.visibilidade, dados.autorId);
+      ReactionsAPI.buildCommentsPanel(dados.id, commentsContainer, dados.visibilidade, dados.autorId);
     }
 
     overlay.classList.add('active');
