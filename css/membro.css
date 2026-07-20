@@ -2565,3 +2565,46 @@ a{ text-decoration: none; color: inherit; }
   color: var(--ink-dim);
   margin: 0;
 }
+
+/* ===== Seletor de emojis ===== */
+.emoji-seletor-btn{
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.3rem 0.45rem;
+  margin: 0.35rem 0 0 0;
+  cursor: pointer;
+  display: inline-block;
+}
+.emoji-seletor-btn:hover{ border-color: #d8b46a; }
+
+.emoji-seletor-painel{
+  position: fixed;
+  z-index: 4000;
+  width: 268px;
+  max-height: 210px;
+  overflow-y: auto;
+  background: var(--card-inner, #171d2b);
+  border: 1px solid rgba(200,160,90,0.4);
+  border-radius: 12px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.5);
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.15rem;
+}
+
+.emoji-seletor-opcao{
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.15rem;
+}
+.emoji-seletor-opcao:hover{
+  background: rgba(216,180,106,0.2);
+}

@@ -94,11 +94,19 @@
       </div>
 
       <div class="login-content login-content-hidden" id="forgotFields">
-        <p class="login-title">Esqueceu sua senha?</p>
-        <p class="guest-note">
-          Por segurança, a redefinição de senha não é feita automaticamente por aqui. Entre em contato com o administrador do site (Ricardo) para receber uma nova senha de acesso.
-        </p>
+        <p class="login-title">Recuperar senha</p>
+        <p class="guest-note">Informe o email e o CPF do seu cadastro. Se os dois baterem, uma nova senha será gerada para você.</p>
+        <input type="email" id="forgotEmail" placeholder="Email do cadastro" autocomplete="email">
+        <input type="text" id="forgotCpf" placeholder="CPF (só números)" inputmode="numeric" maxlength="14">
+        <p id="forgotErro" class="login-error"></p>
+        <div id="forgotResultado" class="login-content-hidden">
+          <p class="guest-note">Sua nova senha é:</p>
+          <p id="forgotNovaSenha" class="senha-gerada"></p>
+          <p class="guest-note">Anote com carinho. Entre com ela e, se quiser, troque depois no ícone de lápis dentro do site.</p>
+        </div>
+        <button id="btnForgotConfirm" class="btn-entrar">Gerar nova senha</button>
         <button id="btnForgotBack" class="btn-publico">Voltar</button>
+        <p class="guest-note" style="font-size:0.68rem; opacity:0.7;">Conta de membro da família? A senha é redefinida pelo administrador (Ricardo).</p>
       </div>
     </div>
   </div>
