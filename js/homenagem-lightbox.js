@@ -35,6 +35,16 @@
     textoEl.style.display = texto ? 'block' : 'none';
     autorEl.textContent = `— ${autor || 'Anônimo'}${data ? ', ' + data : ''}`;
 
+    const itemId = card.getAttribute('data-homenagem-id');
+    const visibilidade = card.getAttribute('data-visibility') || 'todos';
+    const autorId = card.getAttribute('data-autor-id') || '';
+    const reacoesEl = document.getElementById('homenagemLightboxReacoes');
+    const comentariosEl = document.getElementById('homenagemLightboxComentarios');
+    if (window.ReactionsAPI && itemId && reacoesEl && comentariosEl) {
+      ReactionsAPI.buildInteractiveBar(itemId, reacoesEl, visibilidade, autorId);
+      ReactionsAPI.buildCommentsPanel(itemId, comentariosEl, visibilidade, autorId);
+    }
+
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
   }

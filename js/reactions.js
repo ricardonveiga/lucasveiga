@@ -29,6 +29,8 @@
   // o conteúdo (mesma lógica de "quem enxerga o quê" usada no resto do
   // site). "todos" inclui até visitante/cadastro público; "membros" inclui
   // família e membros; "familia" só família; "privado" só o próprio autor.
+  // Reagir com emojis: liberado para QUALQUER pessoa que possa ver o
+  // conteúdo — inclusive visitantes.
   function podeInteragir(visibilidade, autorId){
     const nivel = nivelDeAcessoAtual();
     if (visibilidade === 'privado') {
@@ -38,8 +40,13 @@
     if (visibilidade === 'todos') return true;
     if (nivel === 'visitante') return false;
     if (visibilidade === 'familia') return nivel === 'familia';
-    if (visibilidade === 'membros') return nivel === 'familia' || nivel === 'membro';
+    if (visibilidade === 'membros' || visibilidade === 'ambos') return nivel === 'familia' || nivel === 'membro';
     return false;
+  }
+
+  // Comentar: exclusivo de membros e família.
+  function podeComentar(visibilidade, autorId){
+    return podeInteragir(visibilidade, autorId) && nivelDeAcessoAtual() !== 'visitante';
   }
 
   function getMediaId(card, indice){
@@ -280,10 +287,19 @@
       });
     }
 
+    if (!podeComentar(visibilidade, autorId)) {
+      const aviso = document.createElement('p');
+      aviso.className = 'lightbox-comments-vazio';
+      aviso.textContent = 'Comentar é exclusivo de membros e família — mas você pode reagir com os emojis acima 💛';
+      container.appendChild(aviso);
+      return;
+    }
+
     const form = document.createElement('div');
     form.className = 'lightbox-comment-form';
     const textarea = document.createElement('textarea');
     textarea.placeholder = 'Escreva um comentário...';
+    setTimeout(() => { if (window.anexarSeletorEmoji) window.anexarSeletorEmoji(textarea); }, 0);
     textarea.rows = 2;
     const btnEnviar = document.createElement('button');
     btnEnviar.type = 'button';

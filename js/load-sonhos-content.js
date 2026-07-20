@@ -20,6 +20,8 @@
     const card = document.createElement('div');
     card.className = 'recado-card ' + CORES[indice % CORES.length] + ((item.imagem_url || item.video_url) ? ' recado-card-media' : '');
     card.setAttribute('data-sonho-id', item.id);
+    card.setAttribute('data-visibility', item.visibilidade);
+    card.setAttribute('data-autor-id', item.autor_id ?? '');
     card.setAttribute('data-autor', item.autor_nome || '');
     card.setAttribute('data-texto', item.texto || '');
     card.setAttribute('data-imagem', item.imagem_url || '');

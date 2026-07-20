@@ -144,3 +144,101 @@ window.renderizarCarrossel = function(track, itens, criarCard){
     track.classList.add('marquee-estatico');
   }
 };
+
+
+// ============================================================
+// Seletor de emojis 😊 — um botãozinho ao lado dos campos de texto
+// que abre uma paleta com os emojis padrão e insere no ponto onde
+// a pessoa parou de digitar. No celular o teclado já tem emojis;
+// isso facilita principalmente no computador.
+// ============================================================
+(function(){
+  const EMOJIS_PADRAO = [
+    '❤️','🧡','💛','💚','💙','💜','🤍','💕','💖','💗',
+    '😊','😀','😄','😁','🥹','🥰','😍','😘','🤗','😇',
+    '😢','😭','🥲','😌','🙏','✨','🌟','⭐','🌈','💫',
+    '🌹','🌻','🌸','🍀','🕊️','🦋','🎵','🎶','🕯️','♾️',
+    '👏','🙌','👍','🤝','💪','🎂','🎈','🎉','⚽','🏊'
+  ];
+
+  let painelAberto = null;
+
+  function fecharPainel(){
+    if (painelAberto) {
+      painelAberto.remove();
+      painelAberto = null;
+      document.removeEventListener('click', aoClicarFora, true);
+    }
+  }
+
+  function aoClicarFora(e){
+    if (painelAberto && !painelAberto.contains(e.target) && !e.target.classList.contains('emoji-seletor-btn')) {
+      fecharPainel();
+    }
+  }
+
+  function inserirNoCampo(campo, emoji){
+    const inicio = campo.selectionStart ?? campo.value.length;
+    const fim = campo.selectionEnd ?? campo.value.length;
+    campo.value = campo.value.slice(0, inicio) + emoji + campo.value.slice(fim);
+    const nova = inicio + emoji.length;
+    campo.focus();
+    try { campo.setSelectionRange(nova, nova); } catch(e){}
+    campo.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  window.anexarSeletorEmoji = function(campo){
+    if (!campo || campo.dataset.emojiAnexado) return;
+    campo.dataset.emojiAnexado = '1';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'emoji-seletor-btn';
+    btn.textContent = '😊';
+    btn.setAttribute('aria-label', 'Inserir emoji');
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (painelAberto) { fecharPainel(); return; }
+
+      const painel = document.createElement('div');
+      painel.className = 'emoji-seletor-painel';
+      EMOJIS_PADRAO.forEach(emoji => {
+        const opcao = document.createElement('button');
+        opcao.type = 'button';
+        opcao.className = 'emoji-seletor-opcao';
+        opcao.textContent = emoji;
+        opcao.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          inserirNoCampo(campo, emoji);
+        });
+        painel.appendChild(opcao);
+      });
+
+      document.body.appendChild(painel);
+      // Posiciona colado ao botão, sem depender do layout ao redor
+      const r = btn.getBoundingClientRect();
+      const larguraPainel = 268;
+      let esquerda = Math.min(r.left, window.innerWidth - larguraPainel - 8);
+      painel.style.left = Math.max(8, esquerda) + 'px';
+      const alturaEstimada = 210;
+      if (r.bottom + alturaEstimada + 8 > window.innerHeight) {
+        painel.style.top = Math.max(8, r.top - alturaEstimada - 6) + 'px';
+      } else {
+        painel.style.top = (r.bottom + 6) + 'px';
+      }
+
+      painelAberto = painel;
+      setTimeout(() => document.addEventListener('click', aoClicarFora, true), 0);
+    });
+
+    campo.insertAdjacentElement('afterend', btn);
+  };
+
+  // Liga automaticamente nos campos fixos que existirem na página
+  document.addEventListener('DOMContentLoaded', () => {
+    ['recadoTexto', 'recadoDescricao', 'homenagemTexto', 'conteudoTexto', 'sonhoTexto', 'conversaTexto']
+      .forEach(id => window.anexarSeletorEmoji(document.getElementById(id)));
+  });
+})();

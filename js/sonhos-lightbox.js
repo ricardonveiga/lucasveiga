@@ -34,6 +34,16 @@
     textoEl.style.display = texto ? 'block' : 'none';
     autorEl.textContent = autor || 'Anônimo';
 
+    const itemId = card.getAttribute('data-sonho-id');
+    const visibilidade = card.getAttribute('data-visibility') || 'todos';
+    const autorId = card.getAttribute('data-autor-id') || '';
+    const reacoesEl = document.getElementById('sonhoLightboxReacoes');
+    const comentariosEl = document.getElementById('sonhoLightboxComentarios');
+    if (window.ReactionsAPI && itemId && reacoesEl && comentariosEl) {
+      ReactionsAPI.buildInteractiveBar(itemId, reacoesEl, visibilidade, autorId);
+      ReactionsAPI.buildCommentsPanel(itemId, comentariosEl, visibilidade, autorId);
+    }
+
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
