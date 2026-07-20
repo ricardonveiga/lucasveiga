@@ -432,11 +432,12 @@ a{ text-decoration: none; color: inherit; }
 }
 
 .hero-text h1{
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: 0.02em;
-  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  /* Cursiva limpa, no espírito da assinatura do Lucas */
+  font-family: 'Dancing Script', cursive;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.01em;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
   margin: 0 0 0.4rem 0;
   color: #8a5a1f;
 }
