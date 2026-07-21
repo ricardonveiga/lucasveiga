@@ -113,7 +113,7 @@
     }
   }
 
-  async function atualizarStatusConversa(id, novoStatus){
+  async function atualizarStatusConversa(id, novoStatus, extras){
     await window.supaFetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
@@ -122,7 +122,7 @@
         'Content-Type': 'application/json',
         Prefer: 'return=minimal'
       },
-      body: JSON.stringify({ status: novoStatus })
+      body: JSON.stringify({ status: novoStatus, ...(extras || {}) })
     });
   }
 
@@ -145,7 +145,7 @@
     }
   }
 
-  async function atualizarStatusHomenagem(id, novoStatus){
+  async function atualizarStatusHomenagem(id, novoStatus, extras){
     await window.supaFetch(`${SUPABASE_URL}/rest/v1/homenagens?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
@@ -154,7 +154,7 @@
         'Content-Type': 'application/json',
         Prefer: 'return=minimal'
       },
-      body: JSON.stringify({ status: novoStatus })
+      body: JSON.stringify({ status: novoStatus, ...(extras || {}) })
     });
   }
 
@@ -308,6 +308,51 @@
     return { bloco, campo };
   }
 
+  // Campo de visibilidade editável — admin pode trocar antes de publicar,
+  // mesmo que a pessoa tenha marcado outra opção ao enviar.
+  const ROTULOS_VISIBILIDADE = {
+    privado: 'Não compartilhar (só o autor)',
+    familia: 'Apenas com a família',
+    membros: 'Com todos os membros',
+    ambos: 'Membros e família',
+    todos: 'Compartilhar com todos'
+  };
+
+  function criarCampoVisibilidade(valorInicial, opcoesDisponiveis){
+    const bloco = document.createElement('div');
+    bloco.style.marginBottom = '0.5rem';
+
+    const label = document.createElement('label');
+    label.textContent = 'Visibilidade (editável antes de publicar)';
+    label.style.display = 'block';
+    label.style.fontSize = '0.66rem';
+    label.style.color = 'var(--ink-dim)';
+    label.style.marginBottom = '0.2rem';
+    bloco.appendChild(label);
+
+    const campo = document.createElement('select');
+    campo.style.width = '100%';
+    campo.style.padding = '0.45rem 0.6rem';
+    campo.style.borderRadius = '6px';
+    campo.style.border = '1px solid var(--line)';
+    campo.style.background = 'var(--card-inner)';
+    campo.style.color = 'var(--ink)';
+    campo.style.fontFamily = 'Inter, sans-serif';
+    campo.style.fontSize = '0.78rem';
+    campo.style.boxSizing = 'border-box';
+
+    opcoesDisponiveis.forEach(valor => {
+      const opcao = document.createElement('option');
+      opcao.value = valor;
+      opcao.textContent = ROTULOS_VISIBILIDADE[valor] || valor;
+      if (valor === valorInicial) opcao.selected = true;
+      campo.appendChild(opcao);
+    });
+
+    bloco.appendChild(campo);
+    return { bloco, campo };
+  }
+
   function criarCardMidia(item){
     const wrap = document.createElement('div');
     wrap.className = 'content-section';
@@ -338,8 +383,9 @@
     info.style.fontSize = '0.72rem';
     info.style.margin = '0 0 0.6rem 0';
     info.style.color = 'var(--ink-dim)';
-    info.innerHTML = `Visibilidade: ${item.visibilidade} · Autor ID: ${item.autor_id ?? 'desconhecido'}`;
+    info.innerHTML = `Autor ID: ${item.autor_id ?? 'desconhecido'}`;
 
+    const campoVisibilidade = criarCampoVisibilidade(item.visibilidade, ['privado', 'familia', 'membros', 'todos']);
     const campoEvento = criarCampoEditavel('Nome do evento', item.nome_evento);
     const campoAno = criarCampoEditavel('Ano', item.ano, { tipo: 'number' });
     const campoDescricao = criarCampoEditavel('Descrição', item.descricao, { multilinha: true });
@@ -369,6 +415,7 @@
 
     function camposEditados(){
       return {
+        visibilidade: campoVisibilidade.campo.value,
         nome_evento: campoEvento.campo.value.trim(),
         ano: campoAno.campo.value,
         descricao: campoDescricao.campo.value.trim()
@@ -402,6 +449,7 @@
 
     wrap.appendChild(preview);
     wrap.appendChild(info);
+    wrap.appendChild(campoVisibilidade.bloco);
     wrap.appendChild(campoEvento.bloco);
     wrap.appendChild(campoAno.bloco);
     wrap.appendChild(campoDescricao.bloco);
@@ -435,8 +483,9 @@
     info.style.fontSize = '0.72rem';
     info.style.margin = '0 0 0.6rem 0';
     info.style.color = 'var(--ink-dim)';
-    info.innerHTML = `Método: ${item.metodo} · Visibilidade: ${item.visibilidade} · Autor ID: ${item.autor_id ?? 'visitante'}`;
+    info.innerHTML = `Método: ${item.metodo} · Autor ID: ${item.autor_id ?? 'visitante'}`;
 
+    const campoVisibilidade = criarCampoVisibilidade(item.visibilidade, ['privado', 'familia', 'membros', 'todos']);
     const campoAutor = criarCampoEditavel('Nome da pessoa', item.autor_nome);
     const campoTexto = criarCampoEditavel('Texto do recado', item.texto, { multilinha: true });
 
@@ -456,6 +505,7 @@
 
     function camposEditados(){
       return {
+        visibilidade: campoVisibilidade.campo.value,
         autor_nome: campoAutor.campo.value.trim(),
         texto: campoTexto.campo.value.trim()
       };
@@ -487,6 +537,7 @@
     acoes.appendChild(btnRejeitar);
 
     wrap.appendChild(info);
+    wrap.appendChild(campoVisibilidade.bloco);
     wrap.appendChild(campoAutor.bloco);
     wrap.appendChild(campoTexto.bloco);
     wrap.appendChild(acoes);
@@ -530,8 +581,9 @@
     info.style.fontSize = '0.72rem';
     info.style.margin = '0 0 0.6rem 0';
     info.style.color = 'var(--ink-dim)';
-    info.innerHTML = `Visibilidade: ${item.visibilidade} · Autor ID: ${item.autor_id ?? 'desconhecido'}`;
+    info.innerHTML = `Autor ID: ${item.autor_id ?? 'desconhecido'}`;
 
+    const campoVisibilidade = criarCampoVisibilidade(item.visibilidade, ['privado', 'familia', 'membros', 'ambos']);
     const campoAutor = criarCampoEditavel('Nome da pessoa', item.autor_nome);
     const campoTexto = criarCampoEditavel('Texto', item.texto, { multilinha: true });
 
@@ -551,6 +603,7 @@
 
     function camposEditados(){
       return {
+        visibilidade: campoVisibilidade.campo.value,
         autor_nome: campoAutor.campo.value.trim(),
         texto: campoTexto.campo.value.trim()
       };
@@ -582,6 +635,7 @@
     acoes.appendChild(btnRejeitar);
 
     wrap.appendChild(info);
+    wrap.appendChild(campoVisibilidade.bloco);
     wrap.appendChild(campoAutor.bloco);
     wrap.appendChild(campoTexto.bloco);
     wrap.appendChild(acoes);
@@ -674,8 +728,9 @@
     info.style.fontSize = '0.72rem';
     info.style.margin = '0 0 0.6rem 0';
     info.style.color = 'var(--ink-dim)';
-    info.innerHTML = `Tipo: ${item.tipo} · Visibilidade: ${item.visibilidade} · Autor: ${item.autor_nome || 'Anônimo'} (ID: ${item.autor_id ?? 'desconhecido'})`;
+    info.innerHTML = `Tipo: ${item.tipo} · Autor: ${item.autor_nome || 'Anônimo'} (ID: ${item.autor_id ?? 'desconhecido'})`;
 
+    const campoVisibilidade = criarCampoVisibilidade(item.visibilidade, ['privado', 'familia', 'membros', 'todos']);
     const campoTexto = criarCampoEditavel('Lembrança / texto', item.texto_lembranca, { multilinha: true });
 
     const acoes = document.createElement('div');
@@ -690,7 +745,7 @@
     btnAprovar.addEventListener('click', async () => {
       btnAprovar.disabled = true;
       btnAprovar.textContent = 'Aprovando...';
-      await atualizarStatusConversa(item.id, 'aprovado');
+      await atualizarStatusConversa(item.id, 'aprovado', { visibilidade: campoVisibilidade.campo.value, texto_lembranca: campoTexto.campo.value.trim() });
       if (window.avisoSite) window.avisoSite('Conversa aprovada.', '✅');
       wrap.remove();
     });
@@ -717,6 +772,7 @@
     acoes.appendChild(btnRejeitar);
 
     wrap.appendChild(info);
+    wrap.appendChild(campoVisibilidade.bloco);
     wrap.appendChild(campoTexto.bloco);
     wrap.appendChild(acoes);
 
@@ -756,8 +812,9 @@
     info.style.fontSize = '0.72rem';
     info.style.margin = '0 0 0.6rem 0';
     info.style.color = 'var(--ink-dim)';
-    info.innerHTML = `Visibilidade: ${item.visibilidade} · Assinado por: ${item.autor_nome || 'Anônimo'} (${dataFormatada}) · Grupo: ${item.autor_grupo || 'desconhecido'}`;
+    info.innerHTML = `Assinado por: ${item.autor_nome || 'Anônimo'} (${dataFormatada}) · Grupo: ${item.autor_grupo || 'desconhecido'}`;
 
+    const campoVisibilidade = criarCampoVisibilidade(item.visibilidade, ['privado', 'familia', 'membros', 'todos']);
     const campoTexto = criarCampoEditavel('Texto da homenagem', item.texto, { multilinha: true });
 
     const acoes = document.createElement('div');
@@ -772,7 +829,7 @@
     btnAprovar.addEventListener('click', async () => {
       btnAprovar.disabled = true;
       btnAprovar.textContent = 'Aprovando...';
-      await atualizarStatusHomenagem(item.id, 'aprovado');
+      await atualizarStatusHomenagem(item.id, 'aprovado', { visibilidade: campoVisibilidade.campo.value, texto: campoTexto.campo.value.trim() });
       if (window.avisoSite) window.avisoSite('Homenagem aprovada.', '✅');
       wrap.remove();
     });
@@ -792,6 +849,7 @@
     acoes.appendChild(btnRejeitar);
 
     wrap.appendChild(info);
+    wrap.appendChild(campoVisibilidade.bloco);
     wrap.appendChild(campoTexto.bloco);
     wrap.appendChild(acoes);
 

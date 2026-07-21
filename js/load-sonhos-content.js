@@ -132,6 +132,19 @@
       return;
     }
 
+    // No celular, a página de Sonhos e Sinais também vira carrossel
+    // rolando — igual ao Mural — em vez da grade paginada.
+    const carrosselMobile = window.matchMedia('(max-width: 900px)').matches;
+    if (carrosselMobile) {
+      track.classList.remove('full-grid');
+      track.classList.add('marquee-track');
+      if (track.parentElement) track.parentElement.style.overflow = 'hidden';
+      paginacaoEl.style.display = 'none';
+      window.renderizarCarrossel(track, todosOsItens, (item, indice) => criarCardSonho(item, indice));
+      if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
+      return;
+    }
+
     const inicio = paginaAtual * ITENS_POR_PAGINA;
     const fim = inicio + ITENS_POR_PAGINA;
     const itensDaPagina = todosOsItens.slice(inicio, fim);

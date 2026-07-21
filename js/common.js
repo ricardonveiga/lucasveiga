@@ -131,18 +131,41 @@ window.renderizarCarrossel = function(track, itens, criarCard){
   itens.forEach((item, indice) => track.appendChild(criarCard(item, indice)));
 
   const wrap = track.parentElement;
-  const larguraVisivel = wrap ? wrap.clientWidth : 0;
-  const larguraBase = track.scrollWidth;
 
-  if (larguraVisivel > 0 && larguraBase > larguraVisivel + 8) {
-    // Segunda cópia para o loop sem emenda — os cards repetidos entram
-    // por um lado conforme os originais saem pelo outro.
-    itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
-    const duracao = Math.max(18, Math.round(larguraBase / 45));
-    track.style.animationDuration = duracao + 's';
-  } else {
-    track.classList.add('marquee-estatico');
+  function decidir(){
+    const larguraVisivel = wrap ? wrap.clientWidth : 0;
+    const larguraBase = track.scrollWidth;
+
+    if (larguraVisivel > 0 && larguraBase > larguraVisivel + 8) {
+      // Segunda cópia para o loop sem emenda — os cards repetidos entram
+      // por um lado conforme os originais saem pelo outro.
+      itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
+      const duracao = Math.max(18, Math.round(larguraBase / 45));
+      track.style.animationDuration = duracao + 's';
+      track.classList.remove('marquee-estatico');
+    } else {
+      track.classList.add('marquee-estatico');
+    }
   }
+
+  // Espera as imagens dos cards carregarem (ou um limite curto de tempo) e
+  // o layout assentar antes de medir — decidir cedo demais, com imagens
+  // ainda sem tamanho definido, é a causa mais comum de um carrossel achar
+  // que "cabe" quando na verdade não cabe (ou vice-versa).
+  const imagens = Array.from(track.querySelectorAll('img'));
+  const espera = imagens.length
+    ? Promise.race([
+        Promise.all(imagens.map(img => img.complete ? Promise.resolve() : new Promise(res => {
+          img.addEventListener('load', res, { once: true });
+          img.addEventListener('error', res, { once: true });
+        }))),
+        new Promise(res => setTimeout(res, 800))
+      ])
+    : Promise.resolve();
+
+  espera.then(() => {
+    requestAnimationFrame(() => requestAnimationFrame(decidir));
+  });
 };
 
 
