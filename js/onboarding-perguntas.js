@@ -78,7 +78,7 @@
     };
 
     async function tentar(corpo){
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas`, {
+      const resp = await window.supaFetch(`${SUPABASE_URL}/rest/v1/respostas_perguntas`, {
         method: 'POST',
         headers: HEADERS_JSON,
         body: JSON.stringify(corpo)
@@ -140,7 +140,7 @@
 
   async function buscarNotificacoesModeracao(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/notificacoes_moderacao?usuario_id=eq.${usuarioId}&select=*&order=criado_em.desc`,
         { headers: HEADERS }
       );
@@ -154,13 +154,13 @@
 
       if (midiaIds.length > 0) {
         const ids = midiaIds.map(id => `"${id}"`).join(',');
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/midias?id=in.(${ids})&select=id,nome_evento,ano`, { headers: HEADERS });
+        const r = await window.supaFetch(`${SUPABASE_URL}/rest/v1/midias?id=in.(${ids})&select=id,nome_evento,ano`, { headers: HEADERS });
         const d = await r.json();
         if (Array.isArray(d)) mapaMidias = new Map(d.map(m => [String(m.id), m]));
       }
       if (recadoIds.length > 0) {
         const ids = recadoIds.map(id => `"${id}"`).join(',');
-        const r = await fetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=in.(${ids})&select=id,autor_nome`, { headers: HEADERS });
+        const r = await window.supaFetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=in.(${ids})&select=id,autor_nome`, { headers: HEADERS });
         const d = await r.json();
         if (Array.isArray(d)) mapaRecados = new Map(d.map(rc => [String(rc.id), rc]));
       }

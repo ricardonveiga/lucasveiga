@@ -8,7 +8,7 @@ async function validarFavoritasAoVivo(favoritasSalvas){
 
   const ids = favoritasSalvas.map(f => `"${f.id}"`).join(',');
   try {
-    const resp = await fetch(
+    const resp = await window.supaFetch(
       `${SUPABASE_URL_BANNER}/rest/v1/midias?id=in.(${ids})&select=id,url_arquivo,nome_evento,ano`,
       {
         headers: {

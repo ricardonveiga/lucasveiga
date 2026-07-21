@@ -65,7 +65,7 @@
     btnEnviar.textContent = 'Enviando...';
 
     try {
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas`, {
+      const resp = await window.supaFetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas`, {
         method: 'POST',
         headers: { ...HEADERS, Prefer: 'return=minimal' },
         body: JSON.stringify({

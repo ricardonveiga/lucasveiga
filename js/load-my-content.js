@@ -124,7 +124,7 @@
       // o mesmo número de ID (tabelas diferentes). Linhas antigas sem tipo
       // continuam aparecendo (is.null).
       const filtroTipo = `&or=(autor_tipo.eq.${tipoUsuario},autor_tipo.is.null)`;
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/${tabela}?autor_id=eq.${usuarioId}${filtroTipo}&select=*&order=criado_em.desc&limit=100`,
         { headers: HEADERS }
       );

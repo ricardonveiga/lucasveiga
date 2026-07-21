@@ -20,7 +20,7 @@
     // Visitante só vê o que é público — sem exceção.
     if (nivel === 'visitante') {
       try {
-        const resp = await fetch(
+        const resp = await window.supaFetch(
           `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=10`,
           {
             headers: {
@@ -40,7 +40,7 @@
     // Membros e família: veem tudo que não é privado, MAIS os próprios itens
     // marcados como "não compartilhar" (só o autor enxerga os dele).
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&select=*&order=criado_em.desc&limit=30`,
         {
           headers: {
@@ -58,6 +58,9 @@
             const tipoConfere = !item.autor_tipo || item.autor_tipo === meuTipo;
             return !!meuId && tipoConfere && String(item.autor_id) === String(meuId);
           }
+          // Conteúdo "família" é exclusivo de quem está no grupo família —
+          // membro comum não vê (bug corrigido: antes qualquer não-visitante via tudo).
+          if (item.visibilidade === 'familia') return nivel === 'familia';
           return true;
         })
         .slice(0, 10);

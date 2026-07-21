@@ -147,7 +147,7 @@
     const filtro = nivel === 'visitante' ? '&visibilidade=eq.todos' : '';
 
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/conversas?status=eq.aprovado${filtro}&select=*&order=criado_em.asc&limit=500`,
         {
           headers: {

@@ -29,7 +29,7 @@
       : '&visibilidade=neq.privado';
 
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado${filtro}&select=*&order=criado_em.desc&limit=50`,
         {
           headers: {
