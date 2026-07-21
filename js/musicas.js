@@ -1,4 +1,6 @@
 (function(){
+  // Página pública de Músicas: só o envio de sugestões. A moderação
+  // (ver sugestões, marcar como adicionada) fica no Painel Admin.
   const SUPABASE_URL = 'https://igvtlqkkflpjrgasapos.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
   const HEADERS = {
@@ -10,7 +12,6 @@
   const usuarioId = sessionStorage.getItem('usuarioId');
   const nomeUsuario = sessionStorage.getItem('nomeUsuario') || '';
   const tipoAcesso = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
-  const isAdmin = sessionStorage.getItem('papelUsuario') === 'admin';
 
   const autorInput = document.getElementById('sugestaoAutor');
   const autorErro = document.getElementById('sugestaoAutorErro');
@@ -19,8 +20,6 @@
   const descricaoInput = document.getElementById('musicaDescricao');
   const descricaoErro = document.getElementById('musicaDescricaoErro');
   const btnEnviar = document.getElementById('btnSugerirMusica');
-  const listaEl = document.getElementById('listaSugestoesMusicas');
-  const painelAdmin = document.getElementById('painelSugestoesAdmin');
 
   // Qualquer pessoa pode sugerir — pré-preenche o nome de quem já está
   // logado, mas deixa editável.
@@ -29,18 +28,6 @@
   [inputMusica, descricaoInput].forEach(campo => {
     if (campo && window.anexarSeletorEmoji) window.anexarSeletorEmoji(campo);
   });
-
-  // A lista de sugestões (com o botão de aprovar) é só para o admin.
-  if (isAdmin && painelAdmin) {
-    painelAdmin.style.display = '';
-    carregarSugestoes();
-  }
-
-  function formatarData(iso){
-    try {
-      return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    } catch(e){ return ''; }
-  }
 
   function limparErros(){
     autorErro.textContent = '';
@@ -96,7 +83,6 @@
       inputMusica.value = '';
       descricaoInput.value = '';
       if (window.avisoSite) window.avisoSite('Sugestão enviada! Obrigado por ajudar a completar a playlist do Lucas.', '🎵');
-      if (isAdmin) carregarSugestoes();
     } catch (e) {
       musicaErro.textContent = 'Não foi possível enviar agora. Tente novamente.';
     }
@@ -106,99 +92,4 @@
   }
 
   if (btnEnviar) btnEnviar.addEventListener('click', enviarSugestao);
-
-  async function marcarComoAdicionada(item, cartao){
-    try {
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas?id=eq.${item.id}`, {
-        method: 'PATCH',
-        headers: { ...HEADERS, Prefer: 'return=minimal' },
-        body: JSON.stringify({ status: 'adicionada' })
-      });
-      if (!resp.ok) throw new Error('Falha ao atualizar');
-
-      // Avisa a pessoa pelo sino, se ela tiver conta no site
-      if (item.autor_id) {
-        await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
-          method: 'POST',
-          headers: { ...HEADERS, Prefer: 'return=minimal' },
-          body: JSON.stringify({
-            usuario_id: item.autor_id,
-            status: 'aprovado',
-            musica_sugerida: item.musica,
-            lida: false
-          })
-        });
-      }
-
-      cartao.classList.remove('sugestao-pendente');
-      cartao.classList.add('sugestao-adicionada');
-      const selo = cartao.querySelector('.sugestao-status');
-      if (selo) selo.textContent = 'Adicionada ✓';
-      const btn = cartao.querySelector('.btn-marcar-adicionada');
-      if (btn) btn.remove();
-    } catch (e) {
-      if (window.avisoSite) window.avisoSite('Não foi possível marcar agora. Tente de novo.', '⚠️');
-    }
-  }
-
-  function criarCartaoSugestao(item){
-    const cartao = document.createElement('div');
-    cartao.className = 'sugestao-musica-item ' + (item.status === 'adicionada' ? 'sugestao-adicionada' : 'sugestao-pendente');
-
-    const musicaEl = document.createElement('p');
-    musicaEl.className = 'sugestao-musica-nome';
-    musicaEl.textContent = `🎵 ${item.musica}`;
-    cartao.appendChild(musicaEl);
-
-    if (item.descricao) {
-      const descEl = document.createElement('p');
-      descEl.className = 'sugestao-musica-descricao';
-      descEl.textContent = item.descricao;
-      cartao.appendChild(descEl);
-    }
-
-    const meta = document.createElement('p');
-    meta.className = 'sugestao-musica-meta';
-    meta.textContent = `— ${item.autor_nome || 'Anônimo'} · ${formatarData(item.criado_em)}`;
-    cartao.appendChild(meta);
-
-    const selo = document.createElement('span');
-    selo.className = 'sugestao-status';
-    selo.textContent = item.status === 'adicionada' ? 'Adicionada ✓' : 'Aguardando';
-    cartao.appendChild(selo);
-
-    if (item.status !== 'adicionada') {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn-limpar btn-marcar-adicionada';
-      btn.textContent = 'Marcar como adicionada';
-      btn.addEventListener('click', () => marcarComoAdicionada(item, cartao));
-      cartao.appendChild(btn);
-    }
-
-    return cartao;
-  }
-
-  async function carregarSugestoes(){
-    try {
-      const resp = await fetch(
-        `${SUPABASE_URL}/rest/v1/sugestoes_musicas?select=*&order=criado_em.desc&limit=200`,
-        { headers: HEADERS }
-      );
-      const dados = await resp.json();
-      listaEl.innerHTML = '';
-
-      if (!Array.isArray(dados) || dados.length === 0) {
-        const vazio = document.createElement('p');
-        vazio.className = 'hint-text';
-        vazio.textContent = 'Nenhuma sugestão recebida ainda.';
-        listaEl.appendChild(vazio);
-        return;
-      }
-
-      dados.forEach(item => listaEl.appendChild(criarCartaoSugestao(item)));
-    } catch (e) {
-      listaEl.innerHTML = '<p class="hint-text">Não foi possível carregar as sugestões agora.</p>';
-    }
-  }
 })();
