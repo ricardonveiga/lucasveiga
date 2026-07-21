@@ -915,9 +915,9 @@
     } catch(e){ return ''; }
   }
 
-  async function marcarMusicaAdicionada(item, cartao){
+  async function atualizarStatusMusica(item, status, motivo){
     try {
-      const resp = await fetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas?id=eq.${item.id}`, {
+      await fetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas?id=eq.${item.id}`, {
         method: 'PATCH',
         headers: {
           apikey: SUPABASE_KEY,
@@ -925,9 +925,8 @@
           'Content-Type': 'application/json',
           Prefer: 'return=minimal'
         },
-        body: JSON.stringify({ status: 'adicionada' })
+        body: JSON.stringify({ status })
       });
-      if (!resp.ok) throw new Error('Falha ao atualizar');
 
       // Avisa a pessoa pelo sino, se ela tiver conta no site
       if (item.autor_id) {
@@ -941,27 +940,35 @@
           },
           body: JSON.stringify({
             usuario_id: item.autor_id,
-            status: 'aprovado',
-            musica_sugerida: item.musica,
+            status: status === 'adicionada' ? 'aprovado' : 'rejeitado',
+            motivo: motivo || null,
+            musica_sugerida: status === 'adicionada' ? item.musica : null,
+            musica_rejeitada: status === 'rejeitada' ? item.musica : null,
             lida: false
           })
         });
       }
-
-      cartao.classList.remove('sugestao-pendente');
-      cartao.classList.add('sugestao-adicionada');
-      const selo = cartao.querySelector('.sugestao-status');
-      if (selo) selo.textContent = 'Adicionada ✓';
-      const btn = cartao.querySelector('.btn-marcar-adicionada');
-      if (btn) btn.remove();
     } catch (e) {
-      if (window.avisoSite) window.avisoSite('Não foi possível marcar agora. Tente de novo.', '⚠️');
+      if (window.avisoSite) window.avisoSite('Não foi possível atualizar agora. Tente de novo.', '⚠️');
     }
+  }
+
+  async function marcarMusicaAdicionada(item, cartao){
+    await atualizarStatusMusica(item, 'adicionada');
+    cartao.classList.remove('sugestao-pendente');
+    cartao.classList.add('sugestao-adicionada');
+    const selo = cartao.querySelector('.sugestao-status');
+    if (selo) selo.textContent = 'Adicionada ✓';
+    const acoes = cartao.querySelector('.sugestao-musica-acoes');
+    if (acoes) acoes.remove();
+    const painel = cartao.querySelector('textarea');
+    if (painel && painel.parentElement) painel.parentElement.remove();
+    if (window.avisoSite) window.avisoSite(`A sugestão "${item.musica}" foi marcada como adicionada e a pessoa foi avisada.`, '🎵');
   }
 
   function criarCardMusica(item){
     const cartao = document.createElement('div');
-    cartao.className = 'sugestao-musica-item ' + (item.status === 'adicionada' ? 'sugestao-adicionada' : 'sugestao-pendente');
+    cartao.className = 'sugestao-musica-item ' + (item.status === 'adicionada' ? 'sugestao-adicionada' : item.status === 'rejeitada' ? 'sugestao-rejeitada' : 'sugestao-pendente');
 
     const musicaEl = document.createElement('p');
     musicaEl.className = 'sugestao-musica-nome';
@@ -982,16 +989,45 @@
 
     const selo = document.createElement('span');
     selo.className = 'sugestao-status';
-    selo.textContent = item.status === 'adicionada' ? 'Adicionada ✓' : 'Aguardando';
+    selo.textContent = item.status === 'adicionada' ? 'Adicionada ✓' : item.status === 'rejeitada' ? 'Rejeitada' : 'Aguardando';
     cartao.appendChild(selo);
 
-    if (item.status !== 'adicionada') {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn-limpar btn-marcar-adicionada';
-      btn.textContent = 'Marcar como adicionada';
-      btn.addEventListener('click', () => marcarMusicaAdicionada(item, cartao));
-      cartao.appendChild(btn);
+    if (item.status === 'pendente') {
+      const acoes = document.createElement('div');
+      acoes.className = 'sugestao-musica-acoes';
+      acoes.style.display = 'flex';
+      acoes.style.gap = '0.6rem';
+      acoes.style.marginTop = '0.6rem';
+
+      const btnAprovar = document.createElement('button');
+      btnAprovar.className = 'btn-publicar';
+      btnAprovar.style.margin = '0';
+      btnAprovar.textContent = 'Marcar como adicionada';
+
+      const btnRejeitar = document.createElement('button');
+      btnRejeitar.className = 'btn-limpar';
+      btnRejeitar.textContent = 'Rejeitar';
+
+      const painelMotivo = criarPainelMotivo(async (motivo, botao) => {
+        botao.disabled = true;
+        botao.textContent = 'Enviando...';
+        await atualizarStatusMusica(item, 'rejeitada', motivo);
+        cartao.classList.remove('sugestao-pendente');
+        selo.textContent = 'Rejeitada';
+        acoes.remove();
+        painelMotivo.remove();
+        if (window.avisoSite) window.avisoSite(`A sugestão "${item.musica}" foi rejeitada e a pessoa foi avisada do motivo.`, '⚠️');
+      });
+
+      btnAprovar.addEventListener('click', () => marcarMusicaAdicionada(item, cartao));
+      btnRejeitar.addEventListener('click', () => {
+        painelMotivo.style.display = painelMotivo.style.display === 'none' ? 'block' : 'none';
+      });
+
+      acoes.appendChild(btnAprovar);
+      acoes.appendChild(btnRejeitar);
+      cartao.appendChild(acoes);
+      cartao.appendChild(painelMotivo);
     }
 
     return cartao;

@@ -2636,6 +2636,16 @@ a{ text-decoration: none; color: inherit; }
   border-color: rgba(120,200,140,0.4);
 }
 
+.sugestao-musica-item.sugestao-rejeitada{
+  border-color: rgba(224,122,122,0.4);
+  opacity: 0.75;
+}
+
+.sugestao-rejeitada .sugestao-status{
+  background: rgba(224,122,122,0.18);
+  color: #e07a7a;
+}
+
 .sugestao-musica-nome{
   font-weight: 600;
   margin: 0 0 0.2rem 0;

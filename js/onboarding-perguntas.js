@@ -180,6 +180,8 @@
             : `Seu recado no Mural não foi aprovado.${n.motivo ? ' Motivo: ' + n.motivo : ' Nenhum motivo foi informado.'}`;
         } else if (n.musica_sugerida) {
           texto = `🎵 Sua sugestão "${n.musica_sugerida}" foi adicionada à playlist do Lucas!`;
+        } else if (n.musica_rejeitada) {
+          texto = `Sua sugestão "${n.musica_rejeitada}" não foi adicionada.${n.motivo ? ' Motivo: ' + n.motivo : ' Nenhum motivo foi informado.'}`;
         } else {
           texto = n.status === 'aprovado' ? 'Seu conteúdo foi aprovado.' : 'Seu conteúdo não foi aprovado.';
         }
