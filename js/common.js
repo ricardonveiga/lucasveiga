@@ -69,10 +69,10 @@ function nivelDeAcessoAtual(){
 }
 
 function podeVer(visibilidade, nivel){
-  if (visibilidade === 'publico') return true;
+  if (visibilidade === 'publico' || visibilidade === 'todos') return true;
   if (nivel === 'visitante') return false;
-  if (visibilidade === 'familia') return true;
-  if (visibilidade === 'membros') return true;
+  if (visibilidade === 'familia') return nivel === 'familia';
+  if (visibilidade === 'membros' || visibilidade === 'ambos') return true;
   return false;
 }
 
@@ -241,4 +241,49 @@ window.renderizarCarrossel = function(track, itens, criarCard){
     ['recadoTexto', 'recadoDescricao', 'homenagemTexto', 'conteudoTexto', 'sonhoTexto', 'conversaTexto']
       .forEach(id => window.anexarSeletorEmoji(document.getElementById(id)));
   });
+})();
+
+
+// ============================================================
+// Autenticação real nas consultas ao banco.
+// Antes, todo fetch usava sempre a mesma chave pública, então o
+// banco não sabia diferenciar visitante/membro/família/admin.
+// Agora, window.supaFetch() busca a sessão de login de verdade
+// (a mesma que já existe desde o login) e a envia em cada
+// consulta — é isso que permite as regras de segurança (RLS)
+// funcionarem no banco, não só na tela.
+// ============================================================
+(function(){
+  const SUPABASE_URL_AUTH = 'https://igvtlqkkflpjrgasapos.supabase.co';
+  const SUPABASE_KEY_AUTH = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
+
+  function clienteCompartilhado(){
+    if (!window.supabase) return null;
+    if (!window._veigaSupabaseClient) {
+      window._veigaSupabaseClient = window.supabase.createClient(SUPABASE_URL_AUTH, SUPABASE_KEY_AUTH);
+    }
+    return window._veigaSupabaseClient;
+  }
+
+  window.supaFetch = async function(url, options){
+    options = options || {};
+    const headers = Object.assign({}, options.headers || {});
+
+    let token = null;
+    try {
+      const cliente = clienteCompartilhado();
+      if (cliente) {
+        const { data } = await cliente.auth.getSession();
+        token = data && data.session ? data.session.access_token : null;
+      }
+    } catch (e) {
+      // Sem sessão válida: segue como anônimo (mesmo comportamento de antes).
+    }
+
+    headers.apikey = SUPABASE_KEY_AUTH;
+    headers.Authorization = `Bearer ${token || SUPABASE_KEY_AUTH}`;
+    options.headers = headers;
+
+    return fetch(url, options);
+  };
 })();

@@ -20,7 +20,7 @@
 
   async function buscarPendentesMidias(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/midias?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -39,7 +39,7 @@
 
   async function buscarPendentesRecados(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -58,7 +58,7 @@
 
   async function buscarPendentesSonhos(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/sonhos_sinais?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -77,7 +77,7 @@
 
   async function buscarPendentesComentarios(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/comentarios?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -96,7 +96,7 @@
 
   async function buscarPendentesConversas(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/conversas?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -114,7 +114,7 @@
   }
 
   async function atualizarStatusConversa(id, novoStatus){
-    await fetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -128,7 +128,7 @@
 
   async function buscarPendentesHomenagens(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/homenagens?status=eq.pendente&select=*&order=criado_em.asc`,
         {
           headers: {
@@ -146,7 +146,7 @@
   }
 
   async function atualizarStatusHomenagem(id, novoStatus){
-    await fetch(`${SUPABASE_URL}/rest/v1/homenagens?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/homenagens?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -159,7 +159,7 @@
   }
 
   async function atualizarStatusMidia(id, novoStatus, extras){
-    await fetch(`${SUPABASE_URL}/rest/v1/midias?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/midias?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -172,7 +172,7 @@
   }
 
   async function atualizarStatusRecado(id, novoStatus, extras){
-    await fetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/recados_mural?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -185,7 +185,7 @@
   }
 
   async function atualizarStatusSonho(id, novoStatus, extras){
-    await fetch(`${SUPABASE_URL}/rest/v1/sonhos_sinais?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/sonhos_sinais?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -198,7 +198,7 @@
   }
 
   async function aprovarComentario(id){
-    await fetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         apikey: SUPABASE_KEY,
@@ -214,7 +214,7 @@
   // aqui significa apagar de vez, já que não faz sentido deixar um
   // comentário rejeitado esperando pra sempre.
   async function apagarComentario(id){
-    await fetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/comentarios?id=eq.${id}`, {
       method: 'DELETE',
       headers: {
         apikey: SUPABASE_KEY,
@@ -226,7 +226,7 @@
 
   async function criarNotificacao(usuarioId, status, motivo, midiaId, recadoId, sonhoId){
     if (!usuarioId) return;
-    await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
       method: 'POST',
       headers: {
         apikey: SUPABASE_KEY,
@@ -701,7 +701,7 @@
     btnRejeitar.addEventListener('click', async () => {
       btnRejeitar.disabled = true;
       btnRejeitar.textContent = 'Excluindo...';
-      await fetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${item.id}`, {
+      await window.supaFetch(`${SUPABASE_URL}/rest/v1/conversas?id=eq.${item.id}`, {
         method: 'DELETE',
         headers: {
           apikey: SUPABASE_KEY,
@@ -917,7 +917,7 @@
 
   async function atualizarStatusMusica(item, status, motivo){
     try {
-      await fetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas?id=eq.${item.id}`, {
+      await window.supaFetch(`${SUPABASE_URL}/rest/v1/sugestoes_musicas?id=eq.${item.id}`, {
         method: 'PATCH',
         headers: {
           apikey: SUPABASE_KEY,
@@ -930,7 +930,7 @@
 
       // Avisa a pessoa pelo sino, se ela tiver conta no site
       if (item.autor_id) {
-        await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
+        await window.supaFetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
           method: 'POST',
           headers: {
             apikey: SUPABASE_KEY,
@@ -1036,7 +1036,7 @@
   async function carregarMusicas(){
     if (!listaMusicas) return;
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/sugestoes_musicas?select=*&order=criado_em.desc&limit=200`,
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
       );

@@ -65,7 +65,7 @@
     if (idsUnicos.length === 0) return;
     try {
       const filtro = idsUnicos.map(id => `"${id}"`).join(',');
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/reacoes?item_id=in.(${filtro})&select=item_id,usuario_id,emoji`,
         { headers: headersPadrao() }
       );
@@ -105,7 +105,7 @@
     const jaTem = marcado(mediaId, key);
 
     if (jaTem) {
-      await fetch(
+      await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/reacoes?item_id=eq.${encodeURIComponent(mediaId)}&usuario_id=eq.${meu}&emoji=eq.${key}`,
         { method: 'DELETE', headers: headersPadrao() }
       );
@@ -113,7 +113,7 @@
         r => !(String(r.usuario_id) === String(meu) && r.emoji === key)
       );
     } else {
-      await fetch(`${SUPABASE_URL}/rest/v1/reacoes`, {
+      await window.supaFetch(`${SUPABASE_URL}/rest/v1/reacoes`, {
         method: 'POST',
         headers: headersPadrao(),
         body: JSON.stringify({
@@ -202,7 +202,7 @@
 
   async function buscarComentarios(mediaId, itemTipo){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/comentarios?item_id=eq.${encodeURIComponent(mediaId)}&item_tipo=eq.${itemTipo || 'midia'}&select=*&order=criado_em.desc`,
         { headers: headersPadrao() }
       );
@@ -228,7 +228,7 @@
   async function enviarComentario(mediaId, itemTipo, texto){
     const meu = meuId();
     const nivel = nivelDeAcessoAtual();
-    await fetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
+    await window.supaFetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
       method: 'POST',
       headers: headersPadrao(),
       body: JSON.stringify({

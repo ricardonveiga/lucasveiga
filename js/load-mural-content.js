@@ -72,7 +72,7 @@
     // Visitantes só veem o que é público — sem exceção, nem os próprios (visitante não tem "próprio").
     if (nivel === 'visitante') {
       try {
-        const resp = await fetch(
+        const resp = await window.supaFetch(
           `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=500`,
           {
             headers: {
@@ -92,7 +92,7 @@
     // Membros e família: veem tudo que não é privado, MAIS os próprios recados
     // marcados como "não compartilhar" (só eles enxergam os deles).
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&select=*&order=criado_em.desc&limit=500`,
         {
           headers: {
@@ -109,6 +109,9 @@
             const tipoConfere = !item.autor_tipo || item.autor_tipo === meuTipo;
             return !!meuId && tipoConfere && String(item.autor_id) === String(meuId);
         }
+        // Conteúdo "família" é exclusivo de quem está no grupo família —
+        // membro comum não vê (bug corrigido: antes qualquer não-visitante via tudo).
+        if (item.visibilidade === 'familia') return nivel === 'familia';
         return true;
       });
       iniciarPaginacao(itens);

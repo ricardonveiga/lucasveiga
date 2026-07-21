@@ -19,7 +19,7 @@
     const filtro = nivel === 'visitante' ? '&visibilidade=eq.todos' : '';
 
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado${filtro}&select=*&order=criado_em.desc&limit=500`,
         {
           headers: {
@@ -40,6 +40,9 @@
             const tipoConfere = !item.autor_tipo || item.autor_tipo === meuTipo;
             return !!meuId && tipoConfere && String(item.autor_id) === String(meuId);
         }
+        // Conteúdo "família" é exclusivo de quem está no grupo família —
+        // membro comum não vê (bug corrigido: antes qualquer não-visitante via tudo).
+        if (item.visibilidade === 'familia') return nivel === 'familia';
         return true;
       });
     } catch (e) {

@@ -43,7 +43,7 @@
   async function buscarRecados(){
     const nivel = nivelAcesso();
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/recados_mural?status=eq.aprovado&select=*&order=criado_em.asc&limit=500`,
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
       );

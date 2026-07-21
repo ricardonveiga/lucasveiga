@@ -90,7 +90,7 @@
 
   async function carregarSonhos(){
     try {
-      const resp = await fetch(
+      const resp = await window.supaFetch(
         `${SUPABASE_URL}/rest/v1/sonhos_sinais?status=eq.aprovado&select=*&order=criado_em.desc&limit=500`,
         {
           headers: {
