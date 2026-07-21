@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucas Veiga — Mural</title>
+<title>Lucas Veiga — Músicas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -72,7 +72,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           <span>Vídeos</span>
         </a>
-        <a href="mural.html" class="nav-item active">
+        <a href="mural.html" class="nav-item">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
           <span>Mural</span>
         </a>
@@ -88,8 +88,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           <span>Homenagens</span>
         </a>
-
-        <a href="musicas.html" class="nav-item">
+        <a href="musicas.html" class="nav-item active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           <span>Músicas</span>
         </a>
@@ -130,138 +129,44 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Início
       </a>
-      <h1>Mural de Recados</h1>
+      <h1>Biografia</h1>
     </div>
-    <p class="mural-intro">Um recado rápido pro Lucas — uma frase, um coração, uma lembrança de passagem. Digitado, desenhado na tela ou fotografado, sem compromisso, do jeito que sair.</p>
+
+    <p class="mural-intro">A playlist com as músicas que o Lucas amava — para ouvir, lembrar e ir crescendo com o tempo.</p>
 
     <div class="secao-explicacao">
-      <p class="secao-explicacao-titulo">💛 Bateu a vontade de falar com o Lucas?</p>
-      <p class="secao-explicacao-texto">Deixe um recado — é rápido e sem cerimônia: uma frase, um desenho na tela, um bilhete fotografado, do jeito que sair na hora. Este é o espaço do carinho espontâneo, de passagem, quantas vezes quiser. (Para um tributo maior e mais preparado, existe a seção Homenagens.)</p>
+      <p class="secao-explicacao-titulo">🎵 Por que esta seção existe</p>
+      <p class="secao-explicacao-texto">Música guarda sentimento de um jeito que nada mais guarda — basta tocar o começo de uma canção para o Lucas estar ali de novo. Esta playlist reúne as músicas que ele amava, para a família e os amigos ouvirem, lembrarem e sentirem perto. Membros e família podem sugerir novas músicas para completá-la; o acervo cresce com o tempo, como um retrato sonoro dele.</p>
     </div>
 
-    <div class="fotos-actions">
-      <button type="button" id="btnVerTodosRecados" class="btn-misturar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Ver todos em sequência
-      </button>
-    </div>
-    <p id="avisoVisitante" class="hint-text" style="display:none;">Você está vendo apenas o conteúdo público. Membros e família têm acesso a mais recados.</p>
-
-    <!-- Recados existentes (10 por página) -->
     <section class="content-section">
-      <div class="full-grid" id="muralCarrosselTrack">
-        <p class="hint-text" style="margin:0;">Carregando recados...</p>
-      </div>
-      <div class="paginacao" id="muralPaginacao" style="display:none;">
-        <button id="muralPaginaAnterior" class="btn-limpar">‹ Anterior</button>
-        <span id="muralPaginaTexto" class="paginacao-texto">Página 1</span>
-        <button id="muralPaginaProxima" class="btn-limpar">Próxima ›</button>
+      <h2 class="section-title" style="margin-top:0;">Playlist do Lucas</h2>
+      <div class="spotify-embed-wrap">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/2TvrAmAmQdpMysfD4xhCAP?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
       </div>
     </section>
 
-    <!-- Deixar um recado -->
-    <section class="content-section form-section" id="deixar-recado">
-      <div class="section-header">
-        <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Deixar um recado</h2>
-      </div>
-      <p class="method-intro">Escolha como quer escrever seu recado para o Lucas:</p>
+    <section class="content-section" id="sugerir-musica">
+      <h2 class="section-title" style="margin-top:0;">💌 Sugerir uma música</h2>
+      <p class="hint-text" id="sugerirMusicaIntro">Achou uma música do Spotify que combina com o Lucas? Escreva o nome dela (e o artista, se quiser) abaixo. Assim que eu adicionar à playlist, você recebe um aviso.</p>
 
-      <div class="method-tabs">
-        <button type="button" class="method-tab active" data-method="tela">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Manuscrito na tela
-        </button>
-        <button type="button" class="method-tab" data-method="foto">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          Manuscrito em foto
-        </button>
-        <button type="button" class="method-tab" data-method="digitar">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Digitado
-        </button>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-left">
-
-          <div class="method-panel active" id="painelTela">
-            <p class="method-desc">Escreva sua mensagem diretamente na tela, com o dedo ou o mouse.</p>
-            <div class="signature-box">
-              <canvas id="recadoCanvas"></canvas>
-            </div>
-            <div class="signature-actions">
-              <button type="button" id="limparAssinatura" class="btn-limpar">Limpar</button>
-            </div>
-          </div>
-
-          <div class="method-panel" id="painelFoto">
-            <p class="method-desc">Escreveu à mão num papel? Envie a foto aqui.</p>
-            <label class="upload-box">
-              <input type="file" id="recadoFoto" accept="image/*" hidden>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Clique para enviar a foto<br><small>PNG, JPG</small></span>
-            </label>
-          </div>
-
-          <div class="method-panel" id="painelDigitar">
-            <p class="method-desc">Digite sua mensagem para o Lucas.</p>
-            <p class="method-example">Ex: <em>"Sempre vou lembrar do seu sorriso..."</em></p>
-            <textarea id="recadoTexto" placeholder="Escreva seu recado..."></textarea>
-          </div>
-
-          <div class="identificacao-box" id="recadoDescricaoBox">
-            <label for="recadoDescricao" class="identificacao-label">Breve descrição <span class="obrigatorio">*obrigatório</span></label>
-            <textarea id="recadoDescricao" placeholder="Escreva uma breve descrição do seu recado..." rows="2"></textarea>
-            <p id="recadoDescricaoErro" class="campo-erro"></p>
-          </div>
-
-          <div class="identificacao-box">
-            <label for="recadoAutor" class="identificacao-label">Seu nome <span class="obrigatorio">*obrigatório</span></label>
-            <input type="text" id="recadoAutor" name="recadoAutor" placeholder="Como você quer assinar o recado" autocomplete="off" autocorrect="off" spellcheck="false">
-            <p id="recadoAutorErro" class="campo-erro"></p>
-          </div>
-        </div>
-
-        <div class="form-right">
-          <p class="visibility-title">Quem pode ver este recado?</p>
-          <label class="visibility-option">
-            <input type="checkbox" name="visibilidadeRecado" value="privado">
-            <span class="check-label">Não compartilhar <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-            <small>Visível só para você</small>
-          </label>
-          <label class="visibility-option">
-            <input type="checkbox" name="visibilidadeRecado" value="familia">
-            <span class="check-label">Apenas com a família <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg></span>
-            <small>Visível somente para os membros da família</small>
-          </label>
-          <label class="visibility-option">
-            <input type="checkbox" name="visibilidadeRecado" value="membros">
-            <span class="check-label">Com todos os membros <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <small>Visível para todos os membros cadastrados</small>
-          </label>
-          <label class="visibility-option">
-            <input type="checkbox" name="visibilidadeRecado" value="todos">
-            <span class="check-label">Compartilhar com todos <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></span>
-            <small>Visível para todos, inclusive visitantes</small>
-          </label>
-          <button id="btnPublicarRecado" class="btn-publicar">Publicar recado ♥</button>
-          <p class="hint-text">Apenas o marcado como "Não compartilhar" fica disponível na hora, sem aprovação. Todas as outras opções passam por aprovação do administrador antes de aparecer para outras pessoas.</p>
-        </div>
+      <div id="formSugestaoMusica">
+        <label for="musicaSugerida" class="ano-label">Nome da música</label>
+        <input type="text" id="musicaSugerida" class="ano-input" placeholder="Ex: Tempo Perdido — Legião Urbana">
+        <p id="musicaSugeridaErro" class="campo-erro"></p>
+        <button id="btnSugerirMusica" class="btn-publicar">Enviar sugestão ♥</button>
       </div>
     </section>
+
+    <section class="content-section">
+      <h2 class="section-title" style="margin-top:0;">Sugestões da família e amigos</h2>
+      <div id="listaSugestoesMusicas" class="lista-sugestoes-musicas">
+        <p class="hint-text">Carregando...</p>
+      </div>
+    </section>
+
     <footer class="site-footer">veigalucas.com.br © 2026 · Todos os direitos reservados</footer>
   </main>
-
-  <!-- Detalhe de um recado -->
-  <div id="recadoLightbox" class="photo-lightbox">
-    <div class="photo-lightbox-inner">
-      <button id="recadoLightboxClose" class="gallery-lightbox-close" aria-label="Fechar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
-      </button>
-      <div id="recadoLightboxPreview" class="recado-lightbox-preview"></div>
-      <p id="recadoLightboxAutor" class="photo-lightbox-year"></p>
-    </div>
-  </div>
 
   <!-- Modal de perguntas do dia -->
   <div id="perguntasModal" class="perguntas-modal">
@@ -362,24 +267,20 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/site-modal.js"></script>
   <script src="js/common.js"></script>
-  <script src="js/reactions.js"></script>
-  <script src="js/recado-lightbox.js"></script>
-  <script src="js/load-mural-content.js"></script>
-  <script src="js/recados-sequencia.js"></script>
-  <script src="js/mural.js"></script>
   <script src="js/onboarding-perguntas.js"></script>
   <script src="js/mix-fotos.js"></script>
   <script src="js/change-password.js"></script>
+  <script src="js/musicas.js"></script>
   <script>
     if (sessionStorage.getItem('papelUsuario') === 'admin') {
       const linkAdmin = document.getElementById('navAdminLink');
       if (linkAdmin) linkAdmin.style.display = '';
     }
-    // Visitante (cadastro público) só visualiza — não pode deixar recado.
+    // Visitante (cadastro público) só visualiza — não pode adicionar sonhos e sinais.
     if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
-      const formRecado = document.getElementById('deixar-recado');
-      if (formRecado) {
-        formRecado.innerHTML = '<p class="hint-text" style="margin:0;">Deixar recado é exclusivo para membros e família. Você ainda pode ver os recados compartilhados com todos.</p>';
+      const formSonho = document.getElementById('registrar-sonho');
+      if (formSonho) {
+        formSonho.innerHTML = '<p class="hint-text" style="margin:0;">Adicionar sonhos e sinais é exclusivo para membros e família. Você ainda pode ver o que já foi compartilhado com todos.</p>';
       }
     }
   </script>

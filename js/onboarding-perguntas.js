@@ -178,6 +178,8 @@
           texto = n.status === 'aprovado'
             ? `Seu recado no Mural foi aprovado e já está disponível para quem você compartilhou.`
             : `Seu recado no Mural não foi aprovado.${n.motivo ? ' Motivo: ' + n.motivo : ' Nenhum motivo foi informado.'}`;
+        } else if (n.musica_sugerida) {
+          texto = `🎵 Sua sugestão "${n.musica_sugerida}" foi adicionada à playlist do Lucas!`;
         } else {
           texto = n.status === 'aprovado' ? 'Seu conteúdo foi aprovado.' : 'Seu conteúdo não foi aprovado.';
         }
@@ -303,7 +305,7 @@
             card.querySelector('.mensagem-inbox-data').textContent = formatarData(item.criado_em);
           }
           atualizarSinoBadge();
-        }, { once: true });
+        });
       }
 
       listaInbox.appendChild(card);
@@ -312,7 +314,21 @@
 
   function abrirModalPerguntas(){ modalPerguntas.classList.add('active'); }
   function fecharModalPerguntas(){ modalPerguntas.classList.remove('active'); marcarMostradoHoje(); }
-  async function abrirInbox(){ await renderizarInbox(); modalMensagem.classList.add('active'); }
+  // Abrir a caixa = ler: marca tudo como lido em lote e apaga o sino.
+  async function marcarTudoComoLido(){
+    const filtroTipo = colunaTipoDisponivel ? `&or=(tipo_usuario.eq.${tipoUsuario},tipo_usuario.is.null)` : '';
+    await Promise.all([
+      patchOuDelete(`${SUPABASE_URL}/rest/v1/respostas_perguntas?usuario_id=eq.${usuarioId}&lida=eq.false${filtroTipo}`, 'PATCH', { lida: true }),
+      patchOuDelete(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao?usuario_id=eq.${usuarioId}&lida=eq.false`, 'PATCH', { lida: true })
+    ]);
+    await atualizarSinoBadge();
+  }
+
+  async function abrirInbox(){
+    await renderizarInbox();
+    modalMensagem.classList.add('active');
+    marcarTudoComoLido();
+  }
   function fecharInbox(){ modalMensagem.classList.remove('active'); }
 
   letterIcon.addEventListener('click', abrirModalPerguntas);

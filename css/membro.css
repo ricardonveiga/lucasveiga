@@ -2610,3 +2610,61 @@ a{ text-decoration: none; color: inherit; }
 .emoji-seletor-opcao:hover{
   background: rgba(216,180,106,0.2);
 }
+
+/* ===== Página de Músicas ===== */
+.spotify-embed-wrap{
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.lista-sugestoes-musicas{
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.sugestao-musica-item{
+  position: relative;
+  background: var(--card-inner);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  padding-right: 8.5rem;
+}
+
+.sugestao-musica-item.sugestao-adicionada{
+  border-color: rgba(120,200,140,0.4);
+}
+
+.sugestao-musica-nome{
+  font-weight: 600;
+  margin: 0 0 0.2rem 0;
+}
+
+.sugestao-musica-meta{
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.sugestao-status{
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background: rgba(216,180,106,0.15);
+  color: #d8b46a;
+}
+
+.sugestao-adicionada .sugestao-status{
+  background: rgba(120,200,140,0.18);
+  color: #7ec98e;
+}
+
+.btn-marcar-adicionada{
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+}
