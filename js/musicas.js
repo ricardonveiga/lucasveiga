@@ -8,24 +8,32 @@
   };
 
   const usuarioId = sessionStorage.getItem('usuarioId');
-  const nomeUsuario = sessionStorage.getItem('nomeUsuario') || 'Anônimo';
+  const nomeUsuario = sessionStorage.getItem('nomeUsuario') || '';
   const tipoAcesso = sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante';
   const isAdmin = sessionStorage.getItem('papelUsuario') === 'admin';
-  const ehVisitante = typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante';
 
+  const autorInput = document.getElementById('sugestaoAutor');
+  const autorErro = document.getElementById('sugestaoAutorErro');
   const inputMusica = document.getElementById('musicaSugerida');
-  const erroEl = document.getElementById('musicaSugeridaErro');
+  const musicaErro = document.getElementById('musicaSugeridaErro');
+  const descricaoInput = document.getElementById('musicaDescricao');
+  const descricaoErro = document.getElementById('musicaDescricaoErro');
   const btnEnviar = document.getElementById('btnSugerirMusica');
   const listaEl = document.getElementById('listaSugestoesMusicas');
-  const formWrap = document.getElementById('formSugestaoMusica');
-  const introEl = document.getElementById('sugerirMusicaIntro');
+  const painelAdmin = document.getElementById('painelSugestoesAdmin');
 
-  // Sugerir é exclusivo de membros e família — visitante só visualiza.
-  if (ehVisitante && formWrap) {
-    introEl.textContent = 'Sugerir músicas é exclusivo para membros e família. Você pode aproveitar a playlist e ver as sugestões já enviadas abaixo.';
-    formWrap.remove();
-  } else if (inputMusica) {
-    if (window.anexarSeletorEmoji) window.anexarSeletorEmoji(inputMusica);
+  // Qualquer pessoa pode sugerir — pré-preenche o nome de quem já está
+  // logado, mas deixa editável.
+  if (autorInput && nomeUsuario) autorInput.value = nomeUsuario;
+
+  [inputMusica, descricaoInput].forEach(campo => {
+    if (campo && window.anexarSeletorEmoji) window.anexarSeletorEmoji(campo);
+  });
+
+  // A lista de sugestões (com o botão de aprovar) é só para o admin.
+  if (isAdmin && painelAdmin) {
+    painelAdmin.style.display = '';
+    carregarSugestoes();
   }
 
   function formatarData(iso){
@@ -34,18 +42,37 @@
     } catch(e){ return ''; }
   }
 
-  async function enviarSugestao(){
-    const musica = inputMusica.value.trim();
-    erroEl.textContent = '';
+  function limparErros(){
+    autorErro.textContent = '';
+    musicaErro.textContent = '';
+    descricaoErro.textContent = '';
+    [autorInput, inputMusica, descricaoInput].forEach(c => c.style.borderColor = '');
+  }
 
+  async function enviarSugestao(){
+    limparErros();
+
+    const autorNome = autorInput.value.trim();
+    const musica = inputMusica.value.trim();
+    const descricao = descricaoInput.value.trim();
+
+    let temErro = false;
+    if (!autorNome) {
+      autorErro.textContent = 'Informe seu nome.';
+      autorInput.style.borderColor = '#e07a7a';
+      temErro = true;
+    }
     if (!musica) {
-      erroEl.textContent = 'Escreva o nome da música antes de enviar.';
-      return;
+      musicaErro.textContent = 'Escreva o nome da música.';
+      inputMusica.style.borderColor = '#e07a7a';
+      temErro = true;
     }
-    if (!usuarioId) {
-      erroEl.textContent = 'Não identificamos seu login. Recarregue a página e tente de novo.';
-      return;
+    if (!descricao) {
+      descricaoErro.textContent = 'Conte por que essa música é especial — é obrigatório.';
+      descricaoInput.style.borderColor = '#e07a7a';
+      temErro = true;
     }
+    if (temErro) return;
 
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando...';
@@ -55,10 +82,11 @@
         method: 'POST',
         headers: { ...HEADERS, Prefer: 'return=minimal' },
         body: JSON.stringify({
-          autor_id: Number(usuarioId),
+          autor_id: usuarioId ? Number(usuarioId) : null,
           autor_tipo: tipoAcesso,
-          autor_nome: nomeUsuario,
+          autor_nome: autorNome,
           musica,
+          descricao,
           status: 'pendente'
         })
       });
@@ -66,10 +94,11 @@
       if (!resp.ok) throw new Error('Falha ao enviar');
 
       inputMusica.value = '';
-      if (window.avisoSite) window.avisoSite('Sugestão enviada! Assim que for adicionada à playlist, você recebe um aviso.', '🎵');
-      carregarSugestoes();
+      descricaoInput.value = '';
+      if (window.avisoSite) window.avisoSite('Sugestão enviada! Obrigado por ajudar a completar a playlist do Lucas.', '🎵');
+      if (isAdmin) carregarSugestoes();
     } catch (e) {
-      erroEl.textContent = 'Não foi possível enviar agora. Tente novamente.';
+      musicaErro.textContent = 'Não foi possível enviar agora. Tente novamente.';
     }
 
     btnEnviar.disabled = false;
@@ -87,7 +116,7 @@
       });
       if (!resp.ok) throw new Error('Falha ao atualizar');
 
-      // Avisa a pessoa pelo sino
+      // Avisa a pessoa pelo sino, se ela tiver conta no site
       if (item.autor_id) {
         await fetch(`${SUPABASE_URL}/rest/v1/notificacoes_moderacao`, {
           method: 'POST',
@@ -121,6 +150,13 @@
     musicaEl.textContent = `🎵 ${item.musica}`;
     cartao.appendChild(musicaEl);
 
+    if (item.descricao) {
+      const descEl = document.createElement('p');
+      descEl.className = 'sugestao-musica-descricao';
+      descEl.textContent = item.descricao;
+      cartao.appendChild(descEl);
+    }
+
     const meta = document.createElement('p');
     meta.className = 'sugestao-musica-meta';
     meta.textContent = `— ${item.autor_nome || 'Anônimo'} · ${formatarData(item.criado_em)}`;
@@ -131,7 +167,7 @@
     selo.textContent = item.status === 'adicionada' ? 'Adicionada ✓' : 'Aguardando';
     cartao.appendChild(selo);
 
-    if (isAdmin && item.status !== 'adicionada') {
+    if (item.status !== 'adicionada') {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'btn-limpar btn-marcar-adicionada';
@@ -155,7 +191,7 @@
       if (!Array.isArray(dados) || dados.length === 0) {
         const vazio = document.createElement('p');
         vazio.className = 'hint-text';
-        vazio.textContent = 'Nenhuma sugestão por aqui ainda — a próxima pode ser a sua!';
+        vazio.textContent = 'Nenhuma sugestão recebida ainda.';
         listaEl.appendChild(vazio);
         return;
       }
@@ -165,6 +201,4 @@
       listaEl.innerHTML = '<p class="hint-text">Não foi possível carregar as sugestões agora.</p>';
     }
   }
-
-  carregarSugestoes();
 })();
