@@ -156,7 +156,10 @@
       }
       window.renderizarCarrossel(
         track,
-        carrosselMobile ? todosOsItens : itensDaPagina,
+        // Dashboard e mobile: lista completa (quanto mais recados
+        // aprovados existirem, mais aparecem rolando). Só a grade
+        // paginada do desktop usa a fatia de uma página por vez.
+        (carrosselMobile || !paginacaoEl) ? todosOsItens : itensDaPagina,
         (item, indice) => criarCardRecado(item, indice)
       );
       if (window.ReactionsAPI) ReactionsAPI.refreshAllBadges();
