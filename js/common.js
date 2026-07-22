@@ -316,6 +316,13 @@ window.renderizarCarrossel = function(track, itens, criarCard){
     if (!window.souAdmin() || !elementoCard || !tabela || !id) return;
     opts = opts || {};
 
+    // Marca esta cópia visual com uma chave — o carrossel duplica cada
+    // item na tela (pra rolar sem emenda), então a mesma foto/vídeo/recado
+    // pode aparecer 2x. Guardamos a chave pra excluir TODAS as cópias
+    // visuais de uma vez, senão a segunda fica "fantasma" na tela.
+    const chave = `${tabela}:${id}`;
+    elementoCard.setAttribute('data-excluir-chave', chave);
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'admin-excluir-btn';
@@ -343,7 +350,10 @@ window.renderizarCarrossel = function(track, itens, criarCard){
         });
         if (!resp.ok) throw new Error('Falha ao excluir');
 
-        elementoCard.remove();
+        // Remove TODAS as cópias visuais deste item (original + duplicata
+        // do carrossel), não só a que foi clicada.
+        document.querySelectorAll(`[data-excluir-chave="${chave}"]`).forEach(el => el.remove());
+
         if (window.avisoSite) window.avisoSite('Excluído.', '🗑️');
         if (opts.aoExcluir) opts.aoExcluir();
       } catch (err) {
