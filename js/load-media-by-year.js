@@ -88,6 +88,11 @@
       thumb.src = item.url_arquivo;
       thumb.muted = true;
       thumb.preload = 'metadata';
+      // Muitos navegadores (principalmente no celular) mostram uma caixa
+      // preta em vez do primeiro quadro até a pessoa interagir. Forçar um
+      // pulo pro instante 0,1s assim que os metadados carregam faz o
+      // navegador desenhar um quadro de verdade como miniatura.
+      thumb.addEventListener('loadedmetadata', () => { try { thumb.currentTime = 0.1; } catch(e){} }, { once: true });
       thumb.playsInline = true;
       card.appendChild(thumb);
     }
