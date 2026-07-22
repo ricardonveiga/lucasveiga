@@ -132,20 +132,43 @@ window.renderizarCarrossel = function(track, itens, criarCard){
 
   itens.forEach((item, indice) => track.appendChild(criarCard(item, indice)));
 
-  // Sempre rola, da esquerda para a direita, em loop — duplica os itens
-  // para o laço ficar sem emenda (os repetidos entram por um lado
-  // conforme os originais saem pelo outro).
-  itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
+  const wrap = track.parentElement;
+  if (!wrap) return;
 
-  function ajustarVelocidade(){
-    const largura = track.scrollWidth;
-    const duracao = Math.max(14, Math.round(largura / 90));
-    track.style.animationDuration = duracao + 's';
+  let decidido = false;
+
+  function decidir(){
+    if (decidido) return;
+    const larguraVisivel = wrap.clientWidth;
+    const larguraUmaCopia = track.scrollWidth;
+    // Enquanto o layout ainda não assentou (largura 0), espera o próximo
+    // disparo do observer em vez de decidir errado.
+    if (larguraVisivel <= 0 || larguraUmaCopia <= 0) return;
+
+    decidido = true;
+    if (observer) observer.disconnect();
+
+    if (larguraUmaCopia > larguraVisivel + 8) {
+      // Não cabe tudo de uma vez: duplica para o laço rolar sem emenda —
+      // os repetidos entram por um lado conforme os originais saem pelo
+      // outro. Quanto mais itens existirem, mais aparecem passando.
+      itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
+      const novaLargura = track.scrollWidth;
+      const duracao = Math.max(14, Math.round(novaLargura / 90));
+      track.style.animationDuration = duracao + 's';
+    } else {
+      // Cabe tudo na tela: mostra uma vez só, parado — duplicar aqui
+      // pareceria (e seria) conteúdo repetido à toa.
+      track.classList.add('marquee-estatico');
+    }
   }
 
-  ajustarVelocidade();
-  requestAnimationFrame(() => requestAnimationFrame(ajustarVelocidade));
-  setTimeout(ajustarVelocidade, 400);
+  const observer = ('ResizeObserver' in window) ? new ResizeObserver(decidir) : null;
+  if (observer) observer.observe(wrap);
+
+  requestAnimationFrame(decidir);
+  setTimeout(decidir, 300);
+  setTimeout(decidir, 800);
 };
 
 
@@ -368,3 +391,28 @@ window.renderizarCarrossel = function(track, itens, criarCard){
     elementoCard.appendChild(btn);
   };
 })();
+
+
+// ============================================================
+// Proteção contra sessão "congelada" pelo navegador (bfcache).
+// Alguns navegadores (principalmente no celular) guardam uma foto
+// da página na memória e a devolvem ao voltar/reabrir, sem rodar os
+// scripts de novo — então ela pode reaparecer com dados de ANTES
+// (login errado, Painel Admin escondido, notificações antigas etc).
+// Isso força uma recarga de verdade sempre que isso acontecer, pra
+// garantir que a tela nunca minta sobre quem está logado.
+// ============================================================
+window.addEventListener('pageshow', function(evento){
+  if (evento.persisted) {
+    window.location.reload();
+  }
+});
+
+// Mostra/esconde o link do Painel Admin de forma centralizada — antes
+// esse código estava copiado em 12 páginas diferentes.
+document.addEventListener('DOMContentLoaded', function(){
+  const linkAdmin = document.getElementById('navAdminLink');
+  if (linkAdmin) {
+    linkAdmin.style.display = (sessionStorage.getItem('papelUsuario') === 'admin') ? '' : 'none';
+  }
+});
