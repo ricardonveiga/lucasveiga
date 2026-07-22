@@ -68,6 +68,7 @@
     tag.innerHTML = `<span>${item.nome_evento || 'Sem evento'}</span><em>${item.ano || ''}</em>`;
     card.appendChild(tag);
 
+    window.anexarBotaoExcluir(card, 'midias', item.id);
     return card;
   }
 
@@ -101,6 +102,7 @@
     caption.innerHTML = `${item.nome_evento || 'Sem evento'} <em>${item.ano || ''}</em>`;
     card.appendChild(caption);
 
+    window.anexarBotaoExcluir(card, 'midias', item.id);
     return card;
   }
 

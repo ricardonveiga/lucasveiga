@@ -63,6 +63,7 @@
     caption.innerHTML = `${item.autor_nome || 'Anônimo'} <em>${item.texto_lembranca ? '💬' : ''}</em>`;
     card.appendChild(caption);
 
+    window.anexarBotaoExcluir(card, 'conversas', item.id);
     return card;
   }
 

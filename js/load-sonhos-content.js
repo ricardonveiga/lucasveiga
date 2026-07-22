@@ -70,6 +70,7 @@
     autor.textContent = item.autor_nome || 'Anônimo';
     card.appendChild(autor);
 
+    window.anexarBotaoExcluir(card, 'sonhos_sinais', item.id);
     return card;
   }
 

@@ -183,6 +183,14 @@
           card = cardTexto(item, 'Recado', emoji, item.texto, indice);
         }
       }
+      const TABELA_POR_ORIGEM = {
+        midia: 'midias',
+        conversa: 'conversas',
+        homenagem: 'homenagens',
+        sonho: 'sonhos_sinais',
+        recado: 'recados_mural'
+      };
+      window.anexarBotaoExcluir(card, TABELA_POR_ORIGEM[item.origem], item.id);
       return card;
   }
 
