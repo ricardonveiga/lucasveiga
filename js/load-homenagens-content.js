@@ -66,6 +66,7 @@
     caption.innerHTML = `${item.autor_nome || 'Anônimo'} <em>${formatarData(item.criado_em)}</em>`;
     card.appendChild(caption);
 
+    window.anexarBotaoExcluir(card, 'homenagens', item.id);
     return card;
   }
 

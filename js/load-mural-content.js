@@ -63,6 +63,7 @@
     autor.textContent = item.autor_nome || 'Anônimo';
     card.appendChild(autor);
 
+    window.anexarBotaoExcluir(card, 'recados_mural', item.id);
     return card;
   }
 

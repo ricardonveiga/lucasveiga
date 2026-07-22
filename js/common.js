@@ -290,3 +290,71 @@ window.renderizarCarrossel = function(track, itens, criarCard){
     return fetch(url, options);
   };
 })();
+
+
+// ============================================================
+// Botão de excluir universal para o admin.
+// Aparece em QUALQUER card do site (fotos, vídeos, recados,
+// sonhos, conversas, homenagens, comentários, sugestões de
+// música) — só quando quem está logado é admin — e apaga
+// direto no banco, sem precisar entrar no Supabase.
+// ============================================================
+(function(){
+  const SUPABASE_URL_DEL = 'https://igvtlqkkflpjrgasapos.supabase.co';
+  const SUPABASE_KEY_DEL = 'sb_publishable_1WkbxOWGZWAfhnwhRdwcQQ_CJ-4-Ini';
+
+  window.souAdmin = function(){
+    return sessionStorage.getItem('papelUsuario') === 'admin';
+  };
+
+  // elementoCard: o card na tela, que será removido visualmente após excluir
+  // tabela: nome da tabela no banco (ex: 'midias', 'recados_mural')
+  // id: id da linha a excluir
+  // opts.mensagem: texto de confirmação (opcional)
+  // opts.aoExcluir: callback extra depois de excluir com sucesso (opcional)
+  window.anexarBotaoExcluir = function(elementoCard, tabela, id, opts){
+    if (!window.souAdmin() || !elementoCard || !tabela || !id) return;
+    opts = opts || {};
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'admin-excluir-btn';
+    btn.title = 'Excluir (admin)';
+    btn.innerHTML = '🗑️';
+
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const ok = await window.confirmarSite(
+        opts.mensagem || 'Excluir isto definitivamente? Não tem como desfazer.'
+      );
+      if (!ok) return;
+
+      btn.disabled = true;
+      try {
+        const resp = await window.supaFetch(`${SUPABASE_URL_DEL}/rest/v1/${tabela}?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            apikey: SUPABASE_KEY_DEL,
+            Authorization: `Bearer ${SUPABASE_KEY_DEL}`,
+            Prefer: 'return=minimal'
+          }
+        });
+        if (!resp.ok) throw new Error('Falha ao excluir');
+
+        elementoCard.remove();
+        if (window.avisoSite) window.avisoSite('Excluído.', '🗑️');
+        if (opts.aoExcluir) opts.aoExcluir();
+      } catch (err) {
+        btn.disabled = false;
+        if (window.avisoSite) window.avisoSite('Não foi possível excluir agora. Tente de novo.', '⚠️');
+      }
+    });
+
+    if (getComputedStyle(elementoCard).position === 'static') {
+      elementoCard.style.position = 'relative';
+    }
+    elementoCard.appendChild(btn);
+  };
+})();
