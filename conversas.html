@@ -331,11 +331,7 @@
   <script src="js/mix-fotos.js"></script>
   <script src="js/change-password.js"></script>
   <script>
-    if (sessionStorage.getItem('papelUsuario') === 'admin') {
-      const linkAdmin = document.getElementById('navAdminLink');
-      if (linkAdmin) linkAdmin.style.display = '';
-    }
-    // Visitante (cadastro público) só visualiza — não pode adicionar conversas.
+// Visitante (cadastro público) só visualiza — não pode adicionar conversas.
     if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
       const formConversa = document.getElementById('adicionar-conversa');
       if (formConversa) {

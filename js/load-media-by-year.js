@@ -123,7 +123,21 @@
       }
       return;
     }
-    window.renderizarCarrossel(track, itens, (item) => criarCard(item));
+    // Seção "por ano" é arquivo, não vitrine — cada foto aparece uma
+    // única vez, sem duplicar e sem animação, mesmo que a mesma engine
+    // visual do carrossel seja usada nas outras seções do site.
+    track.classList.remove('marquee-vazio');
+    track.classList.add('full-grid');
+    // O container ao redor tem esmaecimento nas bordas pensado pra
+    // rolagem contínua — numa grade normal isso cortaria as fotos das
+    // pontas, então desligamos aqui.
+    const wrap = track.parentElement;
+    if (wrap && wrap.classList.contains('marquee-wrap')) {
+      wrap.style.overflow = 'visible';
+      wrap.style.maskImage = 'none';
+      wrap.style.webkitMaskImage = 'none';
+    }
+    itens.forEach(item => track.appendChild(criarCard(item)));
   }
 
   // ===== Página com várias seções, uma por ano (fotos.html / videos.html) =====

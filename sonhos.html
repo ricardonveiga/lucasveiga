@@ -342,11 +342,7 @@
   <script src="js/mix-fotos.js"></script>
   <script src="js/change-password.js"></script>
   <script>
-    if (sessionStorage.getItem('papelUsuario') === 'admin') {
-      const linkAdmin = document.getElementById('navAdminLink');
-      if (linkAdmin) linkAdmin.style.display = '';
-    }
-    // Visitante (cadastro público) só visualiza — não pode adicionar sonhos e sinais.
+// Visitante (cadastro público) só visualiza — não pode adicionar sonhos e sinais.
     if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
       const formSonho = document.getElementById('registrar-sonho');
       if (formSonho) {

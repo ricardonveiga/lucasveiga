@@ -322,11 +322,7 @@
   <script src="js/mix-fotos.js"></script>
   <script src="js/change-password.js"></script>
   <script>
-    if (sessionStorage.getItem('papelUsuario') === 'admin') {
-      const linkAdmin = document.getElementById('navAdminLink');
-      if (linkAdmin) linkAdmin.style.display = '';
-    }
-    // O botão continua visível para todos, mas só membros e família podem
+// O botão continua visível para todos, mas só membros e família podem
     // de fato publicar — visitante (cadastro público) vê uma mensagem no
     // lugar da seção inteira quando tenta usar.
     if (typeof nivelDeAcessoAtual === 'function' && nivelDeAcessoAtual() === 'visitante') {
