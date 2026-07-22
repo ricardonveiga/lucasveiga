@@ -128,33 +128,24 @@ window.renderizarCarrossel = function(track, itens, criarCard){
   track.style.animationDuration = '';
   track.innerHTML = '';
 
+  if (itens.length === 0) return;
+
   itens.forEach((item, indice) => track.appendChild(criarCard(item, indice)));
 
-  const wrap = track.parentElement;
+  // Sempre rola, da esquerda para a direita, em loop — duplica os itens
+  // para o laço ficar sem emenda (os repetidos entram por um lado
+  // conforme os originais saem pelo outro).
+  itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
 
-  function decidir(){
-    const larguraVisivel = wrap ? wrap.clientWidth : 0;
-    const larguraBase = track.scrollWidth;
-
-    if (larguraBase > larguraVisivel + 8) {
-      // Segunda cópia para o loop sem emenda — os cards repetidos entram
-      // por um lado conforme os originais saem pelo outro.
-      itens.forEach((item, indice) => track.appendChild(criarCard(item, indice + itens.length)));
-      const novaLargura = track.scrollWidth;
-      const duracao = Math.max(18, Math.round(novaLargura / 90));
-      track.style.animationDuration = duracao + 's';
-      track.classList.remove('marquee-estatico');
-    } else {
-      track.classList.add('marquee-estatico');
-    }
+  function ajustarVelocidade(){
+    const largura = track.scrollWidth;
+    const duracao = Math.max(14, Math.round(largura / 90));
+    track.style.animationDuration = duracao + 's';
   }
 
-  // Mede depois que o layout assenta. Duas tentativas: uma rápida (para o
-  // caso comum, sem travar a decisão esperando imagem nenhuma) e uma de
-  // reforço um instante depois — cobre o caso de fotos/vídeos cujo
-  // tamanho só fica definitivo após a imagem carregar.
-  requestAnimationFrame(() => requestAnimationFrame(decidir));
-  setTimeout(decidir, 400);
+  ajustarVelocidade();
+  requestAnimationFrame(() => requestAnimationFrame(ajustarVelocidade));
+  setTimeout(ajustarVelocidade, 400);
 };
 
 
