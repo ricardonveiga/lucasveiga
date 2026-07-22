@@ -53,11 +53,16 @@ themeToggle.addEventListener('click', () => {
 });
 
 // ===== Nome do usuário =====
-const userName = document.getElementById('userName');
-const nomeSalvo = sessionStorage.getItem('nomeUsuario');
-if (nomeSalvo && userName) {
-  userName.textContent = nomeSalvo.trim().split(' ')[0];
+// Função nomeada (não só código solto) para poder ser chamada de novo
+// sempre que a página reaparecer — não só na primeira vez que carrega.
+function atualizarNomeUsuarioNaTela(){
+  const userNameEl = document.getElementById('userName');
+  const nomeSalvo = sessionStorage.getItem('nomeUsuario');
+  if (nomeSalvo && userNameEl) {
+    userNameEl.textContent = nomeSalvo.trim().split(' ')[0];
+  }
 }
+atualizarNomeUsuarioNaTela();
 
 // ===== Filtro de visibilidade por perfil (Fotos, Vídeos, Conversas, Mural) =====
 function nivelDeAcessoAtual(){
@@ -403,6 +408,14 @@ window.renderizarCarrossel = function(track, itens, criarCard){
 // garantir que a tela nunca minta sobre quem está logado.
 // ============================================================
 window.addEventListener('pageshow', function(evento){
+  // Reforço extra: atualiza a tela imediatamente também, mesmo que o
+  // recarregamento abaixo já vá garantir isso um instante depois — evita
+  // qualquer fresta de tempo com dado antigo na tela.
+  atualizarNomeUsuarioNaTela();
+  const linkAdminReforco = document.getElementById('navAdminLink');
+  if (linkAdminReforco) {
+    linkAdminReforco.style.display = (sessionStorage.getItem('papelUsuario') === 'admin') ? '' : 'none';
+  }
   if (evento.persisted) {
     window.location.reload();
   }
