@@ -21,7 +21,7 @@
     if (nivel === 'visitante') {
       try {
         const resp = await window.supaFetch(
-          `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=10`,
+          `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&visibilidade=eq.todos&select=*&order=criado_em.desc&limit=200`,
           {
             headers: {
               apikey: SUPABASE_KEY,
@@ -41,7 +41,7 @@
     // marcados como "não compartilhar" (só o autor enxerga os dele).
     try {
       const resp = await window.supaFetch(
-        `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&select=*&order=criado_em.desc&limit=30`,
+        `${SUPABASE_URL}/rest/v1/midias?tipo=eq.${tipo}&status=eq.aprovado&select=*&order=criado_em.desc&limit=200`,
         {
           headers: {
             apikey: SUPABASE_KEY,
@@ -62,8 +62,7 @@
           // membro comum não vê (bug corrigido: antes qualquer não-visitante via tudo).
           if (item.visibilidade === 'familia') return nivel === 'familia';
           return true;
-        })
-        .slice(0, 10);
+        });
     } catch (e) {
       console.error(`Erro ao buscar ${tipo}s para o dashboard:`, e);
       return [];
