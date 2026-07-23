@@ -1013,15 +1013,8 @@
 
   async function marcarMusicaAdicionada(item, cartao){
     await atualizarStatusMusica(item, 'adicionada');
-    cartao.classList.remove('sugestao-pendente');
-    cartao.classList.add('sugestao-adicionada');
-    const selo = cartao.querySelector('.sugestao-status');
-    if (selo) selo.textContent = 'Adicionada ✓';
-    const acoes = cartao.querySelector('.sugestao-musica-acoes');
-    if (acoes) acoes.remove();
-    const painel = cartao.querySelector('textarea');
-    if (painel && painel.parentElement) painel.parentElement.remove();
     if (window.avisoSite) window.avisoSite(`A sugestão "${item.musica}" foi marcada como adicionada e a pessoa foi avisada.`, '🎵');
+    cartao.remove();
   }
 
   function criarCardMusica(item){
@@ -1070,11 +1063,8 @@
         botao.disabled = true;
         botao.textContent = 'Enviando...';
         await atualizarStatusMusica(item, 'rejeitada', motivo);
-        cartao.classList.remove('sugestao-pendente');
-        selo.textContent = 'Rejeitada';
-        acoes.remove();
-        painelMotivo.remove();
         if (window.avisoSite) window.avisoSite(`A sugestão "${item.musica}" foi rejeitada e a pessoa foi avisada do motivo.`, '⚠️');
+        cartao.remove();
       });
 
       btnAprovar.addEventListener('click', () => marcarMusicaAdicionada(item, cartao));
