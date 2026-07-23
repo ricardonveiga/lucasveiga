@@ -223,6 +223,56 @@ btnEsqueciSenha.addEventListener('click', () => {
 
 btnForgotBack.addEventListener('click', () => {
   resetLoginView();
+
+const btnForgotConfirm = document.getElementById('btnForgotConfirm');
+if (btnForgotConfirm) {
+  btnForgotConfirm.addEventListener('click', async () => {
+    const emailEl = document.getElementById('forgotEmail');
+    const cpfEl = document.getElementById('forgotCpf');
+    const erroEl = document.getElementById('forgotErro');
+    const resultadoEl = document.getElementById('forgotResultado');
+    const senhaEl = document.getElementById('forgotNovaSenha');
+
+    erroEl.textContent = '';
+    resultadoEl.classList.add('login-content-hidden');
+
+    const email = emailEl.value.trim().toLowerCase();
+    const cpf = cpfEl.value.replace(/\D/g, '');
+
+    if (!email.includes('@')) { erroEl.textContent = 'Informe um email válido.'; return; }
+    if (cpf.length !== 11) { erroEl.textContent = 'Informe o CPF completo (11 números).'; return; }
+
+    btnForgotConfirm.disabled = true;
+    btnForgotConfirm.textContent = 'Gerando...';
+
+    try {
+      const resp = await fetch('https://igvtlqkkflpjrgasapos.supabase.co/functions/v1/redefinir-senha', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          apikey: SUPABASE_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, cpf })
+      });
+      const dados = await resp.json();
+
+      if (!resp.ok || dados.erro) {
+        erroEl.textContent = dados.erro || 'Não foi possível redefinir agora. Tente novamente.';
+      } else {
+        senhaEl.textContent = dados.senha;
+        resultadoEl.classList.remove('login-content-hidden');
+        loginUser.value = email;
+        loginPass.value = '';
+      }
+    } catch (e) {
+      erroEl.textContent = 'Não foi possível redefinir agora. Tente novamente.';
+    }
+
+    btnForgotConfirm.disabled = false;
+    btnForgotConfirm.textContent = 'Gerar nova senha';
+  });
+}
 });
 
 function emailValido(email) {
