@@ -391,9 +391,24 @@
   document.getElementById('mensagemModalClose').addEventListener('click', fecharInbox);
   modalMensagem.addEventListener('click', (e) => { if (e.target === modalMensagem) fecharInbox(); });
 
-  if (!jaMostrouHoje()) {
-    setTimeout(abrirModalPerguntas, 1200);
-  }
+  // Só abre a caixa de perguntas depois que a mensagem diária de
+  // boas-vindas (js/mensagem-diaria.js) tiver sido fechada — ou na hora,
+  // se ela já tiver sido mostrada hoje.
+  let jaLiberou = false;
+  window.liberarPerguntasDiarias = function(){
+    if (jaLiberou) return;
+    jaLiberou = true;
+    if (!jaMostrouHoje()) {
+      setTimeout(abrirModalPerguntas, 800);
+    }
+  };
+  // Se o script da mensagem diária não estiver presente por algum motivo,
+  // não trava a experiência: segue como antes depois de um instante.
+  setTimeout(() => {
+    if (!document.querySelector('.boas-vindas-overlay')) {
+      window.liberarPerguntasDiarias();
+    }
+  }, 1500);
 
   atualizarSinoBadge();
 })();

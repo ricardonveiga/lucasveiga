@@ -2713,3 +2713,83 @@ a{ text-decoration: none; color: inherit; }
   opacity: 1;
   background: rgba(200, 60, 60, 0.85);
 }
+
+/* ===== Mensagem diária de boas-vindas (Ricardo) ===== */
+.boas-vindas-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgba(1,2,12,0.88);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.boas-vindas-overlay.ativo{ opacity: 1; }
+
+.boas-vindas-caixa{
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 1.8rem 1.8rem 1.5rem;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+}
+
+.boas-vindas-titulo{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: #d8b46a;
+  margin: 0 0 1rem 0;
+}
+
+.boas-vindas-caixa p{
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--ink);
+  margin: 0 0 0.9rem 0;
+}
+
+.boas-vindas-caixa strong{ color: #d8b46a; }
+
+.boas-vindas-caixa a{
+  color: #d8b46a;
+  text-decoration: underline;
+}
+
+.boas-vindas-assinatura{
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.boas-vindas-fechar{
+  display: block;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #d8b46a, #b8935a);
+  color: #171310;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.boas-vindas-fechar:hover{ opacity: 0.9; }
+
+@media (max-width: 600px){
+  .boas-vindas-caixa{
+    padding: 1.4rem 1.2rem 1.2rem;
+    max-height: 80vh;
+  }
+  .boas-vindas-titulo{ font-size: 1.15rem; }
+}
