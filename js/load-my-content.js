@@ -163,15 +163,7 @@
       return;
     }
 
-    container.classList.remove('marquee-vazio');
-    container.classList.add('full-grid');
-    const wrap = container.parentElement;
-    if (wrap && wrap.classList.contains('marquee-wrap')) {
-      wrap.style.overflow = 'visible';
-      wrap.style.maskImage = 'none';
-      wrap.style.webkitMaskImage = 'none';
-    }
-    todos.forEach((item, indice) => container.appendChild(montarCard(item, indice)));
+    window.renderizarCarrossel(container, todos, (item, indice) => montarCard(item, indice));
   }
 
   function montarCard(item, indice){
