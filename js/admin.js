@@ -1085,7 +1085,7 @@
     if (!listaMusicas) return;
     try {
       const resp = await window.supaFetch(
-        `${SUPABASE_URL}/rest/v1/sugestoes_musicas?select=*&order=criado_em.desc&limit=200`,
+        `${SUPABASE_URL}/rest/v1/sugestoes_musicas?status=eq.pendente&select=*&order=criado_em.desc&limit=200`,
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
       );
       const dados = await resp.json();
@@ -1095,7 +1095,7 @@
         const vazio = document.createElement('p');
         vazio.className = 'hint-text';
         vazio.style.margin = '0';
-        vazio.textContent = 'Nenhuma sugestão recebida ainda.';
+        vazio.textContent = 'Nenhuma sugestão de música aguardando aprovação no momento.';
         listaMusicas.appendChild(vazio);
         return;
       }
