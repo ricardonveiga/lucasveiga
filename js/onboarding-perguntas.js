@@ -118,7 +118,7 @@
     const filtroTipo = `&or=(tipo_usuario.eq.${tipoUsuario},tipo_usuario.is.null)`;
 
     async function tentar(url){
-      const resp = await fetch(url, { headers: HEADERS });
+      const resp = await window.supaFetch(url, { headers: HEADERS });
       if (!resp.ok) return null;
       const dados = await resp.json();
       return Array.isArray(dados) ? dados : null;
@@ -195,7 +195,7 @@
 
   async function patchOuDelete(url, metodo, corpo){
     try {
-      const resp = await fetch(url, {
+      const resp = await window.supaFetch(url, {
         method: metodo,
         headers: metodo === 'PATCH' ? HEADERS_JSON : HEADERS,
         body: corpo ? JSON.stringify(corpo) : undefined
