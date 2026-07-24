@@ -29,6 +29,10 @@
     card.setAttribute('data-item-id', String(item.id));
     card.setAttribute('data-visibility', item.visibilidade);
     card.setAttribute('data-autor-id', item.autor_id ?? '');
+    card.setAttribute('data-autor-nome', item.autor_nome || 'Anônimo');
+    card.setAttribute('data-tipo', item.tipo || '');
+    card.setAttribute('data-texto', item.texto_lembranca || '');
+    card.setAttribute('data-arquivo', item.url_arquivo || '');
 
     if (!ehAudio && item.url_arquivo) {
       card.style.backgroundImage = `url('${item.url_arquivo}')`;
