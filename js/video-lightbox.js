@@ -6,6 +6,7 @@
   const previewEl = document.getElementById('videoLightboxPreview');
   const captionEl = document.getElementById('videoLightboxCaption');
   const yearEl = document.getElementById('videoLightboxYear');
+  const autorEl = document.getElementById('videoLightboxAutor');
   const btnClose = document.getElementById('videoLightboxClose');
 
   let reactionsContainer = overlay.querySelector('.lightbox-reactions-container');
@@ -24,6 +25,7 @@
   function abrir(dados){
     captionEl.textContent = dados.caption || 'Sem descrição';
     yearEl.textContent = dados.year || 'Sem data';
+    if (autorEl) autorEl.textContent = dados.autorNome ? `— ${dados.autorNome}` : '';
 
     if (dados.videoUrl) {
       previewEl.innerHTML = '';
@@ -88,7 +90,8 @@
       year,
       videoUrl: card.dataset.videoUrl || '',
       visibilidade: card.getAttribute('data-visibility'),
-      autorId: card.getAttribute('data-autor-id') || ''
+      autorId: card.getAttribute('data-autor-id') || '',
+      autorNome: card.getAttribute('data-autor-nome') || ''
     });
   });
 

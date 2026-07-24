@@ -7,6 +7,7 @@
   const eventoEl = document.getElementById('photoLightboxEvento');
   const captionEl = document.getElementById('photoLightboxCaption');
   const yearEl = document.getElementById('photoLightboxYear');
+  const autorEl = document.getElementById('photoLightboxAutor');
   const btnClose = document.getElementById('photoLightboxClose');
   const btnFavoritar = document.getElementById('photoLightboxFavoritar');
 
@@ -44,6 +45,7 @@
     if (eventoEl) eventoEl.textContent = dados.evento || '';
     captionEl.textContent = dados.descricao || 'Sem descrição';
     yearEl.textContent = dados.year || 'Sem data';
+    if (autorEl) autorEl.textContent = dados.autorNome ? `— ${dados.autorNome}` : '';
     previewEl.style.backgroundImage = dados.bgUrl ? `url('${dados.bgUrl}')` : 'none';
     painelEscolha.style.display = 'none';
     atualizarBotaoFavoritar();
@@ -78,7 +80,8 @@
       year: card.getAttribute('data-year-label'),
       bgUrl: card.dataset.bgUrl || '',
       visibilidade: card.getAttribute('data-visibility'),
-      autorId: card.getAttribute('data-autor-id') || ''
+      autorId: card.getAttribute('data-autor-id') || '',
+      autorNome: card.getAttribute('data-autor-nome') || ''
     });
   });
 
