@@ -321,11 +321,23 @@
     </button>
   </div>
 
+  <!-- Detalhe de uma conversa -->
+  <div id="conversaLightbox" class="photo-lightbox">
+    <div class="photo-lightbox-inner">
+      <button id="conversaLightboxClose" class="gallery-lightbox-close" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+      </button>
+      <div id="conversaLightboxPreview" class="recado-lightbox-preview"></div>
+      <p id="conversaLightboxAutor" class="photo-lightbox-year"></p>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/site-modal.js"></script>
   <script src="js/common.js"></script>
   <script src="js/reactions.js"></script>
   <script src="js/load-conversas-content.js"></script>
+  <script src="js/conversa-lightbox.js"></script>
   <script src="js/conversas.js"></script>
   <script src="js/story-viewer.js"></script>
   <script src="js/onboarding-perguntas.js"></script>
