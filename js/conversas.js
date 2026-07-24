@@ -111,6 +111,10 @@ if (btnPublicarConversa) {
       window.avisoSite('Escreva uma breve descrição ou lembrança — ela é obrigatória.', '📝');
       return;
     }
+    if (!sessionStorage.getItem('nomeUsuario')) {
+      window.avisoSite('Não conseguimos confirmar seu nome — saia e entre de novo antes de publicar.', '✍️');
+      return;
+    }
     if (checkboxes.length === 0) {
       window.avisoSite('Selecione ao menos uma opção de visibilidade.', '👀');
       return;
@@ -118,7 +122,7 @@ if (btnPublicarConversa) {
 
     const visibilidade = checkboxes[0].value;
     const autorId = sessionStorage.getItem('usuarioId') || '';
-    const autorNome = sessionStorage.getItem('nomeUsuario') || 'Anônimo';
+    const autorNome = sessionStorage.getItem('nomeUsuario');
 
     const totalArquivos = printsInput.files.length + (temAudio ? 1 : 0);
     let enviados = 0;

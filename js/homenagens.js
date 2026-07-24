@@ -97,6 +97,10 @@ if (btnPublicarHomenagem) {
       window.avisoSite('Escreva o texto da sua homenagem.', '💐');
       return;
     }
+    if (!sessionStorage.getItem('nomeUsuario')) {
+      window.avisoSite('Não conseguimos confirmar seu nome — saia e entre de novo antes de publicar.', '✍️');
+      return;
+    }
     if (checkboxes.length === 0) {
       window.avisoSite('Selecione ao menos uma opção de visibilidade.', '👀');
       return;
@@ -104,7 +108,7 @@ if (btnPublicarHomenagem) {
 
     const visibilidade = checkboxes[0].value;
     const autorId = sessionStorage.getItem('usuarioId') || '';
-    const autorNome = sessionStorage.getItem('nomeUsuario') || 'Anônimo';
+    const autorNome = sessionStorage.getItem('nomeUsuario');
     const tipo = arquivo && arquivo.type.startsWith('video') ? 'video' : 'foto';
 
     btnPublicarHomenagem.disabled = true;

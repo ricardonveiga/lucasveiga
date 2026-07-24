@@ -63,7 +63,7 @@
 
     const caption = document.createElement('span');
     caption.className = 'media-caption';
-    caption.innerHTML = `${item.autor_nome || 'Anônimo'} <em>${formatarData(item.criado_em)}</em>`;
+    caption.innerHTML = `Homenagem <em>${formatarData(item.criado_em)}</em>`;
     card.appendChild(caption);
 
     window.anexarBotaoExcluir(card, 'homenagens', item.id);

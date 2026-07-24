@@ -160,7 +160,7 @@ async function enviarUmArquivo(arquivo, ano, evento, texto, visibilidade, autorI
       nome_evento: evento,
       visibilidade,
       autor_id: autorId,
-      autor_nome: sessionStorage.getItem('nomeUsuario') || 'Anônimo',
+      autor_nome: sessionStorage.getItem('nomeUsuario'),
       autor_tipo: sessionStorage.getItem('tipoAcesso') === 'membro' ? 'membro' : 'visitante',
       url_arquivo: urlArquivo
     })
@@ -209,6 +209,10 @@ document.getElementById('btnPublicar').addEventListener('click', async () => {
   const descricaoDigitada = document.getElementById('conteudoTexto') ? document.getElementById('conteudoTexto').value.trim() : '';
   if (!descricaoDigitada) {
     window.avisoSite('Escreva uma breve descrição — ela é obrigatória.', '📝');
+    return;
+  }
+  if (!sessionStorage.getItem('nomeUsuario')) {
+    window.avisoSite('Não conseguimos confirmar seu nome — saia e entre de novo antes de publicar.', '✍️');
     return;
   }
   if (checkboxes.length === 0) {
