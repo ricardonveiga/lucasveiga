@@ -60,7 +60,7 @@
 
     const caption = document.createElement('span');
     caption.className = 'media-caption';
-    caption.innerHTML = `${item.autor_nome || 'Anônimo'} <em>${item.texto_lembranca ? '💬' : ''}</em>`;
+    caption.innerHTML = `${item.tipo === 'audio' ? 'Áudio' : 'Conversa'} <em>${item.texto_lembranca ? '💬' : ''}</em>`;
     card.appendChild(caption);
 
     window.anexarBotaoExcluir(card, 'conversas', item.id);
